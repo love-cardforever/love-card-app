@@ -7,11 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } }
@@ -165,12 +160,7 @@
     </footer>
 
     <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            databaseURL: "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app/"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
@@ -185,25 +175,30 @@
         function closeSuccessModal() { document.getElementById('modal-success').classList.add('hidden'); }
 
         async function getDB() {
-            return new Promise((resolve) => {
-                database.ref('/').once('value', (snapshot) => {
-                    const val = snapshot.val();
-                    if (!val) {
-                        resolve({ couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] });
-                    } else {
-                        resolve({
-                            couples: val.couples || [],
-                            globalCounter: val.globalCounter || 1,
-                            adminRequests: val.adminRequests || [],
-                            adminReportedPhotos: val.adminReportedPhotos || []
-                        });
-                    }
-                });
-            });
+            try {
+                const res = await fetch(`${FIREBASE_URL}/.json`);
+                const val = await res.json();
+                if (!val) {
+                    return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
+                } else {
+                    return {
+                        couples: val.couples || [],
+                        globalCounter: val.globalCounter || 1,
+                        adminRequests: val.adminRequests || [],
+                        adminReportedPhotos: val.adminReportedPhotos || []
+                    };
+                }
+            } catch (e) {
+                return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
+            }
         }
 
         async function saveDB(db) {
-            await database.ref('/').set(db);
+            await fetch(`${FIREBASE_URL}/.json`, {
+                method: 'PUT',
+                body: JSON.stringify(db),
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         async function handleCreateCard(e) {
