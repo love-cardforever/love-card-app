@@ -162,7 +162,7 @@
         </div>
     </div>
 
-    <!-- Modal ยืนยันคำขอเป็นแฟน (กดตกลง หรือ ขอคิดดูก่อน) -->
+    <!-- Modal ยืนยันคำขอเป็นแฟน (แจ้งเตือนให้เข้าสู่ระบบ/สมัครก่อน) -->
     <div id="modal-proposal-popup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
             <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart">
@@ -170,11 +170,11 @@
             </div>
             <div class="space-y-2">
                 <h3 id="popup-proposal-title" class="text-xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h3>
-                <p class="text-xs text-slate-600">โปรดพิจารณาคำขอนี้ด้วยหัวใจ</p>
+                <p class="text-xs text-slate-600">กรุณาเข้าสู่ระบบหรือสมัครสมาชิกบัญชีของคุณก่อนกดตกลงเป็นแฟน</p>
             </div>
             <div class="flex gap-3 pt-2">
-                <button onclick="acceptProposalFromPopup()" class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow transition text-sm">
-                    ตกลงเป็นแฟน 🥰
+                <button onclick="promptLoginBeforeAccept()" class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow transition text-sm">
+                    เข้าสู่ระบบ / สมัครก่อน 🥰
                 </button>
                 <button onclick="openRejectReasonModal()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">
                     ขอคิดดูก่อน 😜
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <!-- Modal กรอกชื่อและเหตุผลตอนปฏิเสธ (มีปุ่มเปลี่ยนใจและยืนยันการปฏิเสธ) -->
+    <!-- Modal ปฏิเสธ (กรอกชื่อและเหตุผล พร้อมปุ่มเปลี่ยนใจและยืนยันการปฏิเสธ) -->
     <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart-crack text-rose-500 mr-1"></i> ปฏิเสธคำขอเป็นแฟน</h3>
@@ -191,7 +191,7 @@
             <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล (ไม่บังคับ)..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex gap-2 pt-2">
-                <button onclick="changeMindToAccept()" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-heart mr-1"></i> เปลี่ยนใจ (ตกลงเป็นแฟน)</button>
+                <button onclick="changeMindToAccept()" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-heart mr-1"></i> เปลี่ยนใจ (เข้าสู่ระบบเพื่อยอมรับ)</button>
                 <button onclick="submitRejectForm()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
             </div>
         </div>
@@ -310,20 +310,6 @@
             });
         }
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const proposalCode = urlParams.get('proposalCode');
-            if (proposalCode) {
-                const db = await getDB();
-                const proposal = db.proposalCodes ? db.proposalCodes[proposalCode] : null;
-                if (proposal && proposal.status === 'PENDING') {
-                    activeProposalCodeKey = proposalCode;
-                    document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนคุณ! 💕`;
-                    document.getElementById('modal-proposal-popup').classList.remove('hidden');
-                }
-            }
-        });
-
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -388,8 +374,59 @@
 
             if (!db.users) db.users = [];
             db.users.push(pendingUserRegData);
-            await saveDB(db);
+            
+            // หากมีโค้ดค้างอยู่ ให้ผูกคู่รักทันทีหลังลงทะเบียนเสร็จ
+            if (activeProposalCodeKey && db.proposalCodes[activeProposalCodeKey]) {
+                const proposal = db.proposalCodes[activeProposalCodeKey];
+                proposal.status = 'ACCEPTED';
+                const sender = db.users.find(u => u.id === proposal.senderId);
+                const receiver = pendingUserRegData;
 
+                const now = new Date();
+                const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+                const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+                let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
+                db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
+
+                let seqNum = db.globalCoupleCounter;
+                let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
+                let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
+                let digit = seqNum % 10;
+                let suffix3 = `${char1}${char2}${digit}`;
+
+                const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
+                const startDateStr = now.toISOString().split('T')[0];
+                const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+                const newCouple = {
+                    id: coupleCardID,
+                    user1Id: sender.id,
+                    user1Name: sender.name,
+                    user2Id: receiver.id,
+                    user2Name: receiver.name,
+                    startDate: startDateStr,
+                    startTime: startTimeStr,
+                    status: 'ACTIVE',
+                    reconcileQuota: 3,
+                    notes: [], photos: [], trashPhotos: [], notifications: []
+                };
+
+                if (!db.couples) db.couples = [];
+                db.couples.push(newCouple);
+                sender.coupleId = coupleCardID;
+                receiver.coupleId = coupleCardID;
+
+                if (!sender.notifications) sender.notifications = [];
+                sender.notifications.push({
+                    id: Date.now(), type: 'PROPOSAL_ACCEPTED',
+                    message: `${receiver.name} ได้สมัครสมาชิกและตกลงรับคำขอเป็นแฟนของคุณแล้ว! 💕`,
+                    time: new Date().toLocaleString(), read: false
+                });
+
+                localStorage.setItem('pending_auto_login', JSON.stringify(receiver));
+            }
+
+            await saveDB(db);
             closeOtpModal();
             document.getElementById('success-user-id').innerText = pendingUserRegData.id;
             document.getElementById('modal-success-reg').classList.remove('hidden');
@@ -418,28 +455,71 @@
                 return;
             }
 
+            // หากมีโค้ดค้างอยู่ตอนเข้าสู่ระบบ ให้ผูกคู่รักทันที
+            if (activeProposalCodeKey && db.proposalCodes[activeProposalCodeKey]) {
+                const proposal = db.proposalCodes[activeProposalCodeKey];
+                proposal.status = 'ACCEPTED';
+                const sender = db.users.find(u => u.id === proposal.senderId);
+                const receiver = user;
+
+                if (sender.id === receiver.id) {
+                    showCustomAlert('ไม่สามารถทำรายการได้', 'คุณไม่สามารถขอเป็นแฟนกับตัวเองได้ครับ');
+                    return;
+                }
+
+                const now = new Date();
+                const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+                const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+                let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
+                db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
+
+                let seqNum = db.globalCoupleCounter;
+                let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
+                let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
+                let digit = seqNum % 10;
+                let suffix3 = `${char1}${char2}${digit}`;
+
+                const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
+                const startDateStr = now.toISOString().split('T')[0];
+                const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+                const newCouple = {
+                    id: coupleCardID,
+                    user1Id: sender.id, user1Name: sender.name,
+                    user2Id: receiver.id, user2Name: receiver.name,
+                    startDate: startDateStr, startTime: startTimeStr,
+                    status: 'ACTIVE', reconcileQuota: 3,
+                    notes: [], photos: [], trashPhotos: [], notifications: []
+                };
+
+                if (!db.couples) db.couples = [];
+                db.couples.push(newCouple);
+                sender.coupleId = coupleCardID;
+                receiver.coupleId = coupleCardID;
+
+                if (!sender.notifications) sender.notifications = [];
+                sender.notifications.push({
+                    id: Date.now(), type: 'PROPOSAL_ACCEPTED',
+                    message: `${receiver.name} ได้เข้าสู่ระบบและตกลงรับคำขอเป็นแฟนของคุณแล้ว! 💕`,
+                    time: new Date().toLocaleString(), read: false
+                });
+
+                await saveDB(db);
+            }
+
             localStorage.setItem('current_user', JSON.stringify(user));
             window.location.href = 'vault.html';
         }
 
         async function goToProposalPage() {
             const code = document.getElementById('input-proposal-code').value.trim();
-            if (!code) {
-                showCustomAlert('กรุณากรอกโค้ด', 'โปรดระบุโค้ดขอเป็นแฟน 7 หลัก');
-                return;
-            }
+            if (!code) { showCustomAlert('กรุณากรอกโค้ด', 'โปรดระบุโค้ดขอเป็นแฟน 7 หลัก'); return; }
 
             const db = await getDB();
             const proposal = db.proposalCodes ? db.proposalCodes[code] : null;
 
-            if (!proposal) {
-                showCustomAlert('ไม่พบโค้ด', 'โค้ดนี้ไม่ถูกต้องหรือไม่มีอยู่ในระบบ');
-                return;
-            }
-            if (proposal.status !== 'PENDING') {
-                showCustomAlert('โค้ดถูกใช้งานแล้ว', 'โค้ดนี้ผ่านการใช้งานหรือถูกปฏิเสธไปแล้วครับ');
-                return;
-            }
+            if (!proposal) { showCustomAlert('ไม่พบโค้ด', 'โค้ดนี้ไม่ถูกต้องหรือไม่มีอยู่ในระบบ'); return; }
+            if (proposal.status !== 'PENDING') { showCustomAlert('โค้ดถูกใช้งานแล้ว', 'โค้ดนี้ผ่านการใช้งานหรือถูกปฏิเสธไปแล้วครับ'); return; }
 
             activeProposalCodeKey = code;
             document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนคุณ! 💕`;
@@ -447,66 +527,9 @@
             document.getElementById('modal-proposal-popup').classList.remove('hidden');
         }
 
-        async function acceptProposalFromPopup() {
-            const db = await getDB();
-            const proposal = db.proposalCodes[activeProposalCodeKey];
-            if (!proposal) return;
-            proposal.status = 'ACCEPTED';
-
-            const sender = db.users.find(u => u.id === proposal.senderId);
-            
-            const now = new Date();
-            const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-            const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
-            let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
-            db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
-
-            let seqNum = db.globalCoupleCounter;
-            let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
-            let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
-            let digit = seqNum % 10;
-            let suffix3 = `${char1}${char2}${digit}`;
-
-            const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
-            const startDateStr = now.toISOString().split('T')[0];
-            const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-            const newCouple = {
-                id: coupleCardID,
-                user1Id: sender ? sender.id : 'UNKNOWN',
-                user1Name: sender ? sender.name : 'ผู้ส่งคำขอ',
-                user2Id: 'NEW_PARTNER',
-                user2Name: 'คู่รัก',
-                startDate: startDateStr,
-                startTime: startTimeStr,
-                status: 'ACTIVE',
-                reconcileQuota: 3,
-                notes: [],
-                photos: [],
-                trashPhotos: [],
-                notifications: []
-            };
-
-            if (!db.couples) db.couples = [];
-            db.couples.push(newCouple);
-
-            if (sender) {
-                sender.coupleId = coupleCardID;
-                if (!sender.notifications) sender.notifications = [];
-                sender.notifications.push({
-                    id: Date.now(),
-                    type: 'PROPOSAL_ACCEPTED',
-                    message: `มีผู้ตอบรับคำขอเป็นแฟนของคุณแล้ว! บัตรคู่รักรหัส ${coupleCardID}`,
-                    time: new Date().toLocaleString(),
-                    read: false
-                });
-            }
-
-            await saveDB(db);
+        function promptLoginBeforeAccept() {
             document.getElementById('modal-proposal-popup').classList.add('hidden');
-            
-            // ให้เด้งเตือนให้ผู้ใช้ทำการสมัครสมาชิกหรือเข้าสู่ระบบเพื่อยืนยันตัวตน
-            showCustomAlert('ยินดีด้วย! 🎉', 'คุณตกลงเป็นแฟนกันแล้ว! กรุณาทำการ "สมัครสมาชิก" หรือ "เข้าสู่ระบบ" เพื่อเข้าสู่หน้าห้องความทรงจำและบัตรคู่รักของคุณ');
+            showCustomAlert('กรุณาเข้าสู่ระบบหรือสมัครสมาชิก', 'ระบบจะทำการผูกบัญชีคู่รักให้คุณอัตโนมัติทันทีหลังจากเข้าสู่ระบบหรือสมัครสมาชิกสำเร็จ');
             switchTab('login');
         }
 
@@ -515,9 +538,10 @@
             document.getElementById('modal-reject-form').classList.remove('hidden');
         }
 
-        async function changeMindToAccept() {
+        function changeMindToAccept() {
             document.getElementById('modal-reject-form').classList.add('hidden');
-            await acceptProposalFromPopup();
+            showCustomAlert('กรุณาเข้าสู่ระบบ', 'เข้าสู่ระบบเพื่อยืนยันการตกลงเป็นแฟน');
+            switchTab('login');
         }
 
         async function submitRejectForm() {
@@ -533,11 +557,9 @@
                 if (sender) {
                     if (!sender.notifications) sender.notifications = [];
                     sender.notifications.push({
-                        id: Date.now(),
-                        type: 'PROPOSAL_REJECTED',
+                        id: Date.now(), type: 'PROPOSAL_REJECTED',
                         message: `${name} ปฏิเสธคำขอ เนื่องจาก: "${reason}"`,
-                        time: new Date().toLocaleString(),
-                        read: false
+                        time: new Date().toLocaleString(), read: false
                     });
                 }
                 await saveDB(db);
@@ -554,7 +576,7 @@
             db.adminRequests.push({ id: Date.now(), userId: 'GUEST', content: text, time: new Date().toLocaleString() });
             await saveDB(db);
             closeIssueModal();
-            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อย (หรือติดต่อ IG: @mumu_apr200x)');
+            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อย');
         }
 
         async function sendRecoveryEmail() {
@@ -562,11 +584,8 @@
             const email = document.getElementById('forgot-email').value.trim();
             const db = await getDB();
             const user = db.users.find(u => u.id === id && u.email === email);
-            if (!user) {
-                showCustomAlert('ไม่พบข้อมูล', 'User ID หรืออีเมลไม่ถูกต้อง');
-                return;
-            }
-            showCustomAlert('กู้คืนสำเร็จ', `รหัสผ่านของคุณคือ: ${user.password} (ติดต่อสำรอง IG: @mumu_apr200x)`);
+            if (!user) { showCustomAlert('ไม่พบข้อมูล', 'User ID หรืออีเมลไม่ถูกต้อง'); return; }
+            showCustomAlert('กู้คืนสำเร็จ', `รหัสผ่านของคุณคือ: ${user.password}`);
             closeForgotModal();
         }
     </script>
