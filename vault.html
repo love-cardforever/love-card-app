@@ -42,7 +42,6 @@
 
     <main class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
 
-        <!-- VIEW 1: NORMAL SEMI-PRIVATE PROFILE & CARD -->
         <section id="view-profile" class="w-full space-y-6">
             <div class="glass-card p-5 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
@@ -115,13 +114,12 @@
                 </div>
             </div>
 
-            <!-- SHARED NOTES & PHOTOS -->
             <div id="shared-features-section" class="space-y-6 opacity-50 pointer-events-none transition-all duration-500">
                 <div class="glass-card p-6 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
                             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-book-bookmark text-rose-500 mr-2"></i> สมุดบันทึกความในใจ (แชร์กัน)</h3>
-                            <p class="text-xs text-slate-500">โน้ตความรู้สึกที่แชร์ร่วมกัน (ใครเขียนคนนั้นลบได้)</p>
+                            <p class="text-xs text-slate-500">โน้ตความรู้สึกที่แชร์ร่วมกัน</p>
                         </div>
                         <button onclick="openNoteModal()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">เขียนโน้ตใหม่</button>
                     </div>
@@ -132,28 +130,12 @@
                     <div class="flex justify-between items-center">
                         <div>
                             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-2"></i> อัลบั้มรูปความทรงจำ (แชร์กัน)</h3>
-                            <p class="text-xs text-slate-500">แชร์ภาพร่วมกัน (ใครอัปโหลด คนนั้นมีสิทธิ์ลบ)</p>
+                            <p class="text-xs text-slate-500">แชร์ภาพร่วมกัน</p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="openTrashModal()" class="relative px-3 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">ถังขยะ</button>
-                            <button onclick="openUploadModal()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">เพิ่มรูปภาพ</button>
-                        </div>
+                        <button onclick="openUploadModal()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">เพิ่มรูปภาพ</button>
                     </div>
                     <div id="photo-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2"></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- VIEW 2: PROPOSAL WIZARD INTERFACE -->
-        <section id="view-proposal-wizard" class="w-full max-w-xl glass-card p-8 rounded-3xl text-center space-y-6 hidden">
-            <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart"><i class="fa-solid fa-ring"></i></div>
-            <div class="space-y-2">
-                <h2 id="proposal-title-text" class="text-2xl md:text-3xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h2>
-                <p id="proposal-desc-text" class="text-xs md:text-sm text-slate-600">โปรดพิจารณาคำขอนี้ด้วยหัวใจ</p>
-            </div>
-            <div id="proposal-action-box" class="flex justify-center items-center gap-4 pt-4">
-                <button onclick="acceptProposalStep()" class="px-8 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow-lg transition text-base">ตกลงเป็นแฟนกัน! 🥰</button>
-                <button id="btn-reject-proposal" onclick="rejectProposalStep()" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">ขอคิดดูก่อน 😜</button>
             </div>
         </section>
     </main>
@@ -183,20 +165,6 @@
         </div>
     </div>
 
-    <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart-crack text-rose-500 mr-1"></i> ปฏิเสธคำขอเป็นแฟน</h3>
-            <p class="text-xs text-slate-500">กรุณากรอกชื่อและเหตุผลของคุณ</p>
-            <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-            <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล (ไม่บังคับ)..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
-            <div class="flex gap-2 pt-2">
-                <button onclick="changeMindToAccept()" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-heart mr-1"></i> เปลี่ยนใจ (ตกลงเป็นแฟน)</button>
-                <button onclick="submitRejectForm()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- NOTIFICATION MODAL (แก้ไขให้กดเปิดแล้วอัปเดตเป็นอ่านแล้ว ตัวเลขหายทันที) -->
     <div id="modal-notif" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -234,7 +202,6 @@
         let currentUser = null;
         let realtimeSyncInterval = null;
         let timerInterval = null;
-        let currentProposalCode = null;
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
@@ -243,7 +210,6 @@
         function openUploadModal() { document.getElementById('modal-upload').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('modal-upload').classList.add('hidden'); }
 
-        // 🔔 เปิดกล่องแจ้งเตือน พร้อมเปลี่ยนสถานะเป็นอ่านแล้วเพื่อให้ตัวเลขแจ้งเตือนหายไปทันที
         async function openNotificationModal() {
             if (currentUser && currentUser.notifications) {
                 currentUser.notifications.forEach(n => n.read = true);
@@ -298,15 +264,8 @@
             if (!savedUser) { window.location.href = 'index.html'; return; }
             currentUser = JSON.parse(savedUser);
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const proposalCode = urlParams.get('proposalCode');
-
-            if (proposalCode) {
-                await handleProposalCodeLoad(proposalCode);
-            } else {
-                await initProfileDashboard();
-                startRealtimeSync();
-            }
+            await initProfileDashboard();
+            startRealtimeSync();
         });
 
         async function initProfileDashboard() {
@@ -325,7 +284,7 @@
 
             if (!currentUser.coupleId) {
                 document.getElementById('profile-couple-status').innerText = 'ยังไม่มีคู่รัก';
-                proposalBtnContainer.innerHTML = `<button onclick="generateProposalLink()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">ขอสมัครเป็นแฟน</button>`;
+                proposalBtnContainer.innerHTML = `<button onclick="generateProposalCode()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">ขอสมัครเป็นแฟน (รับโค้ด)</button>`;
                 sharedSection.classList.add('opacity-50', 'pointer-events-none');
                 actionWrapper.innerHTML = `<span class="text-xs text-slate-400">ยังไม่เชื่อมต่อบัตรคู่รัก</span>`;
             } else {
@@ -364,143 +323,16 @@
             window.location.href = 'index.html';
         }
 
-        async function generateProposalLink() {
+        // สร้างและคัดลอกโค้ด 7 หลัก แทนการสร้างลิงก์
+        async function generateProposalCode() {
             const randomCode = String(Math.floor(1000000 + Math.random() * 9000000));
             const db = await getDB();
             if (!db.proposalCodes) db.proposalCodes = {};
             db.proposalCodes[randomCode] = { senderId: currentUser.id, senderName: currentUser.name, status: 'PENDING' };
             await saveDB(db);
 
-            const link = `${window.location.origin}/vault.html?proposalCode=${randomCode}`;
-            navigator.clipboard.writeText(link);
-            showCustomAlert('สร้างลิงก์สำเร็จ!', `คัดลอกลิงก์ขอเป็นแฟนเรียบร้อยแล้ว! (โค้ด: ${randomCode}) ส่งลิงก์นี้ให้อีกฝ่ายได้เลยครับ`);
-        }
-
-        async function handleProposalCodeLoad(code) {
-            currentProposalCode = code;
-            const db = await getDB();
-            const proposal = db.proposalCodes ? db.proposalCodes[code] : null;
-
-            // หากเป็นเจ้าของลิงก์เอง หรือมีคู่รักอยู่แล้ว ให้ข้ามหน้าขอเป็นแฟนไปหน้าโปรไฟล์ปกติทันที
-            if (!proposal || proposal.status !== 'PENDING' || proposal.senderId === currentUser.id || currentUser.coupleId) {
-                window.location.href = 'vault.html';
-                return;
-            }
-
-            document.getElementById('view-profile').classList.add('hidden');
-            document.getElementById('view-proposal-wizard').classList.remove('hidden');
-            document.getElementById('proposal-title-text').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนของคุณ 💕`;
-        }
-
-        let rejectClickCount = 0;
-        const rejectMessages = [
-            "ขอคิดดูก่อน 😜",
-            "แน่ใจแล้วเหรอ?",
-            "ไม่ได้อยากมีอนาคตกับเขาหรอ?",
-            "ลองทบทวนดูใหม่อีกทีน้าาา",
-            "เสียดายเวลาแย่นะ ถ้าปล่อยมือกันตอนนี้",
-            "ครั้งสุดท้ายจริงๆ แล้วนะ... ยอมรับเถอะน้า!"
-        ];
-
-        function rejectProposalStep() {
-            rejectClickCount++;
-            if (rejectClickCount < 6) {
-                const btn = document.getElementById('btn-reject-proposal');
-                btn.innerText = rejectMessages[rejectClickCount % rejectMessages.length];
-            } else {
-                document.getElementById('modal-reject-form').classList.remove('hidden');
-            }
-        }
-
-        async function changeMindToAccept() {
-            document.getElementById('modal-reject-form').classList.add('hidden');
-            await acceptProposalStep();
-        }
-
-        async function submitRejectForm() {
-            const name = document.getElementById('reject-name-input').value.trim();
-            const reason = document.getElementById('reject-reason-input').value.trim() || 'ไม่มีเหตุผลระบุ';
-            if (!name) { showCustomAlert('กรุณากรอกชื่อ', 'โปรดระบุชื่อของคุณก่อนส่ง'); return; }
-
-            const db = await getDB();
-            const proposal = db.proposalCodes[currentProposalCode];
-            proposal.status = 'REJECTED';
-
-            const sender = db.users.find(u => u.id === proposal.senderId);
-            if (sender) {
-                if (!sender.notifications) sender.notifications = [];
-                sender.notifications.push({
-                    id: Date.now(),
-                    type: 'PROPOSAL_REJECTED',
-                    message: `${name} ปฏิเสธคำขอ เนื่องจาก: "${reason}"`,
-                    time: new Date().toLocaleString(),
-                    read: false
-                });
-            }
-            await saveDB(db);
-            window.location.href = 'vault.html';
-        }
-
-        async function acceptProposalStep() {
-            const db = await getDB();
-            const proposal = db.proposalCodes[currentProposalCode];
-            proposal.status = 'ACCEPTED';
-
-            const sender = db.users.find(u => u.id === proposal.senderId);
-            const receiver = currentUser;
-
-            const now = new Date();
-            const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-            const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
-            let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
-            db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
-
-            let seqNum = db.globalCoupleCounter;
-            let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
-            let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
-            let digit = seqNum % 10;
-            let suffix3 = `${char1}${char2}${digit}`;
-
-            const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
-            const startDateStr = now.toISOString().split('T')[0];
-            const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-            const newCouple = {
-                id: coupleCardID,
-                user1Id: sender.id,
-                user1Name: sender.name,
-                user2Id: receiver.id,
-                user2Name: receiver.name,
-                startDate: startDateStr,
-                startTime: startTimeStr,
-                status: 'ACTIVE',
-                reconcileQuota: 3,
-                notes: [],
-                photos: [],
-                trashPhotos: [],
-                notifications: []
-            };
-
-            if (!db.couples) db.couples = [];
-            db.couples.push(newCouple);
-
-            sender.coupleId = coupleCardID;
-            receiver.coupleId = coupleCardID;
-
-            if (!sender.notifications) sender.notifications = [];
-            sender.notifications.push({
-                id: Date.now(),
-                type: 'PROPOSAL_ACCEPTED',
-                message: `${receiver.name} ได้ตกลงรับคำขอเป็นแฟนของคุณแล้ว! ยินดีด้วยนะครับ ❤️`,
-                time: new Date().toLocaleString(),
-                read: false
-            });
-
-            await saveDB(db);
-            localStorage.setItem('current_user', JSON.stringify(receiver));
-
-            showCustomAlert('ยินดีด้วย! 🎉', 'คุณทั้งสองได้ตกลงเป็นแฟนกันและเปิดบัตรคู่รักเรียบร้อยแล้ว!');
-            setTimeout(() => { window.location.href = 'vault.html'; }, 2000);
+            navigator.clipboard.writeText(randomCode);
+            showCustomAlert('คัดลอกโค้ดสำเร็จ!', `โค้ดขอเป็นแฟนของคุณคือ: ${randomCode} (คัดลอกไปยังคลิปบอร์ดแล้ว นำโค้ดนี้ให้อีกฝ่ายกรอกที่หน้าแรกได้เลยครับ)`);
         }
 
         function renderCoupleCard(couple) {
@@ -552,9 +384,7 @@
             if (!couple.notes) couple.notes = [];
 
             couple.notes.push({
-                id: Date.now(),
-                authorId: currentUser.id,
-                authorName: currentUser.name,
+                id: Date.now(), authorId: currentUser.id, authorName: currentUser.name,
                 title, content, time: new Date().toLocaleDateString('th-TH')
             });
             await saveDB(db);
@@ -566,8 +396,7 @@
         function renderNotes(couple) {
             const grid = document.getElementById('notes-grid');
             grid.innerHTML = '';
-            const notes = couple.notes || [];
-            notes.slice().reverse().forEach(n => {
+            (couple.notes || []).slice().reverse().forEach(n => {
                 let deleteBtn = n.authorId === currentUser.id ? `<button onclick="deleteNote(${n.id})" class="text-rose-500 text-xs font-bold hover:underline">ลบโน้ต</button>` : '';
                 grid.innerHTML += `
                     <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-100 space-y-2 flex flex-col justify-between">
@@ -603,11 +432,8 @@
                 if (!couple.photos) couple.photos = [];
 
                 couple.photos.push({
-                    id: Date.now(),
-                    uploaderId: currentUser.id,
-                    uploaderName: currentUser.name,
-                    url: e.target.result,
-                    caption
+                    id: Date.now(), uploaderId: currentUser.id, uploaderName: currentUser.name,
+                    url: e.target.result, caption
                 });
                 await saveDB(db);
                 closeUploadModal();
@@ -620,8 +446,7 @@
         function renderPhotos(couple) {
             const grid = document.getElementById('photo-grid');
             grid.innerHTML = '';
-            const photos = couple.photos || [];
-            photos.forEach(p => {
+            (couple.photos || []).forEach(p => {
                 let deleteBtn = p.uploaderId === currentUser.id ? `<button onclick="deletePhoto(${p.id})" class="w-full py-1 bg-rose-50 text-rose-600 text-[10px] font-bold rounded-lg">ลบรูป</button>` : '';
                 grid.innerHTML += `
                     <div class="bg-white p-2.5 rounded-2xl border border-rose-100 space-y-2 flex flex-col justify-between">
@@ -647,16 +472,10 @@
 
         function renderNotifications() {
             const notifs = currentUser.notifications || [];
-            // นับเฉพาะแจ้งเตือนที่ยังไม่ได้อ่าน (read !== true)
             const unreadCount = notifs.filter(n => !n.read).length;
             const badge = document.getElementById('notif-badge');
-            
-            if (unreadCount > 0) {
-                badge.innerText = unreadCount;
-                badge.classList.remove('hidden');
-            } else {
-                badge.classList.add('hidden');
-            }
+            if (unreadCount > 0) { badge.innerText = unreadCount; badge.classList.remove('hidden'); }
+            else { badge.classList.add('hidden'); }
 
             const listElem = document.getElementById('notif-list');
             listElem.innerHTML = '';
@@ -680,7 +499,7 @@
         async function requestReconcile(coupleId) {
             const db = await getDB();
             const couple = db.couples.find(c => c.id === coupleId);
-            if (couple.reconcileQuota <= 0) { showCustomAlert('โหมดหมด', 'โควต้าขอคืนดีหมดแล้ว'); return; }
+            if (couple.reconcileQuota <= 0) { showCustomAlert('โควต้าหมด', 'โควต้าขอคืนดีหมดแล้ว'); return; }
             couple.reconcileQuota -= 1;
             couple.status = 'ACTIVE';
             await saveDB(db);
