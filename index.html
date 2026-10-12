@@ -10,7 +10,7 @@
     <!-- EmailJS SDK สำหรับส่ง OTP ของจริง -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
-        (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })(); // ใส่ Public Key ของคุณ หรือปล่อยไว้จำลองระบบจริงผ่าน API
+        (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })();
     </script>
     <script>
         tailwind.config = {
@@ -125,14 +125,14 @@
         </section>
     </main>
 
-    <!-- MODAL: OTP จริง -->
+    <!-- MODALS -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-envelope-circle-check"></i></div>
             <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
-            <p class="text-xs text-slate-500">ระบบได้จัดส่งรหัส OTP 6 หลักไปยังอีเมลของคุณแล้ว กรุณาตรวจสอบกล่องข้อความหรือ Spam:</p>
+            <p class="text-xs text-slate-500">ระบบได้จัดส่งรหัส OTP 6 หลักไปยังอีเมลของคุณแล้ว:</p>
             <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
-            <div class="text-[11px] text-slate-400">ไม่ได้รับอีเมล? ติดต่อผู้สร้างสำรองผ่านทาง IG: <strong class="text-rose-500">@mumu_apr200x</strong></div>
+            <div class="text-[11px] text-slate-400">ติดต่อสำรอง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
             <div class="flex gap-2">
                 <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="verifyOtpAndRegister()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน OTP</button>
@@ -140,12 +140,11 @@
         </div>
     </div>
 
-    <!-- MODAL: SUCCESS -->
     <div id="modal-success-reg" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-check"></i></div>
             <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนสำเร็จ! 🎉</h3>
-            <p class="text-xs text-slate-500">User ID เฉพาะตัวของคุณคือ (โปรดจดจำไว้ใช้เข้าสู่ระบบ):</p>
+            <p class="text-xs text-slate-500">User ID เฉพาะตัวของคุณคือ:</p>
             <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
                 <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
             </div>
@@ -153,7 +152,7 @@
         </div>
     </div>
 
-    <!-- MODALS อื่นๆ -->
+    <!-- Modal ใส่โค้ด -->
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
@@ -161,6 +160,27 @@
             <div class="flex gap-2">
                 <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="goToProposalPage()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบโค้ด</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ยืนยันคำขอเป็นแฟน (เด้งขึ้นมาเมื่อโค้ดถูกต้อง) -->
+    <div id="modal-proposal-popup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
+            <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart">
+                <i class="fa-solid fa-ring"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 id="popup-proposal-title" class="text-xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h3>
+                <p class="text-xs text-slate-600">โปรดพิจารณาคำขอนี้ด้วยหัวใจ</p>
+            </div>
+            <div class="flex gap-3 pt-2">
+                <button onclick="acceptProposalFromPopup()" class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow transition text-sm">
+                    ตกลงเป็นแฟน 🥰
+                </button>
+                <button onclick="rejectProposalFromPopup()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">
+                    ขอคิดดูก่อน 😜
+                </button>
             </div>
         </div>
     </div>
@@ -217,6 +237,7 @@
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
         let pendingUserRegData = null;
         let realOtpCode = "";
+        let activeProposalCodeKey = "";
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -254,16 +275,18 @@
             try {
                 const res = await fetch(`${FIREBASE_URL}/.json`);
                 const val = await res.json();
-                if (!val) return { users: [], couples: [], globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [] };
+                if (!val) return { users: [], couples: [], proposalCodes: {}, globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [], globalCoupleCounter: 0 };
                 return {
                     users: val.users || [],
                     couples: val.couples || [],
+                    proposalCodes: val.proposalCodes || {},
                     globalUserCounter: val.globalUserCounter || 0,
                     globalGroupChar: val.globalGroupChar || 'A',
-                    adminRequests: val.adminRequests || []
+                    adminRequests: val.adminRequests || [],
+                    globalCoupleCounter: val.globalCoupleCounter || 0
                 };
             } catch (e) {
-                return { users: [], couples: [], globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [] };
+                return { users: [], couples: [], proposalCodes: {}, globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [], globalCoupleCounter: 0 };
             }
         }
 
@@ -275,7 +298,6 @@
             });
         }
 
-        // --- ระบบส่ง OTP จริงผ่าน EmailJS ---
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -302,15 +324,12 @@
                 createdTime: new Date().toISOString()
             };
 
-            realOtpCode = String(Math.floor(100000 + Math.random() * 900000)); // OTP 6 หลัก
-
-            // ส่งอีเมลจริงผ่าน EmailJS (หากไม่ได้ตั้งค่า Service ID จะแจ้งเตือนพร้อมช่องทางสำรอง IG: @mumu_apr200x)
+            realOtpCode = String(Math.floor(100000 + Math.random() * 900000));
             const btn = document.getElementById('btn-submit-reg');
             btn.innerText = "กำลังส่งอีเมล OTP...";
             btn.disabled = true;
 
             try {
-                // ใช้ EmailJS ส่งจริง (คุณสามารถใส่ Service ID / Template ID ของคุณลงไปได้)
                 await emailjs.send("service_default", "template_default", {
                     to_email: email,
                     to_name: name,
@@ -318,9 +337,8 @@
                 });
                 document.getElementById('modal-otp').classList.remove('hidden');
             } catch (err) {
-                // หากระบบ EmailJS ขัดข้อง ให้แสดงรหัสจริงเพื่อความสะดวก พร้อมช่องทางสำรอง
                 document.getElementById('modal-otp').classList.remove('hidden');
-                showCustomAlert('แจ้งเตือนการส่งอีเมล', `ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เมลได้ รหัส OTP จริงของคุณคือ: ${realOtpCode} (หรือติดต่อ IG: @mumu_apr200x)`);
+                showCustomAlert('แจ้งเตือนการส่งอีเมล', `ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เมลได้ รหัส OTP ของคุณคือ: ${realOtpCode} (ติดต่อ IG: @mumu_apr200x)`);
             } finally {
                 btn.innerText = "ส่งรหัส OTP ไปยังอีเมล";
                 btn.disabled = false;
@@ -378,10 +396,93 @@
             window.location.href = 'vault.html';
         }
 
-        function goToProposalPage() {
+        // ตรวจสอบโค้ดขอเป็นแฟนแล้วเปิดหน้าต่างยืนยันทันที
+        async function goToProposalPage() {
             const code = document.getElementById('input-proposal-code').value.trim();
-            if (!code) return;
-            window.location.href = `vault.html?proposalCode=${code}`;
+            if (!code) {
+                showCustomAlert('กรุณากรอกโค้ด', 'โปรดระบุโค้ดขอเป็นแฟน 7 หลัก');
+                return;
+            }
+
+            const db = await getDB();
+            const proposal = db.proposalCodes ? db.proposalCodes[code] : null;
+
+            if (!proposal) {
+                showCustomAlert('ไม่พบโค้ด', 'โค้ดนี้ไม่ถูกต้องหรือไม่มีอยู่ในระบบ');
+                return;
+            }
+            if (proposal.status !== 'PENDING') {
+                showCustomAlert('โค้ดถูกใช้งานแล้ว', 'โค้ดนี้ผ่านการใช้งานหรือถูกปฏิเสธไปแล้วครับ');
+                return;
+            }
+
+            activeProposalCodeKey = code;
+            document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนคุณ! 💕`;
+            closeCodeLinkModal();
+            document.getElementById('modal-proposal-popup').classList.remove('hidden');
+        }
+
+        async function acceptProposalFromPopup() {
+            const db = await getDB();
+            const proposal = db.proposalCodes[activeProposalCodeKey];
+            if (!proposal) return;
+            proposal.status = 'ACCEPTED';
+
+            const sender = db.users.find(u => u.id === proposal.senderId);
+            
+            const now = new Date();
+            const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+            const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+            let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
+            db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
+
+            let seqNum = db.globalCoupleCounter;
+            let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
+            let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
+            let digit = seqNum % 10;
+            let suffix3 = `${char1}${char2}${digit}`;
+
+            const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
+            const startDateStr = now.toISOString().split('T')[0];
+            const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            const newCouple = {
+                id: coupleCardID,
+                user1Id: sender.id,
+                user1Name: sender.name,
+                user2Id: 'GUEST_PARTNER',
+                user2Name: 'คู่รักของคุณ',
+                startDate: startDateStr,
+                startTime: startTimeStr,
+                status: 'ACTIVE',
+                reconcileQuota: 3,
+                notes: [],
+                photos: [],
+                trashPhotos: [],
+                notifications: []
+            };
+
+            if (!db.couples) db.couples = [];
+            db.couples.push(newCouple);
+            sender.coupleId = coupleCardID;
+
+            if (!sender.notifications) sender.notifications = [];
+            sender.notifications.push({
+                id: Date.now(),
+                type: 'PROPOSAL_ACCEPTED',
+                message: `มีผู้ตอบรับคำขอเป็นแฟนของคุณแล้ว! บัตรคู่รักรหัส ${coupleCardID}`,
+                time: new Date().toLocaleString(),
+                read: false
+            });
+
+            await saveDB(db);
+            document.getElementById('modal-proposal-popup').classList.add('hidden');
+            showCustomAlert('สำเร็จ! 🎉', `ตกลงเป็นแฟนกันเรียบร้อย! รหัสบัตรคู่รักของคุณคือ: ${coupleCardID}`);
+        }
+
+        function rejectProposalFromPopup() {
+            document.getElementById('modal-proposal-popup').classList.add('hidden');
+            showCustomAlert('ปฏิเสธคำขอ', 'คุณได้ปฏิเสธคำขอเป็นแฟนเรียบร้อยแล้ว');
         }
 
         async function submitIssue() {
