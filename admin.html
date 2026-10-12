@@ -31,7 +31,7 @@
         </div>
         <div class="flex items-center gap-2">
             <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-qrcode text-amber-900"></i> ข้อมูลบัญชีรับเงิน
+                <i class="fa-solid fa-wallet text-amber-900"></i> ข้อมูลบัญชีรับเงิน
             </button>
             <a href="vault.html" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold rounded-xl transition">
                 <i class="fa-solid fa-vault mr-1"></i> ห้องความทรงจำ
@@ -75,6 +75,7 @@
             </div>
         </div>
 
+        <!-- SECTION: NSFW PHOTO AUDIT (คลิกดูภาพเต็มได้) -->
         <div class="glass-card p-6 rounded-3xl space-y-4 border-2 border-rose-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ตรวจสอบภาพลามกอนาจาร / ไม่เหมาะสม</h3>
@@ -192,17 +193,22 @@
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-qrcode text-amber-500 mr-1"></i> ข้อมูลบัญชีรับเงิน (PromptPay)</h3>
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-wallet text-amber-500 mr-1"></i> ข้อมูลบัญชีรับเงิน</h3>
                 <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl inline-block shadow-inner">
-                <img src="promptpay.png" alt="PromptPay QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
             </div>
             <div class="text-xs text-slate-700 space-y-1 bg-rose-50/80 p-3 rounded-2xl border border-rose-100 text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
                 <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-sm">208-5886021</span></p>
                 <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
             </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ZOOM IMAGE PREVIEW FOR ADMIN -->
+    <div id="modal-zoom" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50" onclick="closeZoomModal()">
+        <div class="relative max-w-4xl max-h-[90vh]">
+            <img id="zoom-img-src" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl">
+            <button onclick="closeZoomModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-white text-slate-800 rounded-full font-bold shadow-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
         </div>
     </div>
 
@@ -234,6 +240,9 @@
     </footer>
 
     <script>
+        /* ====================================================
+           SECURE ADMIN PANEL ENGINE (ซ่อนและป้องกันข้อมูลหลังบ้าน)
+           ================================================    */
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
@@ -425,6 +434,7 @@
             }
         }
 
+        // --- NSFW PHOTO AUDIT & ADMIN ZOOM ---
         function renderNSFWAudit(db) {
             const grid = document.getElementById('nsfw-audit-grid');
             const empty = document.getElementById('empty-nsfw');
@@ -441,8 +451,8 @@
                 grid.innerHTML += `
                     <div class="bg-white p-3 rounded-2xl border border-rose-200 shadow-sm space-y-3 flex flex-col justify-between">
                         <div class="relative">
-                            <img src="${item.url}" class="w-full h-40 object-cover rounded-xl filter blur-xs hover:blur-none transition cursor-pointer" title="คลิกเพื่อดูรูปเต็ม">
-                            <span class="absolute top-2 left-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-md">ภาพเบลอเพื่อความปลอดภัย</span>
+                            <img src="${item.url}" class="w-full h-40 object-cover rounded-xl filter blur-xs hover:blur-none transition cursor-pointer" title="คลิกเพื่อดูรูปเต็ม" onclick="zoomAdminImage('${item.url}')">
+                            <span class="absolute top-2 left-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-md pointer-events-none">คลิกเพื่อดูรูปเต็ม</span>
                         </div>
                         <div class="space-y-1 text-xs">
                             <p class="font-bold text-slate-800 truncate">คำบรรยาย: ${item.caption}</p>
@@ -458,6 +468,12 @@
                 `;
             });
         }
+
+        function zoomAdminImage(url) {
+            document.getElementById('zoom-img-src').src = url;
+            document.getElementById('modal-zoom').classList.remove('hidden');
+        }
+        function closeZoomModal() { document.getElementById('modal-zoom').classList.add('hidden'); }
 
         async function warnUserNSFW(coupleId, uploaderName) {
             const db = await getDB();
