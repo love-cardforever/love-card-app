@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- EmailJS SDK สำหรับส่ง OTP ของจริง -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script type="text/javascript">
         (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })();
@@ -152,7 +151,6 @@
         </div>
     </div>
 
-    <!-- Modal ใส่โค้ด -->
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
@@ -164,7 +162,7 @@
         </div>
     </div>
 
-    <!-- Modal ยืนยันคำขอเป็นแฟน (เด้งขึ้นมาเมื่อโค้ดถูกต้อง) -->
+    <!-- Modal ยืนยันคำขอเป็นแฟน (เปิดขึ้นมาทันทีเมื่อใส่โค้ดถูกต้อง) -->
     <div id="modal-proposal-popup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
             <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart">
@@ -298,6 +296,21 @@
             });
         }
 
+        // เช็ค URL ตอนโหลดหน้า หากมีพารามิเตอร์ proposalCode ให้เปิดหน้าต่างยืนยันอัตโนมัติ
+        window.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const proposalCode = urlParams.get('proposalCode');
+            if (proposalCode) {
+                const db = await getDB();
+                const proposal = db.proposalCodes ? db.proposalCodes[proposalCode] : null;
+                if (proposal && proposal.status === 'PENDING') {
+                    activeProposalCodeKey = proposalCode;
+                    document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนคุณ! 💕`;
+                    document.getElementById('modal-proposal-popup').classList.remove('hidden');
+                }
+            }
+        });
+
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -396,7 +409,6 @@
             window.location.href = 'vault.html';
         }
 
-        // ตรวจสอบโค้ดขอเป็นแฟนแล้วเปิดหน้าต่างยืนยันทันที
         async function goToProposalPage() {
             const code = document.getElementById('input-proposal-code').value.trim();
             if (!code) {
@@ -448,8 +460,8 @@
 
             const newCouple = {
                 id: coupleCardID,
-                user1Id: sender.id,
-                user1Name: sender.name,
+                user1Id: sender ? sender.id : 'UNKNOWN',
+                user1Name: sender ? sender.name : 'ผู้ส่งคำขอ',
                 user2Id: 'GUEST_PARTNER',
                 user2Name: 'คู่รักของคุณ',
                 startDate: startDateStr,
@@ -464,16 +476,18 @@
 
             if (!db.couples) db.couples = [];
             db.couples.push(newCouple);
-            sender.coupleId = coupleCardID;
 
-            if (!sender.notifications) sender.notifications = [];
-            sender.notifications.push({
-                id: Date.now(),
-                type: 'PROPOSAL_ACCEPTED',
-                message: `มีผู้ตอบรับคำขอเป็นแฟนของคุณแล้ว! บัตรคู่รักรหัส ${coupleCardID}`,
-                time: new Date().toLocaleString(),
-                read: false
-            });
+            if (sender) {
+                sender.coupleId = coupleCardID;
+                if (!sender.notifications) sender.notifications = [];
+                sender.notifications.push({
+                    id: Date.now(),
+                    type: 'PROPOSAL_ACCEPTED',
+                    message: `มีผู้ตอบรับคำขอเป็นแฟนของคุณแล้ว! บัตรคู่รักรหัส ${coupleCardID}`,
+                    time: new Date().toLocaleString(),
+                    read: false
+                });
+            }
 
             await saveDB(db);
             document.getElementById('modal-proposal-popup').classList.add('hidden');
