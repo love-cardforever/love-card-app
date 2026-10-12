@@ -222,7 +222,6 @@
             const pass1 = document.getElementById('pass1').value.trim();
             const pass2 = document.getElementById('pass2').value.trim();
 
-            // ป้องกันการตั้งรหัสผ่านซ้ำกันระหว่าง 2 ฝ่าย
             if (pass1 === pass2) {
                 showCustomAlert('รหัสผ่านซ้ำกัน', 'รหัสผ่านส่วนตัวของทั้งสองฝ่ายต้องไม่เหมือนกัน เพื่อความปลอดภัยในการเข้าใช้งานแยกบัญชี');
                 return;
