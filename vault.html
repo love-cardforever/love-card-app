@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } }
@@ -28,7 +33,6 @@
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- HEADER -->
     <header class="w-full max-w-4xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow">
@@ -36,11 +40,10 @@
             </div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Love Vault & Memory</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ห้องความทรงจำและความเป็นส่วนตัว</p>
+                <p class="text-[11px] text-rose-500 font-medium">ห้องความทรงจำและความเป็นส่วนตัว (Online Cloud)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <!-- ปุ่มโดเนท PromptPay -->
             <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
                 <i class="fa-solid fa-qrcode text-amber-900"></i> โดเนทสนับสนุน
             </button>
@@ -52,7 +55,6 @@
 
     <main class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
 
-        <!-- 1. LOGIN SECTION -->
         <section id="vault-login-section" class="w-full max-w-md glass-card p-6 md:p-8 rounded-3xl space-y-5">
             <div class="text-center space-y-1">
                 <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2">
@@ -83,7 +85,6 @@
             </form>
         </section>
 
-        <!-- 2. DASHBOARD SECTION -->
         <section id="vault-dashboard-section" class="hidden w-full space-y-6">
             <div class="glass-card p-5 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
@@ -183,7 +184,6 @@
                 </div>
             </div>
 
-            <!-- MEMORY ALBUM -->
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="flex justify-between items-center">
                     <div>
@@ -209,7 +209,6 @@
         </section>
     </main>
 
-    <!-- MODAL: PROMPTPAY DONATE -->
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
@@ -217,7 +216,6 @@
                 <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <!-- ช่องใส่รูป QR Code (นำไฟล์รูป QR โอนเงินมาใส่แทนที่ src="...") -->
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl inline-block shadow-inner">
                 <img src="promptpay.png" alt="PromptPay QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
             </div>
@@ -234,7 +232,6 @@
         </div>
     </div>
 
-    <!-- OTHER MODALS -->
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div id="alert-icon" class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
@@ -324,23 +321,44 @@
     </div>
 
     <footer class="w-full max-w-4xl mx-auto mt-8 text-center text-xs text-slate-500">
-        Love Vault App &copy; 2026
+        Love Vault App &copy; 2026 (Firebase Cloud Connected)
     </footer>
 
     <script>
-        const STORAGE_KEY = 'love_card_app_db_v1';
+        // Firebase Configuration
+        const firebaseConfig = {
+            databaseURL: "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         let currentSession = null;
         let timerInterval = null;
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
 
-        function getDB() {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
-            try { return JSON.parse(raw); } catch (e) { return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] }; }
+        async function getDB() {
+            return new Promise((resolve) => {
+                database.ref('/').once('value', (snapshot) => {
+                    const val = snapshot.val();
+                    if (!val) {
+                        resolve({ couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] });
+                    } else {
+                        resolve({
+                            couples: val.couples || [],
+                            globalCounter: val.globalCounter || 1,
+                            adminRequests: val.adminRequests || [],
+                            adminReportedPhotos: val.adminReportedPhotos || []
+                        });
+                    }
+                });
+            });
         }
-        function saveDB(db) { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+
+        async function saveDB(db) {
+            await database.ref('/').set(db);
+        }
 
         function showCustomAlert(title, message) {
             document.getElementById('alert-title').innerText = title;
@@ -349,7 +367,7 @@
         }
         function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
@@ -360,11 +378,11 @@
                 return;
             }
 
-            const db = getDB();
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === idInput);
 
             if (!couple) {
-                showCustomAlert('ไม่พบข้อมูล', 'ไม่พบ Couple ID นี้ในระบบ');
+                showCustomAlert('ไม่พบข้อมูล', 'ไม่พบ Couple ID นี้ในระบบ Cloud');
                 return;
             }
 
@@ -400,13 +418,13 @@
             document.getElementById('vault-login-section').classList.remove('hidden');
         }
 
-        function loadDashboard() {
-            const db = getDB();
+        async function loadDashboard() {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             if (!couple) { logout(); return; }
 
             checkTrashExpiration(couple);
-            saveDB(db);
+            await saveDB(db);
 
             document.getElementById('vault-login-section').classList.add('hidden');
             document.getElementById('vault-dashboard-section').classList.remove('hidden');
@@ -526,7 +544,7 @@
             }
         }
 
-        function nextBreakupStep() {
+        async function nextBreakupStep() {
             if (breakupStep === 1) {
                 breakupReasonTemp = document.getElementById('reason-text-input').value.trim() || 'ไม่มีเหตุผลระบุ';
             }
@@ -535,12 +553,12 @@
                 askBreakupQuestion();
             } else {
                 closeReasonModal();
-                finalizeBreakup();
+                await finalizeBreakup();
             }
         }
 
-        function finalizeBreakup() {
-            const db = getDB();
+        async function finalizeBreakup() {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const senderRole = currentSession.role;
             const senderName = senderRole === 'name1' ? couple.name1 : couple.name2;
@@ -557,7 +575,7 @@
                 status: 'PENDING'
             });
 
-            saveDB(db);
+            await saveDB(db);
             showCustomAlert('ส่งคำขอสำเร็จ', 'ส่งคำขอบอกเลิกไปยังอีกฝ่ายเรียบร้อยแล้ว');
             loadDashboard();
         }
@@ -578,9 +596,9 @@
         }
         function closeReasonModal() { document.getElementById('modal-reason').classList.add('hidden'); }
 
-        function submitReconcile() {
+        async function submitReconcile() {
             const reason = document.getElementById('reason-text-input').value.trim() || 'อยากกลับมาเริ่มต้นใหม่';
-            const db = getDB();
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             
             if (couple.reconcileQuota <= 0) {
@@ -604,7 +622,7 @@
                 status: 'PENDING'
             });
 
-            saveDB(db);
+            await saveDB(db);
             closeReasonModal();
             showCustomAlert('ส่งคำขอสำเร็จ', 'ส่งคำขอคืนดีเรียบร้อยแล้ว รอการตอบรับจากอีกฝ่าย');
             loadDashboard();
@@ -623,8 +641,8 @@
             }
         }
 
-        function openNotificationModal() {
-            const db = getDB();
+        async function openNotificationModal() {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const listElem = document.getElementById('notif-list');
             listElem.innerHTML = '';
@@ -695,9 +713,9 @@
             modal.classList.remove('hidden');
         }
 
-        function submitRejectBreakup() {
+        async function submitRejectBreakup() {
             const reason = document.getElementById('reason-text-input').value.trim() || 'ไม่อยากเลิก รักกันดีอยู่';
-            const db = getDB();
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const notif = couple.notifications.find(n => n.id === activeNotifIdForReject);
 
@@ -715,7 +733,7 @@
                     status: 'INFO'
                 });
 
-                saveDB(db);
+                await saveDB(db);
                 closeReasonModal();
                 showCustomAlert('ส่งผลสำเร็จ', 'ส่งผลการปฏิเสธไปยังอีกฝ่ายแล้ว');
                 loadDashboard();
@@ -723,8 +741,8 @@
             }
         }
 
-        function responseBreakup(notifId, isAccepted) {
-            const db = getDB();
+        async function responseBreakup(notifId, isAccepted) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const notif = couple.notifications.find(n => n.id === notifId);
             if (notif) {
@@ -753,14 +771,14 @@
                     
                     showCustomAlert('💔 ขอแสดงความเสียใจด้วย', sadnessMsg);
                 }
-                saveDB(db);
+                await saveDB(db);
                 loadDashboard();
                 openNotificationModal();
             }
         }
 
-        function responseReconcile(notifId, isAccepted) {
-            const db = getDB();
+        async function responseReconcile(notifId, isAccepted) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const notif = couple.notifications.find(n => n.id === notifId);
             if (notif) {
@@ -790,7 +808,7 @@
                     });
                     showCustomAlert('แจ้งผล', 'ปฏิเสธคำขอคืนดีเรียบร้อย');
                 }
-                saveDB(db);
+                await saveDB(db);
                 loadDashboard();
                 openNotificationModal();
             }
@@ -805,13 +823,13 @@
             if (fileInput.files.length === 0) { showCustomAlert('แจ้งเตือน', 'กรุณาเลือกรูปภาพ'); return; }
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 const base64Image = e.target.result;
                 const lowerCaption = caption.toLowerCase();
                 const NSFWKeywords = ['18+', 'nsfw', 'โป๊', 'ลามก', 'อนาจาร', 'X', 'xxx', 'เปลือย'];
                 const isNSFW = NSFWKeywords.some(keyword => lowerCaption.includes(keyword)) || fileInput.files[0].name.toLowerCase().includes('nsfw');
 
-                const db = getDB();
+                const db = await getDB();
                 const couple = db.couples.find(c => c.id === currentSession.coupleId);
                 const uploaderName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
 
@@ -826,7 +844,7 @@
                         caption: caption,
                         time: new Date().toLocaleString()
                     });
-                    saveDB(db);
+                    await saveDB(db);
                     closeUploadModal();
                     document.getElementById('upload-file-input').value = '';
                     document.getElementById('upload-caption').value = '';
@@ -843,7 +861,7 @@
                     uploadDate: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })
                 });
 
-                saveDB(db);
+                await saveDB(db);
                 closeUploadModal();
                 document.getElementById('upload-file-input').value = '';
                 document.getElementById('upload-caption').value = '';
@@ -882,8 +900,8 @@
             });
         }
 
-        function moveToTrash(photoId) {
-            const db = getDB();
+        async function moveToTrash(photoId) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             if (!couple.photos) couple.photos = [];
             if (!couple.trashPhotos) couple.trashPhotos = [];
@@ -893,7 +911,7 @@
                 const photo = couple.photos.splice(index, 1)[0];
                 photo.deletedAt = new Date().getTime();
                 couple.trashPhotos.push(photo);
-                saveDB(db);
+                await saveDB(db);
                 loadDashboard();
                 showCustomAlert('ย้ายไปถังขยะ', 'รูปภาพถูกย้ายไปถังขยะแล้ว (จะถูกลบถาวรใน 15 วัน)');
             }
@@ -912,8 +930,8 @@
             else { badge.classList.add('hidden'); }
         }
 
-        function renderTrashModalContent() {
-            const db = getDB();
+        async function renderTrashModalContent() {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
             const trashGrid = document.getElementById('trash-grid');
@@ -956,26 +974,26 @@
             });
         }
 
-        function restorePhoto(photoId) {
-            const db = getDB();
+        async function restorePhoto(photoId) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const index = couple.trashPhotos.findIndex(p => p.id === photoId);
             if (index !== -1) {
                 const photo = couple.trashPhotos.splice(index, 1)[0];
                 delete photo.deletedAt;
                 couple.photos.push(photo);
-                saveDB(db);
+                await saveDB(db);
                 loadDashboard();
                 renderTrashModalContent();
                 showCustomAlert('กู้คืนสำเร็จ', 'รูปภาพกลับเข้าสู่อัลบั้มหลักแล้ว');
             }
         }
 
-        function deletePhotoPermanently(photoId) {
-            const db = getDB();
+        async function deletePhotoPermanently(photoId) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             couple.trashPhotos = couple.trashPhotos.filter(p => p.id !== photoId);
-            saveDB(db);
+            await saveDB(db);
             loadDashboard();
             renderTrashModalContent();
             showCustomAlert('ลบถาวร', 'รูปภาพถูกลบออกจากถังขยะอย่างถาวรแล้ว');
@@ -990,11 +1008,11 @@
 
         function openIssueModal() { document.getElementById('modal-issue').classList.remove('hidden'); }
         function closeIssueModal() { document.getElementById('modal-issue').classList.add('hidden'); }
-        function submitIssue() {
+        async function submitIssue() {
             const text = document.getElementById('issue-text').value.trim();
             if (!text) return;
 
-            const db = getDB();
+            const db = await getDB();
             if (!db.adminRequests) db.adminRequests = [];
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
 
@@ -1007,7 +1025,7 @@
                 time: new Date().toLocaleString()
             });
 
-            saveDB(db);
+            await saveDB(db);
             closeIssueModal();
             document.getElementById('issue-text').value = '';
             showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อยแล้ว');
@@ -1015,10 +1033,10 @@
 
         function openForgotModal() { document.getElementById('modal-forgot').classList.remove('hidden'); }
         function closeForgotModal() { document.getElementById('modal-forgot').classList.add('hidden'); }
-        function sendRecoveryEmail() {
+        async function sendRecoveryEmail() {
             const id = document.getElementById('forgot-id').value.trim();
             const email = document.getElementById('forgot-email').value.trim();
-            const db = getDB();
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === id && c.email === email);
 
             if (!couple) {
