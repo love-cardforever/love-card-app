@@ -67,7 +67,7 @@
             </div>
         </section>
 
-        <!-- STAGE 2: ฟอร์มกรอกข้อมูลสร้างบัตรคู่รัก (ซ่อนไว้ก่อนจนกว่าจะกดตกลงเป็นแฟน) -->
+        <!-- STAGE 2: ฟอร์มกรอกข้อมูลสร้างบัตรคู่รัก -->
         <section id="form-section" class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5 hidden">
             <div class="text-center space-y-1">
                 <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2">
@@ -80,23 +80,23 @@
             <form onsubmit="handleCreateCard(event)" class="space-y-4 pt-2">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อแฟน</label>
-                        <input type="text" id="name1" required placeholder="ใส่ชื่อเล่นหรือชื่อจริง" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อคุณ (ฝ่ายที่ 1)</label>
+                        <input type="text" id="name1" required placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว (ของแฟน)</label>
-                        <input type="password" id="pass1" required placeholder="รหัสผ่านเข้าสู่ระบบ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัวของคุณ</label>
+                        <input type="password" id="pass1" required placeholder="รหัสผ่านส่วนตัว" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อเรา</label>
-                        <input type="text" id="name2" required placeholder="ใส่ชื่อเล่นหรือชื่อจริง" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อแฟน (ฝ่ายที่ 2)</label>
+                        <input type="text" id="name2" required placeholder="ชื่อแฟนของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว (ของเรา)</label>
-                        <input type="password" id="pass2" required placeholder="รหัสผ่านเข้าสู่ระบบ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัวของแฟน</label>
+                        <input type="password" id="pass2" required placeholder="รหัสผ่านส่วนตัวของแฟน" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
                     </div>
                 </div>
 
@@ -107,7 +107,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">เวลาที่คบกัน</label>
-                        <input type="time" id="start-time" required value="00:00" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400 bg-white">
+                        <input type="time" id="start-time" required value="12:00" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400 bg-white">
                     </div>
                 </div>
 
@@ -123,23 +123,19 @@
         </section>
     </main>
 
-    <!-- MODAL: DONATE (ไม่มีรูป QR Code ตามที่แจ้ง) -->
+    <!-- MODAL: DONATE -->
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-wallet text-amber-500 mr-1"></i> สนับสนุนค่าเหนื่อย</h3>
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-wallet text-amber-500 mr-1"></i> สนับสนุนค่าระบบ</h3>
                 <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="text-xs text-slate-700 space-y-2 bg-rose-50/80 p-4 rounded-2xl border border-rose-100 text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
                 <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-base">208-5886021</span></p>
                 <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
             </div>
-
-            <p class="text-[10px] text-slate-400 leading-relaxed">
-                *ขอขอบพระคุณทุกท่านที่ร่วมสนับสนุนระบบด้วยความสมัครใจครับ ❤️
-            </p>
+            <p class="text-[10px] text-slate-400">*ขอขอบพระคุณทุกท่านที่สนับสนุนครับ ❤️</p>
         </div>
     </div>
 
@@ -150,13 +146,11 @@
                 <i class="fa-solid fa-check"></i>
             </div>
             <h3 class="font-bold text-lg text-slate-800">สร้างบัตรคู่รักสำเร็จ!</h3>
-            <p class="text-xs text-slate-500">บันทึกข้อมูลลง Cloud สำเร็จ กรุณาจดจำ Couple ID นี้ไว้เข้าสู่ระบบ:</p>
-            
+            <p class="text-xs text-slate-500">บันทึกข้อมูลลงระบบเรียบร้อย กรุณาจดจำ Couple ID นี้ไว้เข้าสู่ระบบ:</p>
             <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
                 <span class="text-[10px] font-bold text-rose-500 uppercase">COUPLE ID ของคุณ</span>
                 <div id="success-couple-id" class="font-mono font-black text-xl text-rose-700 tracking-wider">--</div>
             </div>
-
             <div class="flex gap-2 pt-2">
                 <button onclick="closeSuccessModal()" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ปิด</button>
                 <a href="vault.html" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center shadow">ไปหน้าเข้าสู่ระบบ</a>
@@ -188,7 +182,6 @@
         }
         function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
 
-        // ลูกเล่นปุ่ม "ขอคิดดูก่อน" วิ่งหนีเมื่อเอาเมาส์โดนหรือพยายามกด
         function moveRejectButton() {
             const btn = document.getElementById('btn-reject');
             const x = Math.random() * 200 - 100;
@@ -196,7 +189,6 @@
             btn.style.transform = `translate(${x}px, ${y}px)`;
         }
 
-        // เมื่อกดตกลงเป็นแฟน จะเปิดฟอร์มสร้างบัตรทันที
         function acceptProposal() {
             document.getElementById('proposal-section').classList.add('hidden');
             document.getElementById('form-section').classList.remove('hidden');
@@ -227,27 +219,42 @@
 
         async function handleCreateCard(e) {
             e.preventDefault();
-            const db = await getDB();
-            if (!db.globalCounter) db.globalCounter = 1;
+            const pass1 = document.getElementById('pass1').value.trim();
+            const pass2 = document.getElementById('pass2').value.trim();
 
-            const coupleId = `12A${String(db.globalCounter).padStart(6, '0')}2026#01`;
-            db.globalCounter++;
+            // ป้องกันการตั้งรหัสผ่านซ้ำกันระหว่าง 2 ฝ่าย
+            if (pass1 === pass2) {
+                showCustomAlert('รหัสผ่านซ้ำกัน', 'รหัสผ่านส่วนตัวของทั้งสองฝ่ายต้องไม่เหมือนกัน เพื่อความปลอดภัยในการเข้าใช้งานแยกบัญชี');
+                return;
+            }
+
+            const dateVal = document.getElementById('start-date').value;
+            const timeVal = document.getElementById('start-time').value;
+            const [yyyy, mm, dd] = dateVal.split('-');
+            const [hh, min] = timeVal.split(':');
+
+            const db = await getDB();
+            let countStr = String(db.globalCounter || 1).padStart(2, '0');
+            const coupleID = `${dd}A${mm}${min}${hh}${yyyy}#${countStr}`;
+            db.globalCounter = (db.globalCounter || 1) + 1;
 
             const newCouple = {
-                id: coupleId,
+                id: coupleID,
                 name1: document.getElementById('name1').value.trim(),
-                pass1: document.getElementById('pass1').value.trim(),
+                pass1: pass1,
                 name2: document.getElementById('name2').value.trim(),
-                pass2: document.getElementById('pass2').value.trim(),
-                startDate: document.getElementById('start-date').value,
-                startTime: document.getElementById('start-time').value,
+                pass2: pass2,
+                startDate: dateVal,
+                startTime: timeVal,
                 email: document.getElementById('email').value.trim(),
                 status: 'ACTIVE',
+                breakupCount: 0,
                 reconcileQuota: 3,
                 notes: [],
                 photos: [],
                 trashPhotos: [],
-                notifications: []
+                notifications: [],
+                createdTime: new Date().toISOString()
             };
 
             if (!db.couples) db.couples = [];
@@ -255,7 +262,7 @@
 
             await saveDB(db);
 
-            document.getElementById('success-couple-id').innerText = coupleId;
+            document.getElementById('success-couple-id').innerText = coupleID;
             document.getElementById('modal-success').classList.remove('hidden');
         }
     </script>
