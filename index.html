@@ -19,7 +19,6 @@
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- HEADER -->
     <header class="w-full max-w-4xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow">
@@ -41,8 +40,6 @@
     </header>
 
     <main class="w-full max-w-xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
-
-        <!-- FORM CARD -->
         <section class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5">
             <div class="text-center space-y-1">
                 <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2">
@@ -98,96 +95,59 @@
         </section>
     </main>
 
-    <!-- MODAL: PROMPTPAY DONATE -->
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-qrcode text-amber-500 mr-1"></i> สนับสนุนค่าระบบ (PromptPay)</h3>
                 <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl inline-block shadow-inner">
                 <img src="promptpay.png" alt="PromptPay QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
             </div>
-
             <div class="text-xs text-slate-700 space-y-1 bg-rose-50/80 p-3 rounded-2xl border border-rose-100 text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
                 <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-sm">208-5886021</span></p>
                 <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
             </div>
-
-            <p class="text-[10px] text-slate-400 leading-relaxed">
-                *ขอสงวนสิทธิ์รับเงินสนับสนุนด้วยความสมัครใจ และห้ามนำบัญชีนี้ไปใช้ทำธุรกรรมผิดกฎหมายทุกประเภท ขอบคุณมากๆ ครับ ❤️
-            </p>
         </div>
     </div>
 
-    <!-- MODAL: SUCCESS / RESULT -->
     <div id="modal-success" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
                 <i class="fa-solid fa-check"></i>
             </div>
             <h3 class="font-bold text-lg text-slate-800">สร้างบัตรคู่รักสำเร็จ!</h3>
-            <p class="text-xs text-slate-500">บันทึกข้อมูลของคุณลงระบบ Cloud เรียบร้อยแล้ว กรุณาจดจำ Couple ID นี้ไว้สำหรับเข้าสู่ระบบ:</p>
-            
+            <p class="text-xs text-slate-500">บันทึกข้อมูลลง Cloud สำเร็จ กรุณาจดจำ Couple ID นี้:</p>
             <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
                 <span class="text-[10px] font-bold text-rose-500 uppercase">COUPLE ID ของคุณ</span>
                 <div id="success-couple-id" class="font-mono font-black text-xl text-rose-700 tracking-wider">--</div>
             </div>
-
             <div class="flex gap-2 pt-2">
-                <button onclick="closeSuccessModal()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">ปิดหน้าต่าง</button>
-                <a href="vault.html" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs transition flex items-center justify-center shadow">ไปหน้าเข้าสู่ระบบ</a>
+                <button onclick="closeSuccessModal()" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ปิด</button>
+                <a href="vault.html" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center shadow">ไปหน้าเข้าสู่ระบบ</a>
             </div>
         </div>
     </div>
-
-    <!-- MODAL: CUSTOM ALERT -->
-    <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
-                <i class="fa-solid fa-heart"></i>
-            </div>
-            <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือนระบบ</h3>
-            <p id="alert-message" class="text-xs text-slate-600 leading-relaxed">รายละเอียดข้อความ...</p>
-            <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
-        </div>
-    </div>
-
-    <footer class="w-full max-w-4xl mx-auto mt-8 text-center text-xs text-slate-500">
-        Forever Love Card &copy; 2026 (Firebase Cloud Connected)
-    </footer>
 
     <script>
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
-
-        function showCustomAlert(title, message) {
-            document.getElementById('alert-title').innerText = title;
-            document.getElementById('alert-message').innerText = message;
-            document.getElementById('modal-custom-alert').classList.remove('hidden');
-        }
-        function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
-
         function closeSuccessModal() { document.getElementById('modal-success').classList.add('hidden'); }
 
         async function getDB() {
             try {
                 const res = await fetch(`${FIREBASE_URL}/.json`);
                 const val = await res.json();
-                if (!val) {
-                    return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
-                } else {
-                    return {
-                        couples: val.couples || [],
-                        globalCounter: val.globalCounter || 1,
-                        adminRequests: val.adminRequests || [],
-                        adminReportedPhotos: val.adminReportedPhotos || []
-                    };
-                }
+                if (!val) return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
+                return {
+                    couples: val.couples || [],
+                    globalCounter: val.globalCounter || 1,
+                    adminRequests: val.adminRequests || [],
+                    adminReportedPhotos: val.adminReportedPhotos || []
+                };
             } catch (e) {
                 return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
             }
@@ -203,14 +163,6 @@
 
         async function handleCreateCard(e) {
             e.preventDefault();
-            const name1 = document.getElementById('name1').value.trim();
-            const pass1 = document.getElementById('pass1').value.trim();
-            const name2 = document.getElementById('name2').value.trim();
-            const pass2 = document.getElementById('pass2').value.trim();
-            const startDate = document.getElementById('start-date').value;
-            const startTime = document.getElementById('start-time').value;
-            const email = document.getElementById('email').value.trim();
-
             const db = await getDB();
             if (!db.globalCounter) db.globalCounter = 1;
 
@@ -219,15 +171,16 @@
 
             const newCouple = {
                 id: coupleId,
-                name1: name1,
-                pass1: pass1,
-                name2: name2,
-                pass2: pass2,
-                startDate: startDate,
-                startTime: startTime,
-                email: email,
+                name1: document.getElementById('name1').value.trim(),
+                pass1: document.getElementById('pass1').value.trim(),
+                name2: document.getElementById('name2').value.trim(),
+                pass2: document.getElementById('pass2').value.trim(),
+                startDate: document.getElementById('start-date').value,
+                startTime: document.getElementById('start-time').value,
+                email: document.getElementById('email').value.trim(),
                 status: 'ACTIVE',
                 reconcileQuota: 3,
+                notes: [],
                 photos: [],
                 trashPhotos: [],
                 notifications: []
