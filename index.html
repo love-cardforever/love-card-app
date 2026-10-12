@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forever Love - ขอเป็นแฟนและออกบัตรคู่รักออนไลน์</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { prompt: ['Prompt', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%);
+            min-height: 100vh;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12);
+        }
+        @keyframes heartGlow {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(244, 63, 94, 0.6)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 25px rgba(244, 63, 94, 0.9)); }
+        }
+        .animate-heart-glow { animation: heartGlow 2s infinite ease-in-out; }
+        @keyframes scanLine {
+            0% { top: 0%; opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0.8; }
+        }
+        .scan-laser {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ef4444, #f43f5e, #ef4444, transparent);
+            box-shadow: 0 0 15px #f43f5e;
+            animation: scanLine 1.5s ease-in-out infinite alternate;
+        }
+    </style>
+</head>
+<body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
+
+    <!-- HEADER (ปุ่มเข้าสู่ระบบลิงก์ไป vault.html แบบไม่มีวงเล็บ) -->
+    <header class="w-full max-w-2xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-base text-slate-800">Forever Love Card</h1>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบออกบัตรออนไลน์</p>
+            </div>
+        </div>
+        <a href="vault.html" class="px-3 py-1.5 bg-rose-500 text-white text-xs font-semibold rounded-xl shadow transition hover:bg-rose-600">
+            <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
+        </a>
+    </header>
+
+    <main class="w-full max-w-xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
+
+        <!-- STAGE 1: PROPOSAL PAGE (หน้าขอเป็นแฟน) -->
+        <section id="stage-proposal" class="w-full glass-card p-6 md:p-8 rounded-3xl text-center space-y-6">
+            <div class="relative inline-block my-2">
+                <div class="w-24 h-24 rounded-full bg-rose-100 flex items-center justify-center mx-auto text-4xl text-rose-500 animate-heart-glow">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">ตกลงเป็นแฟนกันนะ? ❤️</h2>
+                <p class="text-slate-600 text-sm leading-relaxed">
+                    ตั้งแต่วันที่ได้รู้จักเธอ โลกของเราก็สดใสขึ้นทุกวัน <br/>
+                    อยากที่จะเดินร่วมทางและสร้างบัตรคู่รักดิจิทัลไปด้วยกันมั้ย?
+                </p>
+            </div>
+
+            <div id="no-reaction-box" class="hidden p-3 rounded-2xl bg-rose-100/80 text-rose-700 text-xs md:text-sm font-medium border border-rose-200">
+                <i class="fa-solid fa-face-sad-tear mr-1"></i> <span id="no-reaction-text">คิดดูอีกทีน้าาา...</span>
+            </div>
+
+            <div id="proposal-btn-container" class="relative min-h-[140px] flex flex-col md:flex-row items-center justify-center gap-4 pt-2">
+                <button id="btn-yes" onclick="acceptProposal()" class="w-full md:w-auto px-8 py-3.5 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-rose-200 transition text-base z-10">
+                    เป็นครับ / เป็นค่ะ 💕
+                </button>
+                <button id="btn-no" onclick="handleNoClick()" class="w-full md:w-auto px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-600 font-semibold rounded-2xl transition text-sm">
+                    ไม่เป็น 🥺
+                </button>
+            </div>
+        </section>
+
+        <!-- STAGE 2: FINGERPRINT SCANNER & SETUP FORM -->
+        <section id="stage-fingerprint" class="hidden w-full glass-card p-6 md:p-8 rounded-3xl text-center space-y-6">
+            <div class="space-y-1">
+                <span class="text-xs font-semibold uppercase tracking-wider text-rose-500 bg-rose-100 px-3 py-1 rounded-full">Step 2 of 2</span>
+                <h2 class="text-2xl font-bold text-slate-800">ยืนยันลายนิ้วมือคู่รัก</h2>
+                <p class="text-xs text-slate-500">แตะปุ่มสแกนค้างไว้จนครบ 100% เพื่อออกรหัส ID บัตร</p>
+            </div>
+
+            <div class="py-2 flex flex-col items-center justify-center">
+                <div id="fingerprint-btn" class="relative w-28 h-28 rounded-full bg-slate-900 border-4 border-rose-300 shadow-xl flex items-center justify-center cursor-pointer select-none overflow-hidden group touch-none">
+                    <div id="scan-laser" class="scan-laser hidden"></div>
+                    <svg class="absolute inset-0 w-full h-full transform -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="44" stroke="currentColor" stroke-width="6" class="text-slate-800" fill="transparent" />
+                        <circle id="scan-progress-circle" cx="50" cy="50" r="44" stroke="currentColor" stroke-width="6" class="text-rose-500 transition-all duration-75" stroke-dasharray="276.46" stroke-dashoffset="276.46" stroke-linecap="round" fill="transparent" />
+                    </svg>
+                    <i id="fp-icon" class="fa-solid fa-fingerprint text-5xl text-rose-400 transition-all duration-300 group-hover:scale-105"></i>
+                </div>
+                <div class="mt-2 text-center">
+                    <div class="text-lg font-bold text-rose-600" id="scan-percentage">0%</div>
+                    <div class="text-xs text-slate-400" id="scan-status-text">กดค้างไว้ตรงลายนิ้วมือ...</div>
+                </div>
+            </div>
+
+            <form id="couple-form" onsubmit="createCoupleCard(event)" class="hidden space-y-3 text-left border-t border-rose-100 pt-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อคุณ</label>
+                        <input type="text" id="name-1" required placeholder="ชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อแฟน</label>
+                        <input type="text" id="name-2" required placeholder="ชื่อแฟน" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่คบกัน</label>
+                        <input type="date" id="date-start" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">เวลา</label>
+                        <input type="time" id="time-start" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลติดต่อ / สำหรับกู้คืนรหัส</label>
+                    <input type="email" id="email-input" required placeholder="example@email.com" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านคุณ</label>
+                        <input type="password" id="pass-1" required placeholder="รหัสผ่านส่วนตัวของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านแฟน</label>
+                        <input type="password" id="pass-2" required placeholder="รหัสผ่านส่วนตัวของแฟน" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm mt-3">
+                    <i class="fa-solid fa-id-card mr-1"></i> สร้างบัตรและดาวน์โหลดทันที
+                </button>
+            </form>
+        </section>
+
+        <!-- STAGE 3: RESULT STAGE (CARD + SEPARATE TIMER) -->
+        <section id="stage-result" class="hidden w-full space-y-4">
+            
+            <!-- SEPARATE TIMER BOX -->
+            <div class="bg-gradient-to-r from-rose-500 to-pink-500 text-white p-5 rounded-2xl shadow-lg text-center space-y-1">
+                <span class="text-xs uppercase tracking-widest font-medium opacity-90">ระยะเวลาที่เราคบกัน</span>
+                <div id="counter-display" class="font-bold text-sm md:text-lg tracking-wide">
+                    -- ปี -- เดือน -- วัน -- ชม. -- นาที -- วินาที
+                </div>
+            </div>
+
+            <!-- OFFICIAL ID CARD -->
+            <div id="couple-card-element" class="w-full rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white via-rose-50 to-pink-100 border-2 border-rose-300 shadow-2xl relative overflow-hidden space-y-4">
+                <div class="absolute -right-10 -bottom-10 text-rose-200/40 text-9xl pointer-events-none select-none">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+
+                <div class="flex justify-between items-center border-b border-rose-200/80 pb-3 relative z-10">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-500 text-white flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-certificate text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-rose-600 block">Certificate of Love</span>
+                            <span class="font-bold text-sm text-slate-900">บัตรประจำตัวคู่รักออนไลน์</span>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-700 border border-pink-300 shadow-xs">ไม่มีวันหมดอายุ</span>
+                </div>
+
+                <div class="space-y-3 relative z-10">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">COUPLE ID NUMBER</span>
+                        <div id="card-id-text" class="font-mono font-black text-xl md:text-2xl text-rose-700 tracking-wider">--</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 bg-white/95 px-4 py-4 rounded-2xl border border-rose-200/80 text-slate-900 shadow-inner items-center">
+                        <div class="space-y-1">
+                            <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 1</span>
+                            <span id="card-n1" class="font-bold text-base md:text-lg text-slate-800 block truncate leading-normal" style="padding: 2px 0;">--</span>
+                        </div>
+                        <div class="space-y-1 border-l border-rose-100 pl-3">
+                            <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 2</span>
+                            <span id="card-n2" class="font-bold text-base md:text-lg text-slate-800 block truncate leading-normal" style="padding: 2px 0;">--</span>
+                        </div>
+                    </div>
+
+                    <div class="text-xs font-medium text-slate-700 bg-rose-50/95 py-3 px-3 rounded-xl border border-rose-100 text-center shadow-xs">
+                        <i class="fa-solid fa-calendar-days text-rose-500 mr-1"></i> <span id="card-start-datetime">คบกันวันที่: -- | เวลา: -- น.</span>
+                    </div>
+                </div>
+
+                <div class="pt-2 border-t border-rose-200/80 flex justify-between items-center text-[11px] text-slate-600 font-medium relative z-10">
+                    <span><i class="fa-solid fa-shield-heart text-rose-500 mr-1"></i> โปรดเก็บ ID คู่รักไว้ให้ดี </span>
+                    <span class="text-rose-600 font-bold" style="font-family: cursive;">Forever & Always</span>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="forceDownloadCard()" class="py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow transition">
+                    <i class="fa-solid fa-download mr-1"></i> บันทึกรูปภาพบัตรลงเครื่อง
+                </button>
+                <button onclick="copyCardID()" class="py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold rounded-xl text-xs shadow-sm transition">
+                    <i class="fa-solid fa-copy mr-1 text-indigo-500"></i> คัดลอก ID
+                </button>
+            </div>
+            <div class="text-center pt-2">
+                <button onclick="location.reload()" class="text-xs text-slate-500 hover:underline">สร้างบัตรใหม่</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full max-w-2xl mx-auto mt-8 text-center text-xs text-slate-500">
+        Love Card App &copy; 2026 by @mumu_apr200x​
+    </footer>
+
+    <!-- SCRIPT -->
+    <script>
+        const STORAGE_KEY = 'love_card_app_db_v1';
+        let currentCoupleData = null;
+        let timerInterval = null;
+        let noCount = 0;
+        let isScanning = false;
+        let scanProgress = 0;
+        let scanTimer = null;
+
+        const noPhrases = [
+            "แน่ใจเหรอครับ? คิดดูดีๆ อีกทีนะ 🥺",
+            "เค้าเสียใจนะ... ลองกดดูอีกรอบซิ! 💔",
+            "อย่าใจร้ายเลยนะขอร้องงง 🙏",
+            "ปุ่มไม่เป็นจะเล็กลงแล้วน้าาา!",
+            "ยอมเป็นแฟนเหอะนะ น้าาาา! 🥰",
+            "กดเป็นเหอะ รับรองจะดูแลอย่างดี!",
+            "อีกนิดเดียวก็ปุ่มไม่เป็นจะหายแล้ว!",
+            "ฮั่นแน่! ไม่มีทางเลือกอื่นแล้วล่ะ! ❤️"
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            document.getElementById('date-start').value = today.toISOString().split('T')[0];
+            document.getElementById('time-start').value = "12:00";
+            setupFingerprintScanner();
+        });
+
+        function handleNoClick() {
+            noCount++;
+            const btnYes = document.getElementById('btn-yes');
+            const btnNo = document.getElementById('btn-no');
+            const reactionBox = document.getElementById('no-reaction-box');
+            const reactionText = document.getElementById('no-reaction-text');
+
+            reactionBox.classList.remove('hidden');
+            reactionText.innerText = noPhrases[Math.min(noCount - 1, noPhrases.length - 1)];
+
+            btnYes.style.transform = `scale(${1 + (noCount * 0.15)})`;
+            btnNo.style.transform = `scale(${Math.max(0.3, 1 - (noCount * 0.1))})`;
+
+            if (noCount >= 8) {
+                btnNo.style.display = 'none';
+                btnYes.className = 'w-full py-4 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-bold rounded-2xl shadow-xl text-lg animate-bounce';
+                btnYes.innerHTML = 'เป็นครับ! ❤️ (ตกลงแล้วนะ)';
+            }
+        }
+
+        function acceptProposal() {
+            document.getElementById('stage-proposal').classList.add('hidden');
+            document.getElementById('stage-fingerprint').classList.remove('hidden');
+        }
+
+        function setupFingerprintScanner() {
+            const fpBtn = document.getElementById('fingerprint-btn');
+            const laser = document.getElementById('scan-laser');
+            const circle = document.getElementById('scan-progress-circle');
+            const percentageText = document.getElementById('scan-percentage');
+            const statusText = document.getElementById('scan-status-text');
+            const fpIcon = document.getElementById('fp-icon');
+
+            const startScan = (e) => {
+                e.preventDefault();
+                isScanning = true;
+                laser.classList.remove('hidden');
+                fpIcon.classList.add('text-rose-500', 'scale-110');
+                statusText.innerText = 'กำลังสแกนลายนิ้วมือ...';
+
+                scanTimer = setInterval(() => {
+                    if (!isScanning) return;
+                    scanProgress += 5;
+                    if (scanProgress > 100) scanProgress = 100;
+
+                    circle.style.strokeDashoffset = 276.46 - (276.46 * scanProgress / 100);
+                    percentageText.innerText = `${scanProgress}%`;
+
+                    if (scanProgress >= 100) {
+                        stopScan();
+                        document.getElementById('scan-status-text').innerText = '✓ สแกนสำเร็จ!';
+                        document.getElementById('couple-form').classList.remove('hidden');
+                    }
+                }, 40);
+            };
+
+            const stopScan = () => {
+                if (scanProgress < 100) {
+                    scanProgress = 0;
+                    circle.style.strokeDashoffset = 276.46;
+                    percentageText.innerText = '0%';
+                    statusText.innerText = 'สแกนไม่สำเร็จ กดค้างใหม่';
+                }
+                isScanning = false;
+                clearInterval(scanTimer);
+                laser.classList.add('hidden');
+                fpIcon.classList.remove('scale-110');
+            };
+
+            fpBtn.addEventListener('mousedown', startScan);
+            fpBtn.addEventListener('mouseup', stopScan);
+            fpBtn.addEventListener('mouseleave', stopScan);
+            fpBtn.addEventListener('touchstart', startScan);
+            fpBtn.addEventListener('touchend', stopScan);
+        }
+
+        const DBManager = {
+            getDB() {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return { couples: [], globalCounter: 1, adminRequests: [] };
+                try { return JSON.parse(raw); } catch (e) { return { couples: [], globalCounter: 1, adminRequests: [] }; }
+            },
+            saveDB(db) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+            }
+        };
+
+        function createCoupleCard(e) {
+            e.preventDefault();
+            const n1 = document.getElementById('name-1').value.trim();
+            const n2 = document.getElementById('name-2').value.trim();
+            const dateVal = document.getElementById('date-start').value;
+            const timeVal = document.getElementById('time-start').value;
+            const email = document.getElementById('email-input').value.trim();
+            const pass1 = document.getElementById('pass-1').value.trim();
+            const pass2 = document.getElementById('pass-2').value.trim();
+
+            const [yyyy, mm, dd] = dateVal.split('-');
+            const [hh, min] = timeVal.split(':');
+            
+            const db = DBManager.getDB();
+            let countStr = String(db.globalCounter || 1).padStart(2, '0');
+            const coupleID = `${dd}A${mm}${min}${hh}${yyyy}#${countStr}`;
+
+            db.globalCounter = (db.globalCounter || 1) + 1;
+
+            const newCouple = {
+                id: coupleID,
+                name1: n1,
+                name2: n2,
+                startDate: dateVal,
+                startTime: timeVal,
+                email: email,
+                pass1: pass1,
+                pass2: pass2,
+                status: 'ACTIVE',
+                breakupCount: 0,
+                breakupReason: '',
+                reconcileReason: '',
+                rejectReason: '',
+                reconcileQuota: 3,
+                photos: [],
+                createdTime: new Date().toISOString()
+            };
+
+            db.couples.push(newCouple);
+            DBManager.saveDB(db);
+
+            currentCoupleData = newCouple;
+            renderResultView(newCouple);
+
+            setTimeout(() => {
+                forceDownloadCard();
+            }, 600);
+        }
+
+        function renderResultView(data) {
+            document.getElementById('stage-proposal').classList.add('hidden');
+            document.getElementById('stage-fingerprint').classList.add('hidden');
+            document.getElementById('stage-result').classList.remove('hidden');
+
+            document.getElementById('card-id-text').innerText = data.id;
+            document.getElementById('card-n1').innerText = data.name1;
+            document.getElementById('card-n2').innerText = data.name2;
+            document.getElementById('card-start-datetime').innerText = `คบกันวันที่: ${data.startDate} | เวลา: ${data.startTime} น.`;
+
+            startTimer(data.startDate, data.startTime);
+        }
+
+        function startTimer(startDate, startTime) {
+            const startDateTime = new Date(`${startDate}T${startTime}:00`);
+            if (timerInterval) clearInterval(timerInterval);
+
+            const update = () => {
+                const now = new Date();
+                let diff = Math.floor((now - startDateTime) / 1000);
+                if (diff < 0) diff = 0;
+
+                const years = Math.floor(diff / (365 * 24 * 3600));
+                diff %= 365 * 24 * 3600;
+                const months = Math.floor(diff / (30 * 24 * 3600));
+                diff %= 30 * 24 * 3600;
+                const days = Math.floor(diff / (24 * 3600));
+                diff %= 24 * 3600;
+                const hours = Math.floor(diff / 3600);
+                diff %= 3600;
+                const mins = Math.floor(diff / 60);
+                const secs = diff % 60;
+
+                document.getElementById('counter-display').innerText = 
+                    `${years} ปี ${months} เดือน ${days} วัน ${hours} ชม. ${mins} นาที ${secs} วินาที`;
+            };
+            update();
+            timerInterval = setInterval(update, 1000);
+        }
+
+        function forceDownloadCard() {
+            const cardElem = document.getElementById('couple-card-element');
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(cardElem, { 
+                    scale: 3, 
+                    backgroundColor: null,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: cardElem.scrollWidth
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `CoupleCard_${currentCoupleData ? currentCoupleData.id : 'ID'}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            }
+        }
+
+        function copyCardID() {
+            if (!currentCoupleData) return;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = currentCoupleData.id;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert(`คัดลอกเฉพาะ ID สำเร็จ: ${currentCoupleData.id}`);
+        }
+    </script>
+</body>
+</html>
