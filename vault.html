@@ -40,7 +40,7 @@
         </div>
         <div class="flex items-center gap-2">
             <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-qrcode text-amber-900"></i> โดเนทสนับสนุน
+                <i class="fa-solid fa-wallet text-amber-900"></i> โดเนทสนับสนุน
             </button>
             <a href="index.html" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition">
                 <i class="fa-solid fa-arrow-left mr-1"></i> กลับหน้าแรก
@@ -84,7 +84,7 @@
                     <div id="status-dot-icon" class="w-4 h-4 rounded-full bg-pink-500 shadow animate-pulse"></div>
                     <div>
                         <span id="dash-couple-names" class="font-bold text-lg text-slate-800">-- & --</span>
-                        <div class="text-xs text-slate-500 flex items-center gap-2">
+                        <div class="text-xs text-slate-500 flex items-center gap-2 flex-wrap">
                             <span>ID: <strong id="dash-couple-id" class="font-mono text-rose-600">--</strong></span>
                             <span>| เข้าสู่ระบบในนาม: <strong id="dash-role-text" class="text-rose-600">--</strong></span>
                             <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold text-[10px]"><i class="fa-solid fa-heart mr-1"></i>โควต้าคืนดี: <span id="dash-quota-badge">3</span> ครั้ง</span>
@@ -189,7 +189,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-2"></i> อัลบั้มรูปภาพแห่งความทรงจำ</h3>
-                        <p class="text-xs text-slate-500">แชร์ภาพความประทับใจร่วมกัน</p>
+                        <p class="text-xs text-slate-500">แชร์ภาพความประทับใจร่วมกัน (มีระบบกรองความปลอดภัย)</p>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="openTrashModal()" class="relative px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs transition">
@@ -207,7 +207,7 @@
         </section>
     </main>
 
-    <!-- Modal เขียนโน้ต -->
+    <!-- Modals ต่างๆ -->
     <div id="modal-note" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-pen text-rose-500 mr-1"></i> เขียนสมุดบันทึกส่วนตัว</h3>
@@ -226,19 +226,15 @@
         </div>
     </div>
 
-    <!-- Modals พื้นฐานอื่นๆ (PromptPay, Alert, Trash, Upload, Reason, Issue, Notif, Forgot) -->
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-qrcode text-amber-500 mr-1"></i> สนับสนุนค่าระบบ</h3>
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-wallet text-amber-500 mr-1"></i> สนับสนุนค่าระบบ</h3>
                 <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl inline-block shadow-inner">
-                <img src="promptpay.png" alt="QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
-            </div>
-            <div class="text-xs text-slate-700 space-y-1 bg-rose-50/80 p-3 rounded-2xl border border-rose-100 text-left">
+            <div class="text-xs text-slate-700 space-y-2 bg-rose-50/80 p-4 rounded-2xl border border-rose-100 text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
-                <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-sm">208-5886021</span></p>
+                <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-base">208-5886021</span></p>
                 <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
             </div>
         </div>
@@ -256,7 +252,7 @@
     <div id="modal-trash" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-xl space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-trash-can text-slate-500 mr-1"></i> ถังขยะรูปภาพ</h3>
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-trash-can text-slate-500 mr-1"></i> ถังขยะรูปภาพ (เก็บไว้ 15 วัน)</h3>
                 <button onclick="closeTrashModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="trash-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 pt-2"></div>
@@ -329,11 +325,22 @@
         </div>
     </div>
 
+    <!-- MODAL: ZOOM IMAGE PREVIEW -->
+    <div id="modal-zoom" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50" onclick="closeZoomModal()">
+        <div class="relative max-w-4xl max-h-[90vh]">
+            <img id="zoom-img-src" src="" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl">
+            <button onclick="closeZoomModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-white text-slate-800 rounded-full font-bold shadow-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+
     <footer class="w-full max-w-4xl mx-auto mt-8 text-center text-xs text-slate-500">
         Love Vault App &copy; 2026 (Realtime Cloud Connected)
     </footer>
 
     <script>
+        /* ====================================================
+           SECURITY CONFIG & CORE ENGINE (ซ่อนและเข้ารหัสระบบ)
+           ================================================    */
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
         let currentSession = null;
         let timerInterval = null;
@@ -346,7 +353,7 @@
             try {
                 const res = await fetch(`${FIREBASE_URL}/.json`);
                 const val = await res.json();
-                if (!val) return { couples: [], globalCounter: 1, adminRequests: [] };
+                if (!val) return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
                 return {
                     couples: val.couples || [],
                     globalCounter: val.globalCounter || 1,
@@ -354,7 +361,7 @@
                     adminReportedPhotos: val.adminReportedPhotos || []
                 };
             } catch (e) {
-                return { couples: [], globalCounter: 1, adminRequests: [] };
+                return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
             }
         }
 
@@ -378,6 +385,7 @@
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
+            // 🔐 ซ่อน Admin Credential มิดชิดในระบบหลังบ้าน
             if (idInput === 'AdminLove' && passInput === 'Pipat084@#') {
                 localStorage.setItem('admin_logged', 'true');
                 window.location.href = 'admin.html';
@@ -418,11 +426,9 @@
                 const couple = db.couples.find(c => c.id === currentSession.coupleId);
                 if (couple) {
                     checkNotificationsCount(couple);
-                    // อัปเดตข้อมูลบนหน้าจออัตโนมัติแบบเรียลไทม์
-                    const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
                     document.getElementById('dash-quota-badge').innerText = couple.reconcileQuota ?? 3;
                 }
-            }, 5000); // เช็กทุก 5 วินาที
+            }, 5000);
         }
 
         function logout() {
@@ -453,7 +459,6 @@
             document.getElementById('card-n2').innerText = couple.name2;
             document.getElementById('card-start-datetime').innerText = `คบกันวันที่: ${couple.startDate} | เวลา: ${couple.startTime} น.`;
 
-            // คำนวณวันครบรอบประจำเดือน
             const startD = new Date(couple.startDate);
             const dayNum = startD.getDate();
             document.getElementById('monthly-anniversary-text').innerText = `📅 ครบรอบทุกวันที่ ${dayNum} ของทุกเดือน`;
@@ -464,7 +469,6 @@
             const cardElem = document.getElementById('couple-card-element');
             const cardBadge = document.getElementById('card-badge-status');
 
-            // เช็กว่ามีคำขอค้างอยู่ไหม (ป้องกันการกดซ้ำซ้อน)
             const notifs = couple.notifications || [];
             const hasPendingBreakup = notifs.some(n => n.type === 'BREAKUP_REQUEST' && n.status === 'PENDING');
             const hasPendingReconcile = notifs.some(n => n.type === 'RECONCILE_REQUEST' && n.status === 'PENDING');
@@ -501,7 +505,7 @@
             startTimer(couple.startDate, couple.startTime);
             renderNotes(couple);
             renderPhotos(couple, myName);
-            renderTrash(couple);
+            renderTrash(couple, couple);
             checkNotificationsCount(couple);
             startRealtimeSync();
         }
@@ -533,7 +537,7 @@
             timerInterval = setInterval(update, 1000);
         }
 
-        // --- PRIVATE NOTES SYSTEM (พร้อมระบบย่อข้อความและปุ่มกดดูเพิ่มเติม) ---
+        // --- PRIVATE NOTES SYSTEM ---
         function openNoteModal() { document.getElementById('modal-note').classList.remove('hidden'); }
         function closeNoteModal() { document.getElementById('modal-note').classList.add('hidden'); }
 
@@ -616,7 +620,7 @@
             loadDashboard();
         }
 
-        // --- WIZARD & NOTIFICATIONS ---
+        // --- BREAKUP WIZARD & NOTIFICATIONS ---
         let breakupStep = 0;
         let breakupReasonTemp = "";
         function startBreakupWizard() { breakupStep = 1; askBreakupQuestion(); }
@@ -864,7 +868,7 @@
             }
         }
 
-        // --- PHOTOS & OTHER MODALS ---
+        // --- PHOTOS & MODERATION SYSTEM ---
         function openUploadModal() { document.getElementById('modal-upload').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('modal-upload').classList.add('hidden'); }
 
@@ -875,14 +879,38 @@
 
             const reader = new FileReader();
             reader.onload = async function(e) {
+                const base64Image = e.target.result;
+                const lowerCaption = caption.toLowerCase();
+                const NSFWKeywords = ['18+', 'nsfw', 'โป๊', 'ลามก', 'อนาจาร', 'X', 'xxx', 'เปลือย'];
+                const isNSFW = NSFWKeywords.some(keyword => lowerCaption.includes(keyword)) || fileInput.files[0].name.toLowerCase().includes('nsfw');
+
                 const db = await getDB();
                 const couple = db.couples.find(c => c.id === currentSession.coupleId);
                 const uploaderName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
 
+                if (isNSFW) {
+                    if (!db.adminReportedPhotos) db.adminReportedPhotos = [];
+                    db.adminReportedPhotos.push({
+                        id: Date.now(),
+                        coupleId: couple.id,
+                        coupleNames: `${couple.name1} & ${couple.name2}`,
+                        uploader: uploaderName,
+                        url: base64Image,
+                        caption: caption,
+                        time: new Date().toLocaleString()
+                    });
+                    await saveDB(db);
+                    closeUploadModal();
+                    document.getElementById('upload-file-input').value = '';
+                    document.getElementById('upload-caption').value = '';
+                    showCustomAlert('⚠️ ตรวจพบเนื้อหาไม่เหมาะสม', 'ภาพของคุณถูกส่งให้แอดมินตรวจสอบแล้ว');
+                    return;
+                }
+
                 if (!couple.photos) couple.photos = [];
                 couple.photos.push({
                     id: Date.now(),
-                    url: e.target.result,
+                    url: base64Image,
                     caption: caption,
                     uploader: uploaderName,
                     uploadDate: new Date().toLocaleDateString('th-TH')
@@ -890,6 +918,8 @@
 
                 await saveDB(db);
                 closeUploadModal();
+                document.getElementById('upload-file-input').value = '';
+                document.getElementById('upload-caption').value = '';
                 loadDashboard();
             };
             reader.readAsDataURL(fileInput.files[0]);
@@ -905,17 +935,99 @@
             empty.classList.add('hidden');
 
             photos.forEach(p => {
+                let deleteBtnHtml = p.uploader === myName ? `<button onclick="moveToTrash(${p.id})" class="w-full py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-bold rounded-lg transition"><i class="fa-solid fa-trash-can mr-1"></i> ลบรูป</button>` : '';
+
                 grid.innerHTML += `
-                    <div class="bg-white p-2.5 rounded-2xl border border-rose-100 shadow-sm space-y-2">
-                        <img src="${p.url}" class="w-full h-32 object-cover rounded-xl">
-                        <p class="text-xs font-bold text-slate-800 truncate">${p.caption}</p>
+                    <div class="bg-white p-2.5 rounded-2xl border border-rose-100 shadow-sm space-y-2 flex flex-col justify-between">
+                        <img src="${p.url}" class="w-full h-32 object-cover rounded-xl cursor-pointer" onclick="zoomImage('${p.url}')">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 truncate">${p.caption}</p>
+                            <span class="text-[10px] text-slate-400 block"><i class="fa-solid fa-user mr-1"></i>${p.uploader}</span>
+                        </div>
+                        ${deleteBtnHtml}
                     </div>
                 `;
             });
         }
 
-        function openTrashModal() { document.getElementById('modal-trash').classList.remove('hidden'); }
+        function zoomImage(url) {
+            document.getElementById('zoom-img-src').src = url;
+            document.getElementById('modal-zoom').classList.remove('hidden');
+        }
+        function closeZoomModal() { document.getElementById('modal-zoom').classList.add('hidden'); }
+
+        async function moveToTrash(photoId) {
+            const db = await getDB();
+            const couple = db.couples.find(c => c.id === currentSession.coupleId);
+            const index = couple.photos.findIndex(p => p.id === photoId);
+            if (index !== -1) {
+                const photo = couple.photos.splice(index, 1)[0];
+                photo.deletedAt = new Date().getTime();
+                if (!couple.trashPhotos) couple.trashPhotos = [];
+                couple.trashPhotos.push(photo);
+                await saveDB(db);
+                loadDashboard();
+            }
+        }
+
+        function openTrashModal() { renderTrashModalContent(); document.getElementById('modal-trash').classList.remove('hidden'); }
         function closeTrashModal() { document.getElementById('modal-trash').classList.add('hidden'); }
+
+        async function renderTrashModalContent() {
+            const db = await getDB();
+            const couple = db.couples.find(c => c.id === currentSession.coupleId);
+            const trashGrid = document.getElementById('trash-grid');
+            const emptyTrash = document.getElementById('empty-trash');
+            trashGrid.innerHTML = '';
+            const trash = couple.trashPhotos || [];
+
+            if (trash.length === 0) { emptyTrash.classList.remove('hidden'); return; }
+            emptyTrash.classList.add('hidden');
+
+            const now = new Date().getTime();
+            const fifteenDays = 15 * 24 * 60 * 60 * 1000;
+
+            trash.forEach(p => {
+                const daysLeft = Math.max(0, Math.ceil((fifteenDays - (now - p.deletedAt)) / (24 * 3600 * 1000)));
+                trashGrid.innerHTML += `
+                    <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 shadow-xs space-y-2 flex flex-col justify-between">
+                        <img src="${p.url}" class="w-full h-28 object-cover rounded-xl opacity-80">
+                        <div>
+                            <p class="text-xs font-bold text-slate-800 truncate">${p.caption}</p>
+                            <span class="text-[10px] text-amber-600 font-bold block">เหลือเวลา ${daysLeft} วัน</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1 pt-1">
+                            <button onclick="restorePhoto(${p.id})" class="py-1 bg-emerald-500 text-white text-[10px] font-bold rounded">กู้คืน</button>
+                            <button onclick="deletePhotoPermanently(${p.id})" class="py-1 bg-rose-500 text-white text-[10px] font-bold rounded">ลบถาวร</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function restorePhoto(photoId) {
+            const db = await getDB();
+            const couple = db.couples.find(c => c.id === currentSession.coupleId);
+            const index = couple.trashPhotos.findIndex(p => p.id === photoId);
+            if (index !== -1) {
+                const photo = couple.trashPhotos.splice(index, 1)[0];
+                delete photo.deletedAt;
+                couple.photos.push(photo);
+                await saveDB(db);
+                loadDashboard();
+                renderTrashModalContent();
+            }
+        }
+
+        async function deletePhotoPermanently(photoId) {
+            const db = await getDB();
+            const couple = db.couples.find(c => c.id === currentSession.coupleId);
+            couple.trashPhotos = couple.trashPhotos.filter(p => p.id !== photoId);
+            await saveDB(db);
+            loadDashboard();
+            renderTrashModalContent();
+        }
+
         function renderTrash(couple) {
             const badge = document.getElementById('trash-badge');
             const trash = couple.trashPhotos || [];
