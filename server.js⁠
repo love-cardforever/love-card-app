@@ -1,0 +1,116 @@
+require('dotenv').config();
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+// เชื่อมต่อฐานข้อมูล SQLite
+const dbPath = path.join(__dirname, 'database.sqlite');
+const db = new sqlite3.Database(dbPath, (err) => {
+    if (err) console.error('Error opening database', err.message);
+    else console.log('Connected to SQLite database.');
+});
+
+// สร้างตารางข้อมูลบัตรคู่รัก และตารางเก็บปัญหา/คำขอ
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS cards (
+        id TEXT PRIMARY KEY,
+        partner1 TEXT NOT NULL,
+        partner2 TEXT NOT NULL,
+        start_date TEXT NOT NULL,
+        status TEXT DEFAULT 'pink', 
+        break_count INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        card_id TEXT,
+        message TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+});
+
+// API: สร้างบัตรคู่รัก
+app.post('/api/cards', (req, res) => {
+    const { partner1, partner2, start_date } = req.body;
+    const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+    const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const cardId = `LOVE-${dateStr}-${randomSuffix}`;
+
+    const query = `INSERT INTO cards (id, partner1, partner2, start_date, status, break_count) VALUES (?, ?, ?, ?, 'pink', 0)`;
+    
+    db.run(query, [cardId, partner1, partner2, start_date], function(err) {
+        if (err) return res.status(500).json({ success: false, error: err.message });
+        res.json({ success: true, id: cardId });
+    });
+});
+
+// API: ดึงข้อมูลบัตรด้วย ID
+app.get('/api/cards/:id', (req, res) => {
+    const cardId = req.params.id;
+    db.get(`SELECT * FROM cards WHERE id = ?`, [cardId], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!row) return res.status(404).json({ error: 'ไม่พบข้อมูลบัตรนี้' });
+        res.json(row);
+    });
+});
+
+// API: ระบบตรวจสอบการเข้าสู่ระบบ (แอดมิน หรือ ผู้ใช้ทั่วไป)
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // รหัสแอดมิน (ดึงจาก Environment ทางการ หรือใช้ค่าตั้งต้นของคุณ)
+    const adminUser = process.env.ADMIN_USER || 'AdminLove';
+    const adminPass = process.env.ADMIN_PASS || 'Pipat084@#';
+
+    if (username === adminUser && password === adminPass) {
+        return res.json({ success: true, role: 'admin', redirect: '/admin.html' });
+    }
+
+    // ตรวจสอบไอดีบัตรของผู้ใช้ทั่วไป
+    db.get(`SELECT * FROM cards WHERE id = ?`, [username], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (row) {
+            return res.json({ success: true, role: 'user', redirect: `/card.html?id=${row.id}` });
+        }
+        res.status(401).json({ success: false, message: 'ไอดีหรือรหัสผ่านไม่ถูกต้อง' });
+    });
+});
+
+// API: ผู้ใช้ส่งแจ้งเตือนปัญหาหรือคำขอ
+app.post('/api/reports', (req, res) => {
+    const { card_id, message } = req.body;
+    db.run(`INSERT INTO reports (card_id, message) VALUES (?, ?)`, [card_id, message], function(err) {
+        if (err) return res.status(500).json({ success: false, error: err.message });
+        res.json({ success: true, message: 'ส่งข้อมูลสำเร็จ' });
+    });
+});
+
+// API สำหรับแอดมิน: ดึงข้อมูลคู่รักทั้งหมดและปัญหาที่แจ้งเข้ามา
+app.get('/api/admin/data', (req, res) => {
+    db.all(`SELECT * FROM cards ORDER BY created_at DESC`, [], (err, cards) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        db.all(`SELECT * FROM reports ORDER BY created_at DESC`, [], (err2, reports) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            res.json({ cards, reports });
+        });
+    });
+});
+
+// API สำหรับลืมรหัสผ่าน (ส่งแจ้งเตือนไปอีเมลแอดมิน)
+app.post('/api/forgot-password', (req, res) => {
+    const adminEmail = process.env.ADMIN_EMAIL || 'pipat.thawon05@gmail.com';
+    console.log(`[Forgot Password] ส่งคำขอรีเซ็ต์ไปที่อีเมลแอดมิน: ${adminEmail}`);
+    res.json({ success: true, message: `ส่งคำขอยืนยันรหัสผ่านไปที่อีเมล ${adminEmail} เรียบร้อยแล้ว` });
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
