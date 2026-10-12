@@ -19,7 +19,6 @@
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- รหัสซ้ำอีกชั้นตามกำหนด (ซ่อนใน modal ก่อนใช้งานจริง) -->
     <div id="modal-admin-sec" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-shield-halved text-rose-500 mr-1"></i> ยืนยันรหัสความปลอดภัยชั้นที่ 2</h3>
@@ -41,7 +40,6 @@
     </header>
 
     <main id="admin-main-content" class="w-full max-w-6xl mx-auto flex-1 space-y-6 hidden">
-        <!-- ประกาศข้อความถึงทุกคน -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-bullhorn text-rose-500 mr-2"></i> ประกาศแจ้งเตือนไปยังทุกคน</h3>
             <textarea id="admin-broadcast-text" rows="3" placeholder="พิมพ์ข้อความประกาศ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
@@ -50,7 +48,6 @@
             </div>
         </div>
 
-        <!-- รายการคู่รักและผู้ใช้ -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-users text-rose-500 mr-2"></i> ข้อมูลคู่รักและผู้ใช้งานทั้งหมด</h3>
             <div class="overflow-x-auto">
