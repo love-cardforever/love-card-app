@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Love Vault & Memory</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ห้องความทรงจำและความเป็นส่วนตัว (Cloud Connected)</p>
+                <p class="text-[11px] text-rose-500 font-medium">ห้องความทรงจำ (Realtime Cloud Connected)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -62,17 +62,15 @@
             <form onsubmit="handleLogin(event)" class="space-y-4 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Couple ID</label>
-                    <input type="text" id="login-id" required placeholder="เช่น 12A1000122026#01" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400 font-mono">
+                    <input type="text" id="login-id" required placeholder="เช่น 12A1000122026#01" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
-                    <input type="password" id="login-pass" required placeholder="รหัสผ่านส่วนตัวของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                    <input type="password" id="login-pass" required placeholder="รหัสผ่านส่วนตัวของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 </div>
-
                 <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
                     <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
                 </button>
-
                 <div class="flex justify-between text-xs pt-2">
                     <button type="button" onclick="openForgotModal()" class="text-rose-500 hover:underline">ลืมรหัสผ่าน?</button>
                     <a href="index.html" class="text-slate-500 hover:underline">ยังไม่มีบัตร? สร้างบัตรใหม่</a>
@@ -89,6 +87,7 @@
                         <div class="text-xs text-slate-500 flex items-center gap-2">
                             <span>ID: <strong id="dash-couple-id" class="font-mono text-rose-600">--</strong></span>
                             <span>| เข้าสู่ระบบในนาม: <strong id="dash-role-text" class="text-rose-600">--</strong></span>
+                            <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold text-[10px]"><i class="fa-solid fa-heart mr-1"></i>โควต้าคืนดี: <span id="dash-quota-badge">3</span> ครั้ง</span>
                         </div>
                     </div>
                 </div>
@@ -105,15 +104,10 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                 <div id="couple-card-element" class="w-full rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white via-rose-50 to-pink-100 border-2 border-rose-300 shadow-2xl relative overflow-hidden space-y-4 transition-all duration-700">
-                    <div class="absolute -right-10 -bottom-10 text-rose-200/40 text-9xl pointer-events-none select-none">
-                        <i class="fa-solid fa-heart"></i>
-                    </div>
-
+                    <div class="absolute -right-10 -bottom-10 text-rose-200/40 text-9xl pointer-events-none select-none"><i class="fa-solid fa-heart"></i></div>
                     <div class="flex justify-between items-center border-b border-rose-200/80 pb-3 relative z-10">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-500 text-white flex items-center justify-center shadow-md">
-                                <i class="fa-solid fa-certificate text-sm"></i>
-                            </div>
+                            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-pink-500 text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-certificate text-sm"></i></div>
                             <div>
                                 <span class="text-[10px] font-extrabold uppercase tracking-widest text-rose-600 block">Certificate of Love</span>
                                 <span class="font-bold text-sm text-slate-900">บัตรประจำตัวคู่รักออนไลน์</span>
@@ -127,20 +121,19 @@
                             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">COUPLE ID NUMBER</span>
                             <div id="card-id-text" class="font-mono font-black text-lg md:text-xl text-rose-700 tracking-wider">--</div>
                         </div>
-
                         <div class="grid grid-cols-2 gap-3 bg-white/95 px-4 py-3 rounded-2xl border border-rose-200/80 text-slate-900 shadow-inner items-center">
                             <div class="space-y-1">
                                 <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 1</span>
-                                <span id="card-n1" class="font-bold text-sm md:text-base text-slate-800 block truncate leading-normal">--</span>
+                                <span id="card-n1" class="font-bold text-sm text-slate-800 block truncate">--</span>
                             </div>
                             <div class="space-y-1 border-l border-rose-100 pl-3">
                                 <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 2</span>
-                                <span id="card-n2" class="font-bold text-sm md:text-base text-slate-800 block truncate leading-normal">--</span>
+                                <span id="card-n2" class="font-bold text-sm text-slate-800 block truncate">--</span>
                             </div>
                         </div>
-
-                        <div class="text-xs font-medium text-slate-700 bg-rose-50/95 py-2.5 px-3 rounded-xl border border-rose-100 text-center shadow-xs">
-                            <i class="fa-solid fa-calendar-days text-rose-500 mr-1"></i> <span id="card-start-datetime">คบกันวันที่: -- | เวลา: -- น.</span>
+                        <div class="text-xs font-medium text-slate-700 bg-rose-50/95 py-2.5 px-3 rounded-xl border border-rose-100 text-center shadow-xs space-y-1">
+                            <div><i class="fa-solid fa-calendar-days text-rose-500 mr-1"></i> <span id="card-start-datetime">คบกันวันที่: -- | เวลา: -- น.</span></div>
+                            <div class="text-[11px] text-rose-600 font-bold" id="monthly-anniversary-text">ครบรอบทุกวันที่: -- ของทุกเดือน</div>
                         </div>
                     </div>
 
@@ -153,16 +146,13 @@
                 <div class="space-y-4">
                     <div class="bg-gradient-to-r from-rose-500 to-pink-500 text-white p-5 rounded-3xl shadow-lg text-center space-y-1">
                         <span class="text-xs uppercase tracking-widest font-medium opacity-90">ระยะเวลาที่เราคบกัน</span>
-                        <div id="counter-display" class="font-bold text-sm md:text-base tracking-wide">
-                            -- ปี -- เดือน -- วัน -- ชม. -- นาที -- วินาที
-                        </div>
+                        <div id="counter-display" class="font-bold text-sm md:text-base tracking-wide">-- ปี -- เดือน -- วัน -- ชม. -- นาที -- วินาที</div>
                     </div>
 
                     <div class="glass-card p-4 rounded-3xl flex justify-between items-center">
                         <div>
                             <h3 class="font-bold text-sm text-slate-800">สถานะความสัมพันธ์</h3>
                             <p class="text-xs text-slate-500" id="relation-subtext">คู่รักรักกันดี ไม่มีปัญหา</p>
-                            <p id="quota-text" class="text-xs font-bold text-rose-600 mt-1 hidden"><i class="fa-solid fa-heart mr-1"></i> โควต้าขอคืนดีเหลือ: <span id="quota-num">3</span> ครั้ง</p>
                         </div>
                         <div id="action-btn-wrapper"></div>
                     </div>
@@ -179,11 +169,27 @@
                 </div>
             </div>
 
+            <!-- PRIVATE NOTES SECTION -->
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-book-bookmark text-rose-500 mr-2"></i> สมุดบันทึกความในใจส่วนตัว</h3>
+                        <p class="text-xs text-slate-500">เขียนโน้ตความรู้สึกเก็บไว้ (ย่ออัตโนมัติหากข้อยาว)</p>
+                    </div>
+                    <button onclick="openNoteModal()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow transition">
+                        <i class="fa-solid fa-plus mr-1"></i> เขียนโน้ตใหม่
+                    </button>
+                </div>
+                <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2"></div>
+                <div id="empty-notes" class="text-center py-6 text-slate-400 text-xs hidden">ยังไม่มีบันทึกความในใจ เริ่มเขียนบันทึกแรกกันเลย!</div>
+            </div>
+
+            <!-- PHOTOS ALBUM SECTION -->
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-2"></i> อัลบั้มรูปภาพแห่งความทรงจำ</h3>
-                        <p class="text-xs text-slate-500">แชร์ภาพความประทับใจร่วมกัน (แสดงวันที่และเจ้าของรูป)</p>
+                        <p class="text-xs text-slate-500">แชร์ภาพความประทับใจร่วมกัน</p>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="openTrashModal()" class="relative px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs transition">
@@ -195,24 +201,40 @@
                         </button>
                     </div>
                 </div>
-
                 <div id="photo-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2"></div>
-                <div id="empty-photos" class="text-center py-10 text-slate-400 text-xs hidden">
-                    ยังไม่มีรูปภาพในความทรงจำ เริ่มอัปรูปแรกกันเลย!
-                </div>
+                <div id="empty-photos" class="text-center py-10 text-slate-400 text-xs hidden">ยังไม่มีรูปภาพในความทรงจำ</div>
             </div>
         </section>
     </main>
 
-    <!-- Modals -->
+    <!-- Modal เขียนโน้ต -->
+    <div id="modal-note" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-pen text-rose-500 mr-1"></i> เขียนสมุดบันทึกส่วนตัว</h3>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">หัวข้อบันทึก</label>
+                <input type="text" id="note-title" placeholder="เช่น ความรู้สึกวันนี้..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">เนื้อหาบันทึก</label>
+                <textarea id="note-content" rows="4" placeholder="พิมพ์ความในใจยาวๆ ได้เลย..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeNoteModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="submitNote()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">บันทึกโน้ต</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals พื้นฐานอื่นๆ (PromptPay, Alert, Trash, Upload, Reason, Issue, Notif, Forgot) -->
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-qrcode text-amber-500 mr-1"></i> สนับสนุนค่าระบบ (PromptPay)</h3>
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-qrcode text-amber-500 mr-1"></i> สนับสนุนค่าระบบ</h3>
                 <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl inline-block shadow-inner">
-                <img src="promptpay.png" alt="PromptPay QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
+                <img src="promptpay.png" alt="QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
             </div>
             <div class="text-xs text-slate-700 space-y-1 bg-rose-50/80 p-3 rounded-2xl border border-rose-100 text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
@@ -224,9 +246,9 @@
 
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div id="alert-icon" class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-heart"></i></div>
-            <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือนระบบ</h3>
-            <p id="alert-message" class="text-xs text-slate-600 leading-relaxed">รายละเอียดข้อความ...</p>
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-heart"></i></div>
+            <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือน</h3>
+            <p id="alert-message" class="text-xs text-slate-600 leading-relaxed"></p>
             <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
         </div>
     </div>
@@ -234,18 +256,18 @@
     <div id="modal-trash" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-xl space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-trash-can text-slate-500 mr-1"></i> ถังขยะรูปภาพ (เก็บไว้ 15 วัน)</h3>
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-trash-can text-slate-500 mr-1"></i> ถังขยะรูปภาพ</h3>
                 <button onclick="closeTrashModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="trash-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 pt-2"></div>
-            <div id="empty-trash" class="text-center py-10 text-slate-400 text-xs hidden">ถังขยะว่างเปล่า ไม่มีรูปภาพที่ถูกลบ</div>
+            <div id="empty-trash" class="text-center py-10 text-slate-400 text-xs hidden">ถังขยะว่างเปล่า</div>
         </div>
     </div>
 
     <div id="modal-reason" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 id="reason-modal-title" class="font-bold text-base text-slate-800"><i class="fa-solid fa-pen-to-square text-rose-500 mr-1"></i> ระบุเหตุผล</h3>
-            <textarea id="reason-text-input" rows="4" placeholder="พิมพ์เหตุผลหรือรายละเอียด..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            <textarea id="reason-text-input" rows="4" placeholder="พิมพ์เหตุผล..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeReasonModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button id="reason-submit-btn" onclick="" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน</button>
@@ -255,11 +277,11 @@
 
     <div id="modal-upload" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-cloud-arrow-up text-rose-500 mr-1"></i> เพิ่มรูปภาพแห่งความทรงจำ</h3>
-            <input type="file" id="upload-file-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-cloud-arrow-up text-rose-500 mr-1"></i> เพิ่มรูปภาพ</h3>
+            <input type="file" id="upload-file-input" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-700">
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">คำบรรยายภาพ</label>
-                <input type="text" id="upload-caption" placeholder="เช่น วันไปเที่ยวทะเลด้วยกัน 🌊" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="upload-caption" placeholder="เช่น ไปเที่ยวด้วยกัน 🌊" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             </div>
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeUploadModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
@@ -270,8 +292,8 @@
 
     <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1"></i> แจ้งปัญหาหรือข้อเสนอแนะ</h3>
-            <textarea id="issue-text" rows="4" placeholder="พิมพ์รายละเอียดปัญหาที่ต้องการแจ้งแอดมิน..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1"></i> แจ้งปัญหา</h3>
+            <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหา..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
@@ -283,7 +305,7 @@
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-bell text-rose-500 mr-1"></i> แจ้งเตือนส่วนตัว</h3>
-                <button onclick="closeNotificationModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeNotificationModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="notif-list" class="space-y-3"></div>
         </div>
@@ -291,31 +313,31 @@
 
     <div id="modal-forgot" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> กู้คืนรหัสผ่านผ่านอีเมล</h3>
-            <p class="text-xs text-slate-500">กรอก Couple ID และอีเมลที่ลงทะเบียนไว้ ระบบจะส่งข้อมูลรหัสผ่านไปที่อีเมลของคุณ</p>
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> กู้คืนรหัสผ่าน</h3>
             <div>
                 <label class="block text-xs font-semibold text-slate-600 mb-1">Couple ID</label>
-                <input type="text" id="forgot-id" placeholder="เช่น 12A1000122026#01" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono">
+                <input type="text" id="forgot-id" placeholder="ID คู่รัก" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono">
             </div>
             <div>
-                <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลที่ใช้สมัคร</label>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมล</label>
                 <input type="email" id="forgot-email" placeholder="example@email.com" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             </div>
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งรหัสผ่านทางอีเมล</button>
+                <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งรหัสผ่าน</button>
             </div>
         </div>
     </div>
 
     <footer class="w-full max-w-4xl mx-auto mt-8 text-center text-xs text-slate-500">
-        Love Vault App &copy; 2026 (Firebase Cloud Connected)
+        Love Vault App &copy; 2026 (Realtime Cloud Connected)
     </footer>
 
     <script>
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
         let currentSession = null;
         let timerInterval = null;
+        let realtimeSyncInterval = null;
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
@@ -324,18 +346,15 @@
             try {
                 const res = await fetch(`${FIREBASE_URL}/.json`);
                 const val = await res.json();
-                if (!val) {
-                    return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
-                } else {
-                    return {
-                        couples: val.couples || [],
-                        globalCounter: val.globalCounter || 1,
-                        adminRequests: val.adminRequests || [],
-                        adminReportedPhotos: val.adminReportedPhotos || []
-                    };
-                }
+                if (!val) return { couples: [], globalCounter: 1, adminRequests: [] };
+                return {
+                    couples: val.couples || [],
+                    globalCounter: val.globalCounter || 1,
+                    adminRequests: val.adminRequests || [],
+                    adminReportedPhotos: val.adminReportedPhotos || []
+                };
             } catch (e) {
-                return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
+                return { couples: [], globalCounter: 1, adminRequests: [] };
             }
         }
 
@@ -367,20 +386,13 @@
 
             const db = await getDB();
             const couple = db.couples.find(c => c.id === idInput);
-
-            if (!couple) {
-                showCustomAlert('ไม่พบข้อมูล', 'ไม่พบ Couple ID นี้ในระบบ Cloud');
-                return;
-            }
+            if (!couple) { showCustomAlert('ไม่พบข้อมูล', 'ไม่พบ Couple ID นี้ในระบบ Cloud'); return; }
 
             let role = null;
             if (passInput === couple.pass1) role = 'name1';
             else if (passInput === couple.pass2) role = 'name2';
 
-            if (!role) {
-                showCustomAlert('รหัสผ่านผิด', 'รหัสผ่านส่วนตัวไม่ถูกต้อง');
-                return;
-            }
+            if (!role) { showCustomAlert('รหัสผ่านผิด', 'รหัสผ่านส่วนตัวไม่ถูกต้อง'); return; }
 
             currentSession = { coupleId: couple.id, role: role };
             localStorage.setItem('current_session', JSON.stringify(currentSession));
@@ -393,14 +405,31 @@
                 try {
                     currentSession = JSON.parse(savedSession);
                     loadDashboard();
+                    startRealtimeSync();
                 } catch (e) { localStorage.removeItem('current_session'); }
             }
         });
+
+        function startRealtimeSync() {
+            if (realtimeSyncInterval) clearInterval(realtimeSyncInterval);
+            realtimeSyncInterval = setInterval(async () => {
+                if (!currentSession) return;
+                const db = await getDB();
+                const couple = db.couples.find(c => c.id === currentSession.coupleId);
+                if (couple) {
+                    checkNotificationsCount(couple);
+                    // อัปเดตข้อมูลบนหน้าจออัตโนมัติแบบเรียลไทม์
+                    const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
+                    document.getElementById('dash-quota-badge').innerText = couple.reconcileQuota ?? 3;
+                }
+            }, 5000); // เช็กทุก 5 วินาที
+        }
 
         function logout() {
             localStorage.removeItem('current_session');
             currentSession = null;
             if (timerInterval) clearInterval(timerInterval);
+            if (realtimeSyncInterval) clearInterval(realtimeSyncInterval);
             document.getElementById('vault-dashboard-section').classList.add('hidden');
             document.getElementById('vault-login-section').classList.remove('hidden');
         }
@@ -410,9 +439,6 @@
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             if (!couple) { logout(); return; }
 
-            checkTrashExpiration(couple);
-            await saveDB(db);
-
             document.getElementById('vault-login-section').classList.add('hidden');
             document.getElementById('vault-dashboard-section').classList.remove('hidden');
 
@@ -420,19 +446,28 @@
             document.getElementById('dash-couple-names').innerText = `${couple.name1} & ${couple.name2}`;
             document.getElementById('dash-couple-id').innerText = couple.id;
             document.getElementById('dash-role-text').innerText = myName;
+            document.getElementById('dash-quota-badge').innerText = couple.reconcileQuota ?? 3;
 
             document.getElementById('card-id-text').innerText = couple.id;
             document.getElementById('card-n1').innerText = couple.name1;
             document.getElementById('card-n2').innerText = couple.name2;
             document.getElementById('card-start-datetime').innerText = `คบกันวันที่: ${couple.startDate} | เวลา: ${couple.startTime} น.`;
 
+            // คำนวณวันครบรอบประจำเดือน
+            const startD = new Date(couple.startDate);
+            const dayNum = startD.getDate();
+            document.getElementById('monthly-anniversary-text').innerText = `📅 ครบรอบทุกวันที่ ${dayNum} ของทุกเดือน`;
+
             const statusDot = document.getElementById('status-dot-icon');
             const relationSub = document.getElementById('relation-subtext');
             const actionWrapper = document.getElementById('action-btn-wrapper');
             const cardElem = document.getElementById('couple-card-element');
             const cardBadge = document.getElementById('card-badge-status');
-            const quotaText = document.getElementById('quota-text');
-            const quotaNum = document.getElementById('quota-num');
+
+            // เช็กว่ามีคำขอค้างอยู่ไหม (ป้องกันการกดซ้ำซ้อน)
+            const notifs = couple.notifications || [];
+            const hasPendingBreakup = notifs.some(n => n.type === 'BREAKUP_REQUEST' && n.status === 'PENDING');
+            const hasPendingReconcile = notifs.some(n => n.type === 'RECONCILE_REQUEST' && n.status === 'PENDING');
 
             if (couple.status === 'BROKEN') {
                 statusDot.className = "w-4 h-4 rounded-full bg-zinc-900 shadow";
@@ -442,10 +477,9 @@
                 cardBadge.innerText = "สถานะ: เลิกรา";
 
                 if (couple.reconcileQuota === undefined) couple.reconcileQuota = 3;
-                quotaNum.innerText = couple.reconcileQuota;
-                quotaText.classList.remove('hidden');
-
-                if (couple.reconcileQuota > 0) {
+                if (hasPendingReconcile) {
+                    actionWrapper.innerHTML = `<span class="text-xs font-bold text-amber-600">⏳ ส่งคำขอคืนดีแล้ว (รอตอบรับ)</span>`;
+                } else if (couple.reconcileQuota > 0) {
                     actionWrapper.innerHTML = `<button onclick="openReasonModal('reconcile')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow transition"><i class="fa-solid fa-hand-holding-heart mr-1"></i> ขอคืนดี</button>`;
                 } else {
                     actionWrapper.innerHTML = `<span class="text-xs font-bold text-red-500">หมดโควต้าขอคืนดีแล้ว</span>`;
@@ -456,14 +490,20 @@
                 cardElem.classList.remove('card-broken', 'animate-tear');
                 cardBadge.className = "px-3 py-1 rounded-full text-xs font-bold bg-pink-100 text-pink-700 border border-pink-300 shadow-xs";
                 cardBadge.innerText = "ไม่มีวันหมดอายุ";
-                quotaText.classList.add('hidden');
-                actionWrapper.innerHTML = `<button onclick="startBreakupWizard()" class="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow transition"><i class="fa-solid fa-heart-crack mr-1"></i> แจ้งบอกเลิก</button>`;
+
+                if (hasPendingBreakup) {
+                    actionWrapper.innerHTML = `<span class="text-xs font-bold text-rose-600">⏳ ส่งคำขอบอกเลิกแล้ว (รอตอบรับ)</span>`;
+                } else {
+                    actionWrapper.innerHTML = `<button onclick="startBreakupWizard()" class="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs font-bold rounded-xl shadow transition"><i class="fa-solid fa-heart-crack mr-1"></i> แจ้งบอกเลิก</button>`;
+                }
             }
 
             startTimer(couple.startDate, couple.startTime);
+            renderNotes(couple);
             renderPhotos(couple, myName);
-            renderTrash(couple, myName);
+            renderTrash(couple);
             checkNotificationsCount(couple);
+            startRealtimeSync();
         }
 
         function startTimer(startDate, startTime) {
@@ -493,13 +533,93 @@
             timerInterval = setInterval(update, 1000);
         }
 
+        // --- PRIVATE NOTES SYSTEM (พร้อมระบบย่อข้อความและปุ่มกดดูเพิ่มเติม) ---
+        function openNoteModal() { document.getElementById('modal-note').classList.remove('hidden'); }
+        function closeNoteModal() { document.getElementById('modal-note').classList.add('hidden'); }
+
+        async function submitNote() {
+            const title = document.getElementById('note-title').value.trim();
+            const content = document.getElementById('note-content').value.trim();
+            if (!title || !content) { showCustomAlert('แจ้งเตือน', 'กรุณากรอกหัวข้อและเนื้อหาโน้ต'); return; }
+
+            const db = await getDB();
+            const couple = db.couples.find(c => c.id === currentSession.coupleId);
+            if (!couple.notes) couple.notes = [];
+
+            couple.notes.push({
+                id: Date.now(),
+                title: title,
+                content: content,
+                author: currentSession.role === 'name1' ? couple.name1 : couple.name2,
+                time: new Date().toLocaleDateString('th-TH')
+            });
+
+            await saveDB(db);
+            closeNoteModal();
+            document.getElementById('note-title').value = '';
+            document.getElementById('note-content').value = '';
+            loadDashboard();
+        }
+
+        function renderNotes(couple) {
+            const grid = document.getElementById('notes-grid');
+            const empty = document.getElementById('empty-notes');
+            grid.innerHTML = '';
+            const notes = couple.notes || [];
+
+            if (notes.length === 0) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            notes.slice().reverse().forEach(n => {
+                const isLong = n.content.length > 100;
+                const shortText = isLong ? n.content.substring(0, 100) + '...' : n.content;
+
+                grid.innerHTML += `
+                    <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-100 shadow-2xs space-y-2 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center text-[11px] text-slate-400 mb-1">
+                                <span class="font-bold text-rose-600">${n.author}</span>
+                                <span>${n.time}</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-slate-800">${n.title}</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed mt-1" id="note-text-${n.id}">${shortText}</p>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-rose-100/60">
+                            ${isLong ? `<button onclick="toggleNote(${n.id}, '${encodeURIComponent(n.content)}', '${encodeURIComponent(shortText)}')" id="btn-toggle-${n.id}" class="text-[11px] font-bold text-rose-500 hover:underline">ดูเพิ่มเติม</button>` : '<span></span>'}
+                            <button onclick="deleteNote(${n.id})" class="text-slate-400 hover:text-rose-600 text-xs"><i class="fa-solid fa-trash-can"></i> ลบ</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function toggleNote(id, fullEnc, shortEnc) {
+            const pElem = document.getElementById(`note-text-${id}`);
+            const btnElem = document.getElementById(`btn-toggle-${id}`);
+            const fullText = decodeURIComponent(fullEnc);
+            const shortText = decodeURIComponent(shortEnc);
+
+            if (btnElem.innerText === 'ดูเพิ่มเติม') {
+                pElem.innerText = fullText;
+                btnElem.innerText = 'ย่อเก็บ';
+            } else {
+                pElem.innerText = shortText;
+                btnElem.innerText = 'ดูเพิ่มเติม';
+            }
+        }
+
+        async function deleteNote(noteId) {
+            const db = await getDB();
+            const couple = db.couples.find(c => c.id === currentSession.coupleId);
+            couple.notes = (couple.notes || []).filter(n => n.id !== noteId);
+            await saveDB(db);
+            loadDashboard();
+        }
+
+        // --- WIZARD & NOTIFICATIONS ---
         let breakupStep = 0;
         let breakupReasonTemp = "";
-
-        function startBreakupWizard() {
-            breakupStep = 1;
-            askBreakupQuestion();
-        }
+        function startBreakupWizard() { breakupStep = 1; askBreakupQuestion(); }
 
         function askBreakupQuestion() {
             const questions = [
@@ -525,7 +645,6 @@
                     title.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500 mr-1"></i> ${questions[breakupStep - 1]}`;
                     input.classList.add('hidden');
                 }
-
                 btn.setAttribute('onclick', 'nextBreakupStep()');
                 modal.classList.remove('hidden');
             }
@@ -536,12 +655,8 @@
                 breakupReasonTemp = document.getElementById('reason-text-input').value.trim() || 'ไม่มีเหตุผลระบุ';
             }
             breakupStep++;
-            if (breakupStep <= 5) {
-                askBreakupQuestion();
-            } else {
-                closeReasonModal();
-                await finalizeBreakup();
-            }
+            if (breakupStep <= 5) { askBreakupQuestion(); } 
+            else { closeReasonModal(); await finalizeBreakup(); }
         }
 
         async function finalizeBreakup() {
@@ -552,12 +667,11 @@
             const targetRole = senderRole === 'name1' ? 'name2' : 'name1';
 
             if (!couple.notifications) couple.notifications = [];
-            
             couple.notifications.push({
                 id: Date.now(),
                 targetRole: targetRole,
                 type: 'BREAKUP_REQUEST',
-                message: `${senderName} ได้ผ่านการทบทวนและส่งคำขอบอกเลิกรา เหตุผล: "${breakupReasonTemp}"`,
+                message: `${senderName} ได้ส่งคำขอบอกเลิกรา เหตุผล: "${breakupReasonTemp}"`,
                 time: new Date().toLocaleString(),
                 status: 'PENDING'
             });
@@ -587,9 +701,9 @@
             const reason = document.getElementById('reason-text-input').value.trim() || 'อยากกลับมาเริ่มต้นใหม่';
             const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
-            
+
             if (couple.reconcileQuota <= 0) {
-                showCustomAlert('โควต้าหมด', 'โควต้าขอคืนดีของคุณหมดแล้ว (จำกัด 3 ครั้ง)');
+                showCustomAlert('โควต้าหมด', 'โควต้าขอคืนดีของคุณหมดแล้ว');
                 closeReasonModal();
                 return;
             }
@@ -611,14 +725,14 @@
 
             await saveDB(db);
             closeReasonModal();
-            showCustomAlert('ส่งคำขอสำเร็จ', 'ส่งคำขอคืนดีเรียบร้อยแล้ว รอการตอบรับจากอีกฝ่าย');
+            showCustomAlert('ส่งคำขอสำเร็จ', 'ส่งคำขอคืนดีเรียบร้อยแล้ว รอการตอบรับ');
             loadDashboard();
         }
 
         function checkNotificationsCount(couple) {
             const notifs = couple.notifications || [];
             const myRole = currentSession.role;
-            const myNotifs = notifs.filter(n => n.targetRole === myRole && n.status === 'PENDING');
+            const myNotifs = notifs.filter(n => (n.targetRole === myRole || n.targetRole === 'ALL') && n.status === 'PENDING');
             const badge = document.getElementById('notif-badge');
             if (myNotifs.length > 0) {
                 badge.innerText = myNotifs.length;
@@ -639,42 +753,39 @@
             const relevantNotifs = notifs.filter(n => n.targetRole === myRole || n.targetRole === 'ALL');
 
             if (relevantNotifs.length === 0) {
-                listElem.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs"><i class="fa-regular fa-bell-slash text-2xl mb-2 block"></i> ไม่มีรายการแจ้งเตือนในขณะนี้</div>';
+                listElem.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs">ไม่มีรายการแจ้งเตือน</div>';
             } else {
                 relevantNotifs.slice().reverse().forEach(n => {
                     let actionHtml = '';
                     let statusBadge = '';
 
-                    if (n.status === 'PENDING' && n.targetRole === myRole) {
+                    if (n.status === 'PENDING' && (n.targetRole === myRole)) {
                         if (n.type === 'BREAKUP_REQUEST') {
                             actionHtml = `
                                 <div class="flex gap-2 mt-3 pt-2 border-t border-rose-100">
-                                    <button onclick="responseBreakup(${n.id}, true)" class="px-4 py-2 bg-zinc-900 hover:bg-black text-white text-xs rounded-xl font-bold shadow transition"><i class="fa-solid fa-check mr-1"></i> ยอมรับการเลิกรา</button>
-                                    <button onclick="openReasonModalForReject(${n.id})" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs rounded-xl font-bold shadow transition"><i class="fa-solid fa-xmark mr-1"></i> ปฏิเสธ (ระบุเหตุผล)</button>
+                                    <button onclick="responseBreakup(${n.id}, true)" class="px-3 py-1.5 bg-zinc-900 text-white text-xs rounded-xl font-bold">ยอมรับการเลิก</button>
+                                    <button onclick="openReasonModalForReject(${n.id})" class="px-3 py-1.5 bg-rose-500 text-white text-xs rounded-xl font-bold">ปฏิเสธ</button>
                                 </div>
                             `;
                         } else if (n.type === 'RECONCILE_REQUEST') {
                             actionHtml = `
                                 <div class="flex gap-2 mt-3 pt-2 border-t border-rose-100">
-                                    <button onclick="responseReconcile(${n.id}, true)" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs rounded-xl font-bold shadow transition"><i class="fa-solid fa-hand-holding-heart mr-1"></i> ยอมรับคำขอคืนดี</button>
-                                    <button onclick="responseReconcile(${n.id}, false)" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs rounded-xl font-bold transition">ปฏิเสธ</button>
+                                    <button onclick="responseReconcile(${n.id}, true)" class="px-3 py-1.5 bg-amber-500 text-white text-xs rounded-xl font-bold">ยอมรับคืนดี</button>
+                                    <button onclick="responseReconcile(${n.id}, false)" class="px-3 py-1.5 bg-slate-200 text-slate-700 text-xs rounded-xl font-bold">ปฏิเสธ</button>
                                 </div>
                             `;
                         }
                     } else {
-                        statusBadge = `<span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded-lg uppercase tracking-wide">สถานะ: ${n.status}</span>`;
+                        statusBadge = `<span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">สถานะ: ${n.status}</span>`;
                     }
 
                     listElem.innerHTML += `
                         <div class="p-4 rounded-2xl bg-gradient-to-r from-rose-50/80 to-pink-50/50 border border-rose-100 shadow-xs space-y-2">
                             <div class="flex justify-between items-center text-[11px] text-slate-400">
-                                <span><i class="fa-solid fa-clock mr-1"></i>${n.time}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="uppercase font-extrabold text-rose-500 bg-white px-2 py-0.5 rounded shadow-2xs">${n.type}</span>
-                                    ${statusBadge}
-                                </div>
+                                <span>${n.time}</span>
+                                <span class="uppercase font-extrabold text-rose-500 bg-white px-2 py-0.5 rounded">${n.type}</span>
                             </div>
-                            <p class="text-xs md:text-sm text-slate-800 font-medium leading-relaxed">${n.message}</p>
+                            <p class="text-xs md:text-sm text-slate-800 font-medium">${n.message}</p>
                             ${actionHtml}
                         </div>
                     `;
@@ -701,7 +812,7 @@
         }
 
         async function submitRejectBreakup() {
-            const reason = document.getElementById('reason-text-input').value.trim() || 'ไม่อยากเลิก รักกันดีอยู่';
+            const reason = document.getElementById('reason-text-input').value.trim() || 'ไม่อยากเลิก';
             const db = await getDB();
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
             const notif = couple.notifications.find(n => n.id === activeNotifIdForReject);
@@ -722,7 +833,6 @@
 
                 await saveDB(db);
                 closeReasonModal();
-                showCustomAlert('ส่งผลสำเร็จ', 'ส่งผลการปฏิเสธไปยังอีกฝ่ายแล้ว');
                 loadDashboard();
                 openNotificationModal();
             }
@@ -734,30 +844,7 @@
             const notif = couple.notifications.find(n => n.id === notifId);
             if (notif) {
                 notif.status = isAccepted ? 'ACCEPTED_BREAKUP' : 'REJECTED_BREAKUP';
-                if (isAccepted) {
-                    couple.status = 'BROKEN';
-                    if (couple.breakupCount === undefined) couple.breakupCount = 0;
-                    couple.breakupCount++;
-
-                    let sadnessMsg = "";
-                    if (couple.breakupCount === 1) sadnessMsg = "เลิกกันครั้งนี้ อะไรที่ไม่ดีก็ปล่อยให้มันผ่านไป ขอบคุณสำหรับทุกช่วงเวลาที่ผ่านมานะ";
-                    else if (couple.breakupCount === 2) sadnessMsg = "เลิกกันอีกแล้วนะ... อย่าลืมดูแลตัวเองดีๆ และจดจำสิ่งดีๆ ที่เคยมีร่วมกันไว้เสมอ";
-                    else sadnessMsg = "เลิกกันครั้งนี้ ขอให้ต่างฝ่ายต่างแยกย้ายกันไปเติบโตและพบเจอกับเส้นทางที่มีความสุขในแบบของตัวเองนะ";
-
-                    const senderRole = notif.targetRole === 'name1' ? 'name2' : 'name1';
-                    const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
-                    
-                    couple.notifications.push({
-                        id: Date.now(),
-                        targetRole: senderRole,
-                        type: 'BREAKUP_ACCEPTED_RESULT',
-                        message: `${myName} ได้ยอมรับการเลิกราแล้ว - ${sadnessMsg}`,
-                        time: new Date().toLocaleString(),
-                        status: 'INFO'
-                    });
-                    
-                    showCustomAlert('💔 ขอแสดงความเสียใจด้วย', sadnessMsg);
-                }
+                if (isAccepted) { couple.status = 'BROKEN'; }
                 await saveDB(db);
                 loadDashboard();
                 openNotificationModal();
@@ -770,88 +857,39 @@
             const notif = couple.notifications.find(n => n.id === notifId);
             if (notif) {
                 notif.status = isAccepted ? 'ACCEPTED_RECONCILE' : 'REJECTED_RECONCILE';
-                const senderRole = notif.targetRole === 'name1' ? 'name2' : 'name1';
-                const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
-
-                if (isAccepted) {
-                    couple.status = 'ACTIVE';
-                    couple.notifications.push({
-                        id: Date.now(),
-                        targetRole: senderRole,
-                        type: 'RECONCILE_ACCEPTED_RESULT',
-                        message: `${myName} ได้ตอบรับคำขอคืนดี ความสัมพันธ์กลับมาปกติ`,
-                        time: new Date().toLocaleString(),
-                        status: 'INFO'
-                    });
-                    showCustomAlert('💖 ยินดีด้วย!', 'ตอบรับคำขอคืนดีสำเร็จ ความสัมพันธ์กลับมาสดใสอีกครั้ง');
-                } else {
-                    couple.notifications.push({
-                        id: Date.now(),
-                        targetRole: senderRole,
-                        type: 'RECONCILE_REJECTED_RESULT',
-                        message: `${myName} ได้ปฏิเสธคำขอคืนดี`,
-                        time: new Date().toLocaleString(),
-                        status: 'INFO'
-                    });
-                    showCustomAlert('แจ้งผล', 'ปฏิเสธคำขอคืนดีเรียบร้อย');
-                }
+                if (isAccepted) { couple.status = 'ACTIVE'; }
                 await saveDB(db);
                 loadDashboard();
                 openNotificationModal();
             }
         }
 
+        // --- PHOTOS & OTHER MODALS ---
         function openUploadModal() { document.getElementById('modal-upload').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('modal-upload').classList.add('hidden'); }
 
         function submitPhoto() {
             const fileInput = document.getElementById('upload-file-input');
             const caption = document.getElementById('upload-caption').value.trim() || 'ภาพความทรงจำ';
-            if (fileInput.files.length === 0) { showCustomAlert('แจ้งเตือน', 'กรุณาเลือกรูปภาพ'); return; }
+            if (fileInput.files.length === 0) return;
 
             const reader = new FileReader();
             reader.onload = async function(e) {
-                const base64Image = e.target.result;
-                const lowerCaption = caption.toLowerCase();
-                const NSFWKeywords = ['18+', 'nsfw', 'โป๊', 'ลามก', 'อนาจาร', 'X', 'xxx', 'เปลือย'];
-                const isNSFW = NSFWKeywords.some(keyword => lowerCaption.includes(keyword)) || fileInput.files[0].name.toLowerCase().includes('nsfw');
-
                 const db = await getDB();
                 const couple = db.couples.find(c => c.id === currentSession.coupleId);
                 const uploaderName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
 
-                if (isNSFW) {
-                    if (!db.adminReportedPhotos) db.adminReportedPhotos = [];
-                    db.adminReportedPhotos.push({
-                        id: Date.now(),
-                        coupleId: couple.id,
-                        coupleNames: `${couple.name1} & ${couple.name2}`,
-                        uploader: uploaderName,
-                        url: base64Image,
-                        caption: caption,
-                        time: new Date().toLocaleString()
-                    });
-                    await saveDB(db);
-                    closeUploadModal();
-                    document.getElementById('upload-file-input').value = '';
-                    document.getElementById('upload-caption').value = '';
-                    showCustomAlert('⚠️ ตรวจพบเนื้อหาไม่เหมาะสม', 'ระบบตรวจพบภาพลามกอนาจาร ภาพของคุณถูกส่งให้แอดมินตรวจสอบแล้ว');
-                    return;
-                }
-
                 if (!couple.photos) couple.photos = [];
                 couple.photos.push({
                     id: Date.now(),
-                    url: base64Image,
+                    url: e.target.result,
                     caption: caption,
                     uploader: uploaderName,
-                    uploadDate: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'short', day: 'numeric' })
+                    uploadDate: new Date().toLocaleDateString('th-TH')
                 });
 
                 await saveDB(db);
                 closeUploadModal();
-                document.getElementById('upload-file-input').value = '';
-                document.getElementById('upload-caption').value = '';
                 loadDashboard();
             };
             reader.readAsDataURL(fileInput.files[0]);
@@ -861,136 +899,28 @@
             const grid = document.getElementById('photo-grid');
             const empty = document.getElementById('empty-photos');
             grid.innerHTML = '';
-
             const photos = couple.photos || [];
+
             if (photos.length === 0) { empty.classList.remove('hidden'); return; }
             empty.classList.add('hidden');
 
             photos.forEach(p => {
-                let deleteBtnHtml = '';
-                if (p.uploader === myName) {
-                    deleteBtnHtml = `<button onclick="moveToTrash(${p.id})" class="w-full py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold rounded-lg text-xs transition"><i class="fa-solid fa-trash-can mr-1"></i> ลบรูป</button>`;
-                }
                 grid.innerHTML += `
-                    <div class="bg-white p-2.5 rounded-2xl border border-rose-100 shadow-sm space-y-2 flex flex-col justify-between">
+                    <div class="bg-white p-2.5 rounded-2xl border border-rose-100 shadow-sm space-y-2">
                         <img src="${p.url}" class="w-full h-32 object-cover rounded-xl">
-                        <div class="space-y-0.5">
-                            <p class="text-xs font-bold text-slate-800 truncate">${p.caption}</p>
-                            <div class="flex justify-between items-center text-[10px] text-slate-500 font-medium">
-                                <span><i class="fa-solid fa-user text-rose-400 mr-1"></i>${p.uploader}</span>
-                                <span><i class="fa-regular fa-calendar text-rose-400 mr-1"></i>${p.uploadDate || ''}</span>
-                            </div>
-                        </div>
-                        ${deleteBtnHtml}
+                        <p class="text-xs font-bold text-slate-800 truncate">${p.caption}</p>
                     </div>
                 `;
             });
         }
 
-        async function moveToTrash(photoId) {
-            const db = await getDB();
-            const couple = db.couples.find(c => c.id === currentSession.coupleId);
-            if (!couple.photos) couple.photos = [];
-            if (!couple.trashPhotos) couple.trashPhotos = [];
-
-            const index = couple.photos.findIndex(p => p.id === photoId);
-            if (index !== -1) {
-                const photo = couple.photos.splice(index, 1)[0];
-                photo.deletedAt = new Date().getTime();
-                couple.trashPhotos.push(photo);
-                await saveDB(db);
-                loadDashboard();
-                showCustomAlert('ย้ายไปถังขยะ', 'รูปภาพถูกย้ายไปถังขยะแล้ว (จะถูกลบถาวรใน 15 วัน)');
-            }
-        }
-
-        function openTrashModal() {
-            renderTrashModalContent();
-            document.getElementById('modal-trash').classList.remove('hidden');
-        }
+        function openTrashModal() { document.getElementById('modal-trash').classList.remove('hidden'); }
         function closeTrashModal() { document.getElementById('modal-trash').classList.add('hidden'); }
-
-        function renderTrash(couple, myName) {
-            const trash = couple.trashPhotos || [];
+        function renderTrash(couple) {
             const badge = document.getElementById('trash-badge');
+            const trash = couple.trashPhotos || [];
             if (trash.length > 0) { badge.innerText = trash.length; badge.classList.remove('hidden'); }
             else { badge.classList.add('hidden'); }
-        }
-
-        async function renderTrashModalContent() {
-            const db = await getDB();
-            const couple = db.couples.find(c => c.id === currentSession.coupleId);
-            const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
-            const trashGrid = document.getElementById('trash-grid');
-            const emptyTrash = document.getElementById('empty-trash');
-            trashGrid.innerHTML = '';
-
-            const trash = couple.trashPhotos || [];
-            if (trash.length === 0) { emptyTrash.classList.remove('hidden'); return; }
-            emptyTrash.classList.add('hidden');
-
-            const now = new Date().getTime();
-            const fifteenDays = 15 * 24 * 60 * 60 * 1000;
-
-            trash.forEach(p => {
-                const timeLeft = fifteenDays - (now - p.deletedAt);
-                const daysLeft = Math.max(0, Math.ceil(timeLeft / (24 * 60 * 60 * 1000)));
-
-                let trashActionHtml = '';
-                if (p.uploader === myName) {
-                    trashActionHtml = `
-                        <div class="grid grid-cols-2 gap-1.5 pt-1">
-                            <button onclick="restorePhoto(${p.id})" class="py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg text-[11px] transition">กู้คืน</button>
-                            <button onclick="deletePhotoPermanently(${p.id})" class="py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-semibold rounded-lg text-[11px] transition">ลบถาวร</button>
-                        </div>
-                    `;
-                } else {
-                    trashActionHtml = `<span class="text-[10px] text-slate-400 block text-center pt-1">อัปโดย ${p.uploader}</span>`;
-                }
-
-                trashGrid.innerHTML += `
-                    <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200 shadow-xs space-y-2 flex flex-col justify-between">
-                        <img src="${p.url}" class="w-full h-28 object-cover rounded-xl opacity-80">
-                        <div>
-                            <p class="text-xs font-bold text-slate-800 truncate">${p.caption}</p>
-                            <span class="text-[10px] text-amber-600 font-bold block"><i class="fa-solid fa-clock mr-1"></i>เหลือเวลา ${daysLeft} วัน</span>
-                        </div>
-                        ${trashActionHtml}
-                    </div>
-                `;
-            });
-        }
-
-        async function restorePhoto(photoId) {
-            const db = await getDB();
-            const couple = db.couples.find(c => c.id === currentSession.coupleId);
-            const index = couple.trashPhotos.findIndex(p => p.id === photoId);
-            if (index !== -1) {
-                const photo = couple.trashPhotos.splice(index, 1)[0];
-                delete photo.deletedAt;
-                couple.photos.push(photo);
-                await saveDB(db);
-                loadDashboard();
-                renderTrashModalContent();
-                showCustomAlert('กู้คืนสำเร็จ', 'รูปภาพกลับเข้าสู่อัลบั้มหลักแล้ว');
-            }
-        }
-
-        async function deletePhotoPermanently(photoId) {
-            const db = await getDB();
-            const couple = db.couples.find(c => c.id === currentSession.coupleId);
-            couple.trashPhotos = couple.trashPhotos.filter(p => p.id !== photoId);
-            await saveDB(db);
-            loadDashboard();
-            renderTrashModalContent();
-            showCustomAlert('ลบถาวร', 'รูปภาพถูกลบออกจากถังขยะอย่างถาวรแล้ว');
-        }
-
-        function checkTrashExpiration(couple) {
-            if (!couple.trashPhotos) return;
-            const now = new Date().getTime();
-            const fifteenDays = 15 * 24 * 60 * 60 * 1000;
-            couple.trashPhotos = couple.trashPhotos.filter(p => (now - p.deletedAt) < fifteenDays);
         }
 
         function openIssueModal() { document.getElementById('modal-issue').classList.remove('hidden'); }
@@ -998,24 +928,13 @@
         async function submitIssue() {
             const text = document.getElementById('issue-text').value.trim();
             if (!text) return;
-
             const db = await getDB();
             if (!db.adminRequests) db.adminRequests = [];
             const couple = db.couples.find(c => c.id === currentSession.coupleId);
-
-            db.adminRequests.push({
-                id: Date.now(),
-                coupleId: couple.id,
-                names: `${couple.name1} & ${couple.name2}`,
-                type: 'ISSUE',
-                content: text,
-                time: new Date().toLocaleString()
-            });
-
+            db.adminRequests.push({ id: Date.now(), coupleId: couple.id, names: `${couple.name1} & ${couple.name2}`, content: text, time: new Date().toLocaleString() });
             await saveDB(db);
             closeIssueModal();
-            document.getElementById('issue-text').value = '';
-            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อยแล้ว');
+            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อย');
         }
 
         function openForgotModal() { document.getElementById('modal-forgot').classList.remove('hidden'); }
@@ -1025,13 +944,8 @@
             const email = document.getElementById('forgot-email').value.trim();
             const db = await getDB();
             const couple = db.couples.find(c => c.id === id && c.email === email);
-
-            if (!couple) {
-                showCustomAlert('ไม่พบข้อมูล', 'ไม่พบ Couple ID หรืออีเมลไม่ตรงกันในระบบ');
-                return;
-            }
-
-            showCustomAlert('ส่งอีเมลสำเร็จ', `ระบบได้จำลองการส่งอีเมลกู้คืนรหัสผ่านไปยัง ${email} สำเร็จ\n\nรหัสผ่านฝ่าย 1: ${couple.pass1} | ฝ่าย 2: ${couple.pass2}`);
+            if (!couple) { showCustomAlert('ไม่พบข้อมูล', 'ID หรืออีเมลไม่ถูกต้อง'); return; }
+            showCustomAlert('สำเร็จ', `รหัสผ่านฝ่าย 1: ${couple.pass1} | ฝ่าย 2: ${couple.pass2}`);
             closeForgotModal();
         }
     </script>
