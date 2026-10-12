@@ -327,8 +327,8 @@
 
         function getDB() {
             const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return { couples: [], globalCounter: 1, adminRequests: [] };
-            try { return JSON.parse(raw); } catch (e) { return { couples: [], globalCounter: 1, adminRequests: [] }; }
+            if (!raw) return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] };
+            try { return JSON.parse(raw); } catch (e) { return { couples: [], globalCounter: 1, adminRequests: [], adminReportedPhotos: [] }; }
         }
         function saveDB(db) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
@@ -796,7 +796,7 @@
             }
         }
 
-        // --- MEMORY ALBUM & TRASH BIN SYSTEM ---
+        // --- MEMORY ALBUM & NSFW MODERATION SYSTEM ---
         function openUploadModal() { document.getElementById('modal-upload').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('modal-upload').classList.add('hidden'); }
 
@@ -808,9 +808,34 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Image = e.target.result;
+
+                // ระบบกรองภาพลามกอนาจารเบื้องต้น (Content Moderation)
+                const lowerCaption = caption.toLowerCase();
+                const NSFWKeywords = ['18+', 'nsfw', 'โป๊', 'ลามก', 'อนาจาร', 'X', 'xxx', 'เปลือย'];
+                const isNSFW = NSFWKeywords.some(keyword => lowerCaption.includes(keyword)) || fileInput.files[0].name.toLowerCase().includes('nsfw');
+
                 const db = getDB();
                 const couple = db.couples.find(c => c.id === currentSession.coupleId);
                 const uploaderName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
+
+                if (isNSFW) {
+                    if (!db.adminReportedPhotos) db.adminReportedPhotos = [];
+                    db.adminReportedPhotos.push({
+                        id: Date.now(),
+                        coupleId: couple.id,
+                        coupleNames: `${couple.name1} & ${couple.name2}`,
+                        uploader: uploaderName,
+                        url: base64Image,
+                        caption: caption,
+                        time: new Date().toLocaleString()
+                    });
+                    saveDB(db);
+                    closeUploadModal();
+                    document.getElementById('upload-file-input').value = '';
+                    document.getElementById('upload-caption').value = '';
+                    showCustomAlert('⚠️ ตรวจพบเนื้อหาไม่เหมาะสม', 'ระบบตรวจพบภาพลามกอนาจาร ภาพของคุณถูกส่งให้แอดมินตรวจสอบเพื่อพิจารณาตักเตือนหรือลบถาวรแล้ว');
+                    return;
+                }
 
                 if (!couple.photos) couple.photos = [];
                 couple.photos.push({
