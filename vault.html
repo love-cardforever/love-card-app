@@ -81,21 +81,21 @@
                     <div class="space-y-3">
                         <div>
                             <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">COUPLE CARD ID</span>
-                            <div id="card-id-text" class="font-mono font-black text-lg md:text-xl text-rose-700 tracking-wider">--</div>
+                            <div id="card-id-text" class="font-mono font-black text-lg md:text-xl text-rose-700 tracking-wider">0000#000000</div>
                         </div>
                         <div class="grid grid-cols-2 gap-3 bg-white/95 px-4 py-3 rounded-2xl border border-rose-200/80 shadow-inner">
                             <div class="space-y-1">
                                 <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 1</span>
-                                <span id="card-n1" class="font-bold text-sm text-slate-800 block truncate">--</span>
+                                <span id="card-n1" class="font-bold text-sm text-slate-800 block truncate">ชื่อของคุณ</span>
                             </div>
                             <div class="space-y-1 border-l border-rose-100 pl-3">
                                 <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 2</span>
-                                <span id="card-n2" class="font-bold text-sm text-slate-800 block truncate">--</span>
+                                <span id="card-n2" class="font-bold text-sm text-slate-800 block truncate">ชื่อคู่รัก</span>
                             </div>
                         </div>
                         <div class="text-xs font-medium text-slate-700 bg-rose-50/95 py-2.5 px-3 rounded-xl border border-rose-100 text-center space-y-1">
                             <div><i class="fa-solid fa-calendar-days text-rose-500 mr-1"></i> <span id="card-start-datetime">คบกันวันที่: 00/00/0000 | เวลา: 00:00 น.</span></div>
-                            <div class="text-[11px] text-rose-600 font-bold" id="monthly-anniversary-text">โควต้าขอคืนดี: <span id="dash-quota-badge">3</span> ครั้ง</div>
+                            <div class="text-[11px] text-rose-600 font-bold">โควต้าขอคืนดี: <span id="dash-quota-badge">3</span> ครั้ง</div>
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@
                     </div>
                     <div class="glass-card p-4 rounded-3xl flex justify-between items-center">
                         <div>
-                            <h3 class="font-bold text-sm text-slate-800">สถานะความสัมพันธ์และความคุม</h3>
+                            <h3 class="font-bold text-sm text-slate-800">สถานะความสัมพันธ์</h3>
                             <p class="text-xs text-slate-500" id="relation-subtext">รอการมีคู่รักเพื่อแชร์ความทรงจำร่วมกัน</p>
                         </div>
                         <div id="action-btn-wrapper"></div>
@@ -115,9 +115,8 @@
                 </div>
             </div>
 
-            <!-- SHARED NOTES & PHOTOS (ล็อคไว้จนกว่าจะมีคู่รัก) -->
+            <!-- SHARED NOTES & PHOTOS -->
             <div id="shared-features-section" class="space-y-6 opacity-50 pointer-events-none transition-all duration-500">
-                <!-- NOTES -->
                 <div class="glass-card p-6 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -129,7 +128,6 @@
                     <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2"></div>
                 </div>
 
-                <!-- PHOTOS -->
                 <div class="glass-card p-6 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center">
                         <div>
@@ -146,7 +144,7 @@
             </div>
         </section>
 
-        <!-- VIEW 2: PROPOSAL WIZARD INTERFACE (เมื่อเปิดลิงก์โค้ด) -->
+        <!-- VIEW 2: PROPOSAL WIZARD INTERFACE (ปุ่มปฏิเสธนิ่ง และมีปุ่มเปลี่ยนใจ) -->
         <section id="view-proposal-wizard" class="w-full max-w-xl glass-card p-8 rounded-3xl text-center space-y-6 hidden">
             <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart"><i class="fa-solid fa-ring"></i></div>
             <div class="space-y-2">
@@ -155,7 +153,7 @@
             </div>
             <div id="proposal-action-box" class="flex justify-center items-center gap-4 pt-4">
                 <button onclick="acceptProposalStep()" class="px-8 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow-lg transition text-base">ตกลงเป็นแฟนกัน! 🥰</button>
-                <button id="btn-reject-proposal" onmouseover="moveRejectButton()" onclick="rejectProposalStep()" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">ขอคิดดูก่อน 😜</button>
+                <button id="btn-reject-proposal" onclick="rejectProposalStep()" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">ขอคิดดูก่อน 😜</button>
             </div>
         </section>
     </main>
@@ -185,12 +183,17 @@
         </div>
     </div>
 
+    <!-- MODAL REJECT (เพิ่มปุ่มเปลี่ยนใจและปุ่มยืนยันการปฏิเสธตามสั่ง) -->
     <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">ปฏิเสธคำขอเป็นแฟน</h3>
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart-crack text-rose-500 mr-1"></i> ปฏิเสธคำขอเป็นแฟน</h3>
+            <p class="text-xs text-slate-500">กรุณากรอกชื่อและเหตุผลของคุณ</p>
             <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล (ไม่บังคับ)..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
-            <button onclick="submitRejectForm()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ส่งการปฏิเสธ</button>
+            <div class="flex gap-2 pt-2">
+                <button onclick="changeMindToAccept()" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-heart mr-1"></i> เปลี่ยนใจ (ตกลงเป็นแฟน)</button>
+                <button onclick="submitRejectForm()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
+            </div>
         </div>
     </div>
 
@@ -292,7 +295,6 @@
 
         async function initProfileDashboard() {
             const db = await getDB();
-            // รีเฟรชข้อมูล User
             const freshUser = db.users.find(u => u.id === currentUser.id);
             if (freshUser) { currentUser = freshUser; localStorage.setItem('current_user', JSON.stringify(currentUser)); }
 
@@ -316,9 +318,7 @@
                 sharedSection.classList.remove('opacity-50', 'pointer-events-none');
 
                 const couple = db.couples.find(c => c.id === currentUser.coupleId);
-                if (couple) {
-                    renderCoupleCard(couple);
-                }
+                if (couple) renderCoupleCard(couple);
             }
             renderNotifications();
         }
@@ -348,7 +348,6 @@
             window.location.href = 'index.html';
         }
 
-        // --- ระบบสร้างโค้ดขอเป็นแฟน 7 หลักสุ่ม ---
         async function generateProposalLink() {
             const randomCode = String(Math.floor(1000000 + Math.random() * 9000000));
             const db = await getDB();
@@ -361,7 +360,6 @@
             showCustomAlert('สร้างลิงก์สำเร็จ!', `คัดลอกลิงก์ขอเป็นแฟนเรียบร้อยแล้ว! (โค้ด: ${randomCode}) ส่งลิงก์นี้ให้อีกฝ่ายได้เลยครับ`);
         }
 
-        // --- หน้าขอเป็นแฟน & ยื้อ 6 ครั้ง ---
         async function handleProposalCodeLoad(code) {
             currentProposalCode = code;
             document.getElementById('view-profile').classList.add('hidden');
@@ -394,22 +392,19 @@
             "ครั้งสุดท้ายจริงๆ แล้วนะ... ยอมรับเถอะน้า!"
         ];
 
-        function moveRejectButton() {
-            const btn = document.getElementById('btn-reject-proposal');
-            const x = Math.random() * 150 - 75;
-            const y = Math.random() * 80 - 40;
-            btn.style.transform = `translate(${x}px, ${y}px)`;
-        }
-
         function rejectProposalStep() {
             rejectClickCount++;
             if (rejectClickCount < 6) {
                 const btn = document.getElementById('btn-reject-proposal');
                 btn.innerText = rejectMessages[rejectClickCount % rejectMessages.length];
-                moveRejectButton();
             } else {
                 document.getElementById('modal-reject-form').classList.remove('hidden');
             }
+        }
+
+        async function changeMindToAccept() {
+            document.getElementById('modal-reject-form').classList.add('hidden');
+            await acceptProposalStep();
         }
 
         async function submitRejectForm() {
@@ -443,15 +438,12 @@
             const sender = db.users.find(u => u.id === proposal.senderId);
             const receiver = currentUser;
 
-            // สร้าง Couple ID รูปแบบใหม่: 0000#000###
-            // 0000 = เวลา/วันที่คบ เช่น 1730 (เวลา 17:30 วันที่ 12)
             const now = new Date();
             const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-            const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay(); // จันทร์=1 ถึง อาทิตย์=7
+            const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
             let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
             db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
 
-            // ส่วนท้าย ### (AA0 ถึง ZZ9)
             let seqNum = db.globalCoupleCounter;
             let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
             let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
@@ -491,7 +483,6 @@
             setTimeout(() => { window.location.href = 'vault.html'; }, 2000);
         }
 
-        // --- บัตรคู่รัก & การแสดงผล ---
         function renderCoupleCard(couple) {
             document.getElementById('card-id-text').innerText = couple.id;
             document.getElementById('card-n1').innerText = couple.user1Name;
@@ -531,7 +522,6 @@
             timerInterval = setInterval(update, 1000);
         }
 
-        // --- โน้ตและความทรงจำ (แชร์กัน แต่ลบเฉพาะเจ้าของ) ---
         async function submitNote() {
             const title = document.getElementById('note-title').value.trim();
             const content = document.getElementById('note-content').value.trim();
@@ -581,7 +571,6 @@
             await saveDB(db);
         }
 
-        // --- อัปโหลดรูป (แชร์กัน แต่ลบเฉพาะเจ้าของ) ---
         function submitPhoto() {
             const fileInput = document.getElementById('upload-file-input');
             const caption = document.getElementById('upload-caption').value.trim() || 'ความทรงจำ';
@@ -636,7 +625,6 @@
             }
         }
 
-        // --- การแจ้งเตือนส่วนตัว ---
         function renderNotifications() {
             const notifs = currentUser.notifications || [];
             const badge = document.getElementById('notif-badge');
