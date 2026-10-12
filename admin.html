@@ -193,7 +193,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="border-b pb-3">
-                    <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i> รายการแจ้งปัญหาจากผู้ใช้</h3>
+                    <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i> รายการแจ้งปัญหาจากผู้ใช้ / ผู้เยี่ยมชม</h3>
                 </div>
                 <div id="admin-issues-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
                 <div id="empty-issues" class="text-center py-8 text-slate-400 text-xs hidden">ไม่มีรายการแจ้งปัญหา</div>
@@ -335,7 +335,6 @@
                 donateBadge.classList.add('hidden');
             }
 
-            // Render NSFW Photos Audit
             renderNSFWAudit();
 
             // Couples Table
@@ -430,7 +429,7 @@
                 });
             }
 
-            // Issues List
+            // Issues List (แสดงชื่อผู้เยี่ยมชมหรือชื่อคู่รักที่แจ้งปัญหา)
             const issuesList = document.getElementById('admin-issues-list');
             const emptyIssues = document.getElementById('empty-issues');
             issuesList.innerHTML = '';
@@ -441,12 +440,18 @@
             } else {
                 emptyIssues.classList.add('hidden');
                 requests.slice().reverse().forEach(req => {
+                    const isVisitor = req.coupleId === 'ผู้เยี่ยมชมเว็บ (Visitor)';
+                    const badgeHtml = isVisitor 
+                        ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded">ผู้เยี่ยมชมเว็บ</span>` 
+                        : `ID: <strong class="font-mono text-rose-600">${req.coupleId}</strong> (${req.names})`;
+
                     issuesList.innerHTML += `
                         <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-100 shadow-xs flex justify-between items-start gap-3">
                             <div class="space-y-1">
-                                <div class="text-[11px] text-slate-500 flex gap-2">
-                                    <span>${req.time}</span>
-                                    <span>ID: <strong class="font-mono text-rose-600">${req.coupleId}</strong></span>
+                                <div class="text-[11px] text-slate-500 flex items-center gap-2 flex-wrap">
+                                    <span><i class="fa-solid fa-clock mr-1"></i>${req.time}</span>
+                                    <span>| ผู้แจ้ง: <strong class="text-slate-800">${req.names}</strong></span>
+                                    <span>${badgeHtml}</span>
                                 </div>
                                 <p class="text-xs text-slate-800 font-medium">${req.content}</p>
                             </div>
