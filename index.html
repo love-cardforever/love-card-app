@@ -162,7 +162,7 @@
         </div>
     </div>
 
-    <!-- Modal ยืนยันคำขอเป็นแฟน (เปิดขึ้นมาทันทีเมื่อใส่โค้ดถูกต้อง) -->
+    <!-- Modal ยืนยันคำขอเป็นแฟน (กดตกลง หรือ ขอคิดดูก่อน) -->
     <div id="modal-proposal-popup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
             <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart">
@@ -176,9 +176,23 @@
                 <button onclick="acceptProposalFromPopup()" class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow transition text-sm">
                     ตกลงเป็นแฟน 🥰
                 </button>
-                <button onclick="rejectProposalFromPopup()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">
+                <button onclick="openRejectReasonModal()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">
                     ขอคิดดูก่อน 😜
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal กรอกชื่อและเหตุผลตอนปฏิเสธ (มีปุ่มเปลี่ยนใจและยืนยันการปฏิเสธ) -->
+    <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart-crack text-rose-500 mr-1"></i> ปฏิเสธคำขอเป็นแฟน</h3>
+            <p class="text-xs text-slate-500">กรุณากรอกชื่อและเหตุผลของคุณ</p>
+            <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล (ไม่บังคับ)..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            <div class="flex gap-2 pt-2">
+                <button onclick="changeMindToAccept()" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-heart mr-1"></i> เปลี่ยนใจ (ตกลงเป็นแฟน)</button>
+                <button onclick="submitRejectForm()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
             </div>
         </div>
     </div>
@@ -296,7 +310,6 @@
             });
         }
 
-        // เช็ค URL ตอนโหลดหน้า หากมีพารามิเตอร์ proposalCode ให้เปิดหน้าต่างยืนยันอัตโนมัติ
         window.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const proposalCode = urlParams.get('proposalCode');
@@ -462,8 +475,8 @@
                 id: coupleCardID,
                 user1Id: sender ? sender.id : 'UNKNOWN',
                 user1Name: sender ? sender.name : 'ผู้ส่งคำขอ',
-                user2Id: 'GUEST_PARTNER',
-                user2Name: 'คู่รักของคุณ',
+                user2Id: 'NEW_PARTNER',
+                user2Name: 'คู่รัก',
                 startDate: startDateStr,
                 startTime: startTimeStr,
                 status: 'ACTIVE',
@@ -491,12 +504,46 @@
 
             await saveDB(db);
             document.getElementById('modal-proposal-popup').classList.add('hidden');
-            showCustomAlert('สำเร็จ! 🎉', `ตกลงเป็นแฟนกันเรียบร้อย! รหัสบัตรคู่รักของคุณคือ: ${coupleCardID}`);
+            
+            // ให้เด้งเตือนให้ผู้ใช้ทำการสมัครสมาชิกหรือเข้าสู่ระบบเพื่อยืนยันตัวตน
+            showCustomAlert('ยินดีด้วย! 🎉', 'คุณตกลงเป็นแฟนกันแล้ว! กรุณาทำการ "สมัครสมาชิก" หรือ "เข้าสู่ระบบ" เพื่อเข้าสู่หน้าห้องความทรงจำและบัตรคู่รักของคุณ');
+            switchTab('login');
         }
 
-        function rejectProposalFromPopup() {
+        function openRejectReasonModal() {
             document.getElementById('modal-proposal-popup').classList.add('hidden');
-            showCustomAlert('ปฏิเสธคำขอ', 'คุณได้ปฏิเสธคำขอเป็นแฟนเรียบร้อยแล้ว');
+            document.getElementById('modal-reject-form').classList.remove('hidden');
+        }
+
+        async function changeMindToAccept() {
+            document.getElementById('modal-reject-form').classList.add('hidden');
+            await acceptProposalFromPopup();
+        }
+
+        async function submitRejectForm() {
+            const name = document.getElementById('reject-name-input').value.trim();
+            const reason = document.getElementById('reject-reason-input').value.trim() || 'ไม่มีเหตุผลระบุ';
+            if (!name) { showCustomAlert('กรุณากรอกชื่อ', 'โปรดระบุชื่อของคุณก่อนส่ง'); return; }
+
+            const db = await getDB();
+            const proposal = db.proposalCodes[activeProposalCodeKey];
+            if (proposal) {
+                proposal.status = 'REJECTED';
+                const sender = db.users.find(u => u.id === proposal.senderId);
+                if (sender) {
+                    if (!sender.notifications) sender.notifications = [];
+                    sender.notifications.push({
+                        id: Date.now(),
+                        type: 'PROPOSAL_REJECTED',
+                        message: `${name} ปฏิเสธคำขอ เนื่องจาก: "${reason}"`,
+                        time: new Date().toLocaleString(),
+                        read: false
+                    });
+                }
+                await saveDB(db);
+            }
+            document.getElementById('modal-reject-form').classList.add('hidden');
+            showCustomAlert('ส่งคำตอบแล้ว', 'ระบบได้ส่งผลการปฏิเสธคำขอไปยังผู้ส่งเรียบร้อยแล้ว');
         }
 
         async function submitIssue() {
