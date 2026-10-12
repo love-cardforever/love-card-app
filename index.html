@@ -53,7 +53,7 @@
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- HEADER (ปุ่มเข้าสู่ระบบลิงก์ไป vault.html แบบไม่มีวงเล็บ) -->
+    <!-- HEADER -->
     <header class="w-full max-w-2xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow">
@@ -64,9 +64,15 @@
                 <p class="text-[11px] text-rose-500 font-medium">ระบบออกบัตรออนไลน์</p>
             </div>
         </div>
-        <a href="vault.html" class="px-3 py-1.5 bg-rose-500 text-white text-xs font-semibold rounded-xl shadow transition hover:bg-rose-600">
-            <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
-        </a>
+        <div class="flex items-center gap-2">
+            <!-- ปุ่มแจ้งปัญหา -->
+            <button onclick="openIssueModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-black text-white text-xs font-semibold rounded-xl transition shadow">
+                <i class="fa-solid fa-headset mr-1"></i> แจ้งแอดมิน
+            </button>
+            <a href="vault.html" class="px-3 py-1.5 bg-rose-500 text-white text-xs font-semibold rounded-xl shadow transition hover:bg-rose-600">
+                <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
+            </a>
+        </div>
     </header>
 
     <main class="w-full max-w-xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
@@ -243,6 +249,37 @@
 
     </main>
 
+    <!-- MODAL: ISSUE / REPORT -->
+    <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1"></i> แจ้งปัญหาหรือข้อเสนอแนะถึงแอดมิน</h3>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อผู้แจ้งปัญหา</label>
+                <input type="text" id="issue-sender-name" placeholder="กรอกชื่อของคุณ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">รายละเอียดปัญหา</label>
+                <textarea id="issue-text" rows="4" placeholder="พิมพ์รายละเอียดปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
+                <i class="fa-solid fa-heart"></i>
+            </div>
+            <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือนระบบ</h3>
+            <p id="alert-message" class="text-xs text-slate-600 leading-relaxed">รายละเอียดข้อความ...</p>
+            <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
+        </div>
+    </div>
+
     <footer class="w-full max-w-2xl mx-auto mt-8 text-center text-xs text-slate-500">
         Love Card App &copy; 2026 by @mumu_apr200x​
     </footer>
@@ -274,6 +311,15 @@
             document.getElementById('time-start').value = "12:00";
             setupFingerprintScanner();
         });
+
+        function showCustomAlert(title, message) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('modal-custom-alert').classList.remove('hidden');
+        }
+        function closeCustomAlert() {
+            document.getElementById('modal-custom-alert').classList.add('hidden');
+        }
 
         function handleNoClick() {
             noCount++;
@@ -478,6 +524,41 @@
             document.execCommand('copy');
             document.body.removeChild(tempInput);
             alert(`คัดลอกเฉพาะ ID สำเร็จ: ${currentCoupleData.id}`);
+        }
+
+        // --- ISSUE MODAL FUNCTIONS ---
+        function openIssueModal() {
+            document.getElementById('modal-issue').classList.remove('hidden');
+        }
+        function closeIssueModal() {
+            document.getElementById('modal-issue').classList.add('hidden');
+        }
+        function submitIssue() {
+            const senderName = document.getElementById('issue-sender-name').value.trim();
+            const text = document.getElementById('issue-text').value.trim();
+
+            if (!senderName || !text) {
+                showCustomAlert('แจ้งเตือน', 'กรุณากรอกชื่อผู้แจ้งและรายละเอียดปัญหาให้ครบถ้วน');
+                return;
+            }
+
+            const db = DBManager.getDB();
+            if (!db.adminRequests) db.adminRequests = [];
+
+            db.adminRequests.push({
+                id: Date.now(),
+                coupleId: 'ผู้เยี่ยมชมเว็บ (Visitor)',
+                names: senderName,
+                type: 'ISSUE',
+                content: text,
+                time: new Date().toLocaleString()
+            });
+
+            DBManager.saveDB(db);
+            closeIssueModal();
+            document.getElementById('issue-sender-name').value = '';
+            document.getElementById('issue-text').value = '';
+            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อยแล้ว ขอบคุณสำหรับข้อเสนอแนะครับ');
         }
     </script>
 </body>
