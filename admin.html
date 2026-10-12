@@ -19,7 +19,6 @@
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- HEADER -->
     <header class="w-full max-w-6xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center shadow">
@@ -27,13 +26,12 @@
             </div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Pro Admin Dashboard</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบจัดการและควบคุมระบบหลังบ้านแบบครบวงจร</p>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบจัดการและควบคุมระบบหลังบ้าน (Cloud Connected)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="openDonateModal()" class="relative px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-mug-hot"></i> โดเนท Tipme
-                <span id="donate-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white text-[9px] rounded-full flex items-center justify-center font-bold hidden">0</span>
+            <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-qrcode text-amber-900"></i> ข้อมูลบัญชีรับเงิน
             </button>
             <a href="vault.html" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold rounded-xl transition">
                 <i class="fa-solid fa-vault mr-1"></i> ห้องความทรงจำ
@@ -46,7 +44,6 @@
 
     <main class="w-full max-w-6xl mx-auto flex-1 space-y-6">
 
-        <!-- STATS OVERVIEW -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="glass-card p-4 rounded-3xl flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-users"></i></div>
@@ -70,15 +67,14 @@
                 </div>
             </div>
             <div class="glass-card p-4 rounded-3xl flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-coins"></i></div>
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-wallet"></i></div>
                 <div>
-                    <span class="text-[11px] text-slate-500 font-medium block">ยอดโดเนทรวม</span>
-                    <h3 id="stat-total-donate" class="text-xl font-bold text-slate-800">0.00 บาท</h3>
+                    <span class="text-[11px] text-slate-500 font-medium block">ช่องทางรับเงิน</span>
+                    <h3 class="text-xs font-bold text-slate-800 pt-1 truncate">ธ.เกียรตินาคินภัทร</h3>
                 </div>
             </div>
         </div>
 
-        <!-- NSFW AUDIT -->
         <div class="glass-card p-6 rounded-3xl space-y-4 border-2 border-rose-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ตรวจสอบภาพลามกอนาจาร / ไม่เหมาะสม</h3>
@@ -88,7 +84,6 @@
             <div id="empty-nsfw" class="text-center py-8 text-slate-400 text-xs hidden">ไม่มีภาพถ่ายที่ไม่เหมาะสมรอการตรวจสอบ</div>
         </div>
 
-        <!-- BROADCAST -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
             <div class="border-b pb-3">
                 <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-bullhorn text-rose-500 mr-2"></i> ระบบส่งข้อความ / ประกาศ / ข่าวสาร</h3>
@@ -133,7 +128,6 @@
             </div>
         </div>
 
-        <!-- COUPLES MANAGEMENT -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart text-rose-500 mr-2"></i> จัดการคู่รักและเพิ่มโควต้าขอคืนดี</h3>
@@ -155,7 +149,6 @@
             <div id="empty-couples" class="text-center py-8 text-slate-400 text-xs hidden">ยังไม่มีข้อมูลคู่รักในระบบ</div>
         </div>
 
-        <!-- TRASH BIN -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-trash-can-arrow-up text-slate-600 mr-2"></i> ถังขยะบัญชีคู่รัก</h3>
@@ -176,7 +169,6 @@
             <div id="empty-trash" class="text-center py-8 text-slate-400 text-xs hidden">ถังขยะว่างเปล่า ไม่มีบัญชีที่ถูกลบ</div>
         </div>
 
-        <!-- ISSUES & AUDIT LOG -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="glass-card p-6 rounded-3xl space-y-4">
                 <div class="border-b pb-3">
@@ -196,7 +188,24 @@
         </div>
     </main>
 
-    <!-- MODALS -->
+    <!-- Modals -->
+    <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-qrcode text-amber-500 mr-1"></i> ข้อมูลบัญชีรับเงิน (PromptPay)</h3>
+                <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl inline-block shadow-inner">
+                <img src="promptpay.png" alt="PromptPay QR Code" class="w-48 h-48 object-contain mx-auto rounded-xl">
+            </div>
+            <div class="text-xs text-slate-700 space-y-1 bg-rose-50/80 p-3 rounded-2xl border border-rose-100 text-left">
+                <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
+                <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-sm">208-5886021</span></p>
+                <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-delete-option" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
             <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -211,21 +220,6 @@
         </div>
     </div>
 
-    <div id="modal-donate" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-mug-hot text-amber-500 mr-1"></i> ประวัติการโดเนทผ่าน Tipme</h3>
-                <button onclick="closeDonateModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="donate-list" class="space-y-3"></div>
-            <div class="pt-2">
-                <button onclick="simulateNewDonation()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-xl text-xs transition shadow">
-                    <i class="fa-solid fa-plus mr-1"></i> จำลองมีคนโดเนทเข้ามาใหม่
-                </button>
-            </div>
-        </div>
-    </div>
-
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-shield-heart"></i></div>
@@ -236,24 +230,44 @@
     </div>
 
     <footer class="w-full max-w-6xl mx-auto mt-8 text-center text-xs text-slate-500">
-        Love Vault Pro Admin Panel &copy; 2026
+        Love Vault Pro Admin Panel &copy; 2026 (Firebase Cloud Connected)
     </footer>
 
     <script>
-        const STORAGE_KEY = 'love_card_app_db_v1';
+        const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-        function getDB() {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return { couples: [], globalCounter: 1, adminRequests: [], trashCouples: [], adminLogs: [], donations: [], broadcasts: [], adminReportedPhotos: [] };
-            const db = JSON.parse(raw);
-            if (!db.trashCouples) db.trashCouples = [];
-            if (!db.adminLogs) db.adminLogs = [];
-            if (!db.donations) db.donations = [];
-            if (!db.broadcasts) db.broadcasts = [];
-            if (!db.adminReportedPhotos) db.adminReportedPhotos = [];
-            return db;
+        function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
+        function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
+
+        async function getDB() {
+            try {
+                const res = await fetch(`${FIREBASE_URL}/.json`);
+                const val = await res.json();
+                if (!val) {
+                    return { couples: [], globalCounter: 1, adminRequests: [], trashCouples: [], adminLogs: [], broadcasts: [], adminReportedPhotos: [] };
+                } else {
+                    return {
+                        couples: val.couples || [],
+                        globalCounter: val.globalCounter || 1,
+                        adminRequests: val.adminRequests || [],
+                        trashCouples: val.trashCouples || [],
+                        adminLogs: val.adminLogs || [],
+                        broadcasts: val.broadcasts || [],
+                        adminReportedPhotos: val.adminReportedPhotos || []
+                    };
+                }
+            } catch (e) {
+                return { couples: [], globalCounter: 1, adminRequests: [], trashCouples: [], adminLogs: [], broadcasts: [], adminReportedPhotos: [] };
+            }
         }
-        function saveDB(db) { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+
+        async function saveDB(db) {
+            await fetch(`${FIREBASE_URL}/.json`, {
+                method: 'PUT',
+                body: JSON.stringify(db),
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
 
         function showCustomAlert(title, message) {
             document.getElementById('alert-title').innerText = title;
@@ -278,30 +292,22 @@
             window.location.href = 'vault.html';
         }
 
-        function logAction(actionText) {
-            const db = getDB();
+        async function logAction(actionText) {
+            const db = await getDB();
             if (!db.adminLogs) db.adminLogs = [];
             db.adminLogs.push({ id: Date.now(), action: actionText, time: new Date().toLocaleString() });
-            saveDB(db);
+            await saveDB(db);
         }
 
-        function loadAdminData() {
-            const db = getDB();
-            checkTrashAutoExpiration();
+        async function loadAdminData() {
+            const db = await getDB();
+            await checkTrashAutoExpiration();
 
             document.getElementById('stat-total-couples').innerText = `${db.couples.length} คู่`;
             document.getElementById('stat-total-issues').innerText = `${(db.adminRequests || []).length} รายการ`;
             document.getElementById('stat-total-trash').innerText = `${(db.trashCouples || []).length} บัญชี`;
 
-            const totalDonate = (db.donations || []).reduce((sum, d) => sum + d.amount, 0);
-            document.getElementById('stat-total-donate').innerText = `${totalDonate.toFixed(2)} บาท`;
-
-            const unreadDonates = (db.donations || []).filter(d => !d.read);
-            const donateBadge = document.getElementById('donate-badge');
-            if (unreadDonates.length > 0) { donateBadge.innerText = unreadDonates.length; donateBadge.classList.remove('hidden'); }
-            else { donateBadge.classList.add('hidden'); }
-
-            renderNSFWAudit();
+            renderNSFWAudit(db);
 
             const tableBody = document.getElementById('admin-couples-table');
             const emptyCouples = document.getElementById('empty-couples');
@@ -385,16 +391,12 @@
             else {
                 emptyIssues.classList.add('hidden');
                 requests.slice().reverse().forEach(req => {
-                    const isVisitor = req.coupleId === 'ผู้เยี่ยมชมเว็บ (Visitor)';
-                    const badgeHtml = isVisitor ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded">ผู้เยี่ยมชมเว็บ</span>` : `ID: <strong class="font-mono text-rose-600">${req.coupleId}</strong> (${req.names})`;
-
                     issuesList.innerHTML += `
                         <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-100 shadow-xs flex justify-between items-start gap-3">
                             <div class="space-y-1">
                                 <div class="text-[11px] text-slate-500 flex items-center gap-2 flex-wrap">
                                     <span><i class="fa-solid fa-clock mr-1"></i>${req.time}</span>
-                                    <span>| ผู้แจ้ง: <strong class="text-slate-800">${req.names}</strong></span>
-                                    <span>${badgeHtml}</span>
+                                    <span>| ID: <strong class="font-mono text-rose-600">${req.coupleId}</strong> (${req.names})</span>
                                 </div>
                                 <p class="text-xs text-slate-800 font-medium">${req.content}</p>
                             </div>
@@ -423,8 +425,7 @@
             }
         }
 
-        function renderNSFWAudit() {
-            const db = getDB();
+        function renderNSFWAudit(db) {
             const grid = document.getElementById('nsfw-audit-grid');
             const empty = document.getElementById('empty-nsfw');
             const badge = document.getElementById('badge-nsfw-count');
@@ -458,8 +459,8 @@
             });
         }
 
-        function warnUserNSFW(coupleId, uploaderName) {
-            const db = getDB();
+        async function warnUserNSFW(coupleId, uploaderName) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === coupleId);
             if (couple) {
                 const targetRole = couple.name1 === uploaderName ? 'name1' : 'name2';
@@ -468,21 +469,21 @@
                     id: Date.now(),
                     targetRole: targetRole,
                     type: 'WARNING_NSFW',
-                    message: `⚠️ ประกาศตักเตือนจากแอดมิน: คุณได้ทำการอัปโหลดรูปภาพเข้าข่ายลามกอนาจาร/ไม่เหมาะสม ซึ่งฝ่าฝืนกฎการใช้งานระบบ`,
+                    message: `⚠️ ประกาศตักเตือนจากแอดมิน: คุณได้ทำการอัปโหลดรูปภาพเข้าข่ายลามกอนาจาร/ไม่เหมาะสม`,
                     time: new Date().toLocaleString(),
                     status: 'INFO'
                 });
-                saveDB(db);
-                logAction(`ส่งคำเตือนเรื่องภาพไม่เหมาะสมไปยัง ${uploaderName} (ID: ${coupleId})`);
+                await saveDB(db);
+                await logAction(`ส่งคำเตือนเรื่องภาพไม่เหมาะสมไปยัง ${uploaderName} (ID: ${coupleId})`);
                 showCustomAlert('ส่งคำเตือนสำเร็จ', `ส่งข้อความตักเตือนไปยัง ${uploaderName} เรียบร้อยแล้ว`);
             }
         }
 
-        function deleteNSFWPhoto(photoId) {
-            const db = getDB();
+        async function deleteNSFWPhoto(photoId) {
+            const db = await getDB();
             db.adminReportedPhotos = (db.adminReportedPhotos || []).filter(p => p.id !== photoId);
-            saveDB(db);
-            logAction(`ลบภาพไม่เหมาะสม/ลามกอนาจาร ID: ${photoId} ถาวร`);
+            await saveDB(db);
+            await logAction(`ลบภาพไม่เหมาะสม ID: ${photoId} ถาวร`);
             loadAdminData();
             showCustomAlert('ลบสำเร็จ', 'ลบภาพออกจากระบบอย่างถาวรเรียบร้อยแล้ว');
         }
@@ -498,8 +499,8 @@
             selectedCoupleIdForDelete = null;
         }
 
-        function confirmDeleteProcess(mode) {
-            const db = getDB();
+        async function confirmDeleteProcess(mode) {
+            const db = await getDB();
             const index = db.couples.findIndex(c => c.id === selectedCoupleIdForDelete);
             if (index === -1) { closeDeleteModal(); return; }
 
@@ -507,8 +508,8 @@
             couple.deletedAtTime = new Date().toLocaleString();
 
             if (mode === 'instant') {
-                logAction(`ลบถาวรบัญชีคู่รัก ID: ${selectedCoupleIdForDelete}`);
-                saveDB(db);
+                await logAction(`ลบถาวรบัญชีคู่รัก ID: ${selectedCoupleIdForDelete}`);
+                await saveDB(db);
                 closeDeleteModal();
                 loadAdminData();
                 showCustomAlert('สำเร็จ', 'ลบบัญชีคู่รักถาวรเรียบร้อยแล้ว');
@@ -516,74 +517,73 @@
             }
 
             let days = mode === '15days' ? 15 : 7;
-            const expireDate = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
-            couple.expireAt = expireDate;
+            couple.expireAt = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
 
             if (!db.trashCouples) db.trashCouples = [];
             db.trashCouples.push(couple);
 
-            saveDB(db);
-            logAction(`ย้ายบัญชีคู่รัก ID: ${selectedCoupleIdForDelete} ลงถังขยะ (${days} วัน)`);
+            await saveDB(db);
+            await logAction(`ย้ายบัญชีคู่รัก ID: ${selectedCoupleIdForDelete} ลงถังขยะ (${days} วัน)`);
             closeDeleteModal();
             loadAdminData();
             showCustomAlert('สำเร็จ', `ย้ายบัญชีไปถังขยะเรียบร้อย (ลบอัตโนมัติใน ${days} วัน)`);
         }
 
-        function checkTrashAutoExpiration() {
-            const db = getDB();
+        async function checkTrashAutoExpiration() {
+            const db = await getDB();
             if (!db.trashCouples) return;
             const now = new Date().getTime();
             const initialLen = db.trashCouples.length;
             db.trashCouples = db.trashCouples.filter(t => !t.expireAt || now < t.expireAt);
             if (db.trashCouples.length < initialLen) {
-                logAction('ระบบลบถาวรบัญชีในถังขยะอัตโนมัติเนื่องจากหมดอายุ');
-                saveDB(db);
+                await logAction('ระบบลบถาวรบัญชีในถังขยะอัตโนมัติเนื่องจากหมดอายุ');
+                await saveDB(db);
             }
         }
 
-        function deleteForever(coupleId) {
+        async function deleteForever(coupleId) {
             if (confirm(`คุณแน่ใจหรือไม่ที่จะลบบัญชี ID: ${coupleId} ออกจากถังขยะอย่างถาวร?`)) {
-                const db = getDB();
+                const db = await getDB();
                 db.trashCouples = db.trashCouples.filter(t => t.id !== coupleId);
-                saveDB(db);
-                logAction(`ลบถาวรบัญชี ID: ${coupleId} จากถังขยะ`);
+                await saveDB(db);
+                await logAction(`ลบถาวรบัญชี ID: ${coupleId} จากถังขยะ`);
                 loadAdminData();
                 showCustomAlert('สำเร็จ', 'ลบบัญชีถาวรเรียบร้อยแล้ว');
             }
         }
 
-        function addQuota(coupleId) {
-            const db = getDB();
+        async function addQuota(coupleId) {
+            const db = await getDB();
             const couple = db.couples.find(c => c.id === coupleId);
             if (couple) {
                 if (couple.reconcileQuota === undefined) couple.reconcileQuota = 3;
                 couple.reconcileQuota += 1;
-                saveDB(db);
-                logAction(`เพิ่มโควต้าขอคืนดีให้คู่รัก ID: ${coupleId} เป็น ${couple.reconcileQuota} ครั้ง`);
+                await saveDB(db);
+                await logAction(`เพิ่มโควต้าขอคืนดีให้คู่รัก ID: ${coupleId} เป็น ${couple.reconcileQuota} ครั้ง`);
                 loadAdminData();
                 showCustomAlert('สำเร็จ', `เพิ่มโควต้าให้คู่รัก ${coupleId} เรียบร้อยแล้ว`);
             }
         }
 
-        function restoreCouple(coupleId) {
-            const db = getDB();
+        async function restoreCouple(coupleId) {
+            const db = await getDB();
             const index = db.trashCouples.findIndex(t => t.id === coupleId);
             if (index !== -1) {
                 const couple = db.trashCouples.splice(index, 1)[0];
                 delete couple.deletedAtTime;
                 delete couple.expireAt;
                 db.couples.push(couple);
-                saveDB(db);
-                logAction(`กู้คืนบัญชีคู่รัก ID: ${coupleId} จากถังขยะ`);
+                await saveDB(db);
+                await logAction(`กู้คืนบัญชีคู่รัก ID: ${coupleId} จากถังขยะ`);
                 loadAdminData();
                 showCustomAlert('สำเร็จ', 'กู้คืนบัญชีคู่รักสำเร็จ');
             }
         }
 
-        function deleteIssue(issueId) {
-            const db = getDB();
+        async function deleteIssue(issueId) {
+            const db = await getDB();
             db.adminRequests = (db.adminRequests || []).filter(r => r.id !== issueId);
-            saveDB(db);
+            await saveDB(db);
             loadAdminData();
         }
 
@@ -597,14 +597,14 @@
             else if (type === 'SPECIFIC_PERSON') { coupleWrapper.classList.remove('hidden'); sideWrapper.classList.remove('hidden'); }
         }
 
-        function sendBroadcast(e) {
+        async function sendBroadcast(e) {
             e.preventDefault();
             const type = document.getElementById('bc-target-type').value;
             const content = document.getElementById('bc-content').value.trim();
             const coupleId = document.getElementById('bc-couple-id').value.trim();
             const side = document.getElementById('bc-person-side').value;
 
-            const db = getDB();
+            const db = await getDB();
             let targetRole = 'ALL';
             let targetCoupleId = null;
 
@@ -625,74 +625,21 @@
                 }
             });
 
-            saveDB(db);
-            logAction(`ส่งประกาศ (${type}): "${content}"`);
+            await saveDB(db);
+            await logAction(`ส่งประกาศ (${type}): "${content}"`);
             document.getElementById('bc-content').value = '';
             showCustomAlert('ส่งประกาศสำเร็จ', 'ประกาศถูกส่งไปยังผู้ใช้งานเรียบร้อยแล้ว');
             loadAdminData();
         }
 
-        function deleteBroadcast(broadcastId) {
-            const db = getDB();
+        async function deleteBroadcast(broadcastId) {
+            const db = await getDB();
             db.broadcasts = (db.broadcasts || []).filter(b => b.id !== broadcastId);
             db.couples.forEach(c => { if (c.notifications) c.notifications = c.notifications.filter(n => n.id !== broadcastId); });
-            saveDB(db);
-            logAction(`ลบประกาศ ID: ${broadcastId}`);
+            await saveDB(db);
+            await logAction(`ลบประกาศ ID: ${broadcastId}`);
             loadAdminData();
             showCustomAlert('สำเร็จ', 'ลบประกาศออกจากระบบเรียบร้อยแล้ว');
-        }
-
-        function openDonateModal() {
-            const db = getDB();
-            db.donations.forEach(d => d.read = true);
-            saveDB(db);
-            renderDonateModalContent();
-            document.getElementById('modal-donate').classList.remove('hidden');
-            loadAdminData();
-        }
-        function closeDonateModal() { document.getElementById('modal-donate').classList.add('hidden'); }
-
-        function renderDonateModalContent() {
-            const db = getDB();
-            const list = document.getElementById('donate-list');
-            list.innerHTML = '';
-            const donations = db.donations || [];
-
-            if (donations.length === 0) { list.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs">ยังไม่มีประวัติการโดเนท</div>'; }
-            else {
-                donations.slice().reverse().forEach(d => {
-                    list.innerHTML += `
-                        <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 flex justify-between items-center text-xs">
-                            <div>
-                                <span class="font-bold text-slate-800 block"><i class="fa-solid fa-mug-hot text-amber-600 mr-1"></i> ผู้สนับสนุน: ${d.sender}</span>
-                                <p class="text-slate-600 mt-0.5">ข้อความ: "${d.message}"</p>
-                                <span class="text-[10px] text-slate-400 mt-1 block">${d.time}</span>
-                            </div>
-                            <span class="font-bold text-emerald-600 text-sm bg-white px-3 py-1.5 rounded-xl shadow-2xs">+${d.amount.toFixed(2)} ฿</span>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        function simulateNewDonation() {
-            const db = getDB();
-            const names = ['พี่ปั๊ป', 'คุณเอ', 'น้องบี', 'แฟนคลับผู้ไม่ออกนาม', 'คู่รักสุขสันต์'];
-            const messages = ['สู้ๆ ครับแอด ระบบน่ารักมาก!', 'โดเนทเป็นค่ากาแฟครับ', 'ชอบฟีเจอร์ฉีกบัตรมาก เท่สุดๆ', 'พัฒนาต่อไปนะครับ!', 'สนับสนุนผลงานครับ'];
-            const amounts = [20, 50, 100, 300, 500];
-
-            const randomName = names[Math.floor(Math.random() * names.length)];
-            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-            const randomAmt = amounts[Math.floor(Math.random() * amounts.length)];
-
-            if (!db.donations) db.donations = [];
-            db.donations.push({ id: Date.now(), sender: randomName, message: randomMsg, amount: randomAmt, time: new Date().toLocaleString(), read: false });
-
-            saveDB(db);
-            logAction(`รับเงินโดเนทจาก ${randomName} จำนวน ${randomAmt} บาท`);
-            renderDonateModalContent();
-            loadAdminData();
-            showCustomAlert('💰 ยอดโดเนทเข้า!', `มีผู้สนับสนุน "${randomName}" โดเนทเข้ามา ${randomAmt} บาท`);
         }
     </script>
 </body>
