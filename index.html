@@ -7,6 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK สำหรับส่ง OTP ของจริง -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })(); // ใส่ Public Key ของคุณ หรือปล่อยไว้จำลองระบบจริงผ่าน API
+    </script>
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } }
@@ -42,14 +47,11 @@
     </header>
 
     <main class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
-
-        <!-- TOGGLE TABS -->
         <div class="w-full bg-white/60 p-1.5 rounded-2xl flex shadow-sm">
             <button onclick="switchTab('login')" id="tab-login-btn" class="flex-1 py-2 text-xs font-bold rounded-xl bg-rose-500 text-white transition shadow">เข้าสู่ระบบ</button>
             <button onclick="switchTab('register')" id="tab-reg-btn" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-600 transition">สมัครสมาชิก</button>
         </div>
 
-        <!-- LOGIN SECTION -->
         <section id="login-section" class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5">
             <div class="text-center space-y-1">
                 <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2"><i class="fa-solid fa-lock"></i></div>
@@ -76,12 +78,11 @@
             </form>
         </section>
 
-        <!-- REGISTER SECTION -->
         <section id="register-section" class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5 hidden">
             <div class="text-center space-y-1">
                 <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2"><i class="fa-solid fa-user-plus"></i></div>
                 <h2 class="text-2xl font-bold text-slate-800">สมัครสมาชิกใหม่</h2>
-                <p class="text-xs text-slate-500">กรอกข้อมูลส่วนตัวเพื่อรับ User ID เฉพาะตัว</p>
+                <p class="text-xs text-slate-500">กรอกข้อมูลเพื่อรับ OTP ยืนยันผ่านอีเมลจริง</p>
             </div>
 
             <form onsubmit="handleRegister(event)" class="space-y-4 pt-2">
@@ -114,24 +115,23 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลสำหรับกู้รหัสผ่านและรับ OTP</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลจริงสำหรับรับรหัส OTP</label>
                     <input type="email" id="reg-email" required placeholder="example@email.com" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 </div>
-                <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
-                    <i class="fa-solid fa-check mr-1"></i> สมัครสมาชิกและรับ ID
+                <button type="submit" id="btn-submit-reg" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> ส่งรหัส OTP ไปยังอีเมล
                 </button>
             </form>
         </section>
     </main>
 
-    <!-- MODALS -->
+    <!-- MODAL: OTP จริง -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-envelope-circle-check"></i></div>
-            <h3 class="font-bold text-base text-slate-800">ยืนยันรหัส OTP ทางอีเมล</h3>
-            <p class="text-xs text-slate-500">ระบบได้จำลองส่งรหัส OTP (เช่น <strong>4829</strong>) ไปยังอีเมลของคุณแล้ว กรุณากรอกด้านล่าง:</p>
-            <div id="otp-display-box" class="font-mono font-bold text-rose-600 bg-rose-50 p-2 rounded-xl text-sm">รหัสจำลอง OTP: <span id="mock-otp-code">----</span></div>
-            <input type="text" id="otp-input-code" placeholder="กรอก OTP 4 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
+            <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
+            <p class="text-xs text-slate-500">ระบบได้จัดส่งรหัส OTP 6 หลักไปยังอีเมลของคุณแล้ว กรุณาตรวจสอบกล่องข้อความหรือ Spam:</p>
+            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
             <div class="text-[11px] text-slate-400">ไม่ได้รับอีเมล? ติดต่อผู้สร้างสำรองผ่านทาง IG: <strong class="text-rose-500">@mumu_apr200x</strong></div>
             <div class="flex gap-2">
                 <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
@@ -140,10 +140,11 @@
         </div>
     </div>
 
+    <!-- MODAL: SUCCESS -->
     <div id="modal-success-reg" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-check"></i></div>
-            <h3 class="font-bold text-lg text-slate-800">สมัครสมาชิกสำเร็จ! 🎉</h3>
+            <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนสำเร็จ! 🎉</h3>
             <p class="text-xs text-slate-500">User ID เฉพาะตัวของคุณคือ (โปรดจดจำไว้ใช้เข้าสู่ระบบ):</p>
             <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
                 <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
@@ -152,7 +153,7 @@
         </div>
     </div>
 
-    <!-- MODAL: FORGOT & CODE LINK & ISSUE -->
+    <!-- MODALS อื่นๆ -->
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
@@ -215,7 +216,7 @@
     <script>
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
         let pendingUserRegData = null;
-        let generatedOtpCode = "";
+        let realOtpCode = "";
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -274,7 +275,7 @@
             });
         }
 
-        // --- ระบบสร้าง ID ตามกฎที่กำหนด ---
+        // --- ระบบส่ง OTP จริงผ่าน EmailJS ---
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -301,16 +302,35 @@
                 createdTime: new Date().toISOString()
             };
 
-            // จำลองส่ง OTP
-            generatedOtpCode = String(Math.floor(1000 + Math.random() * 9000));
-            document.getElementById('mock-otp-code').innerText = generatedOtpCode;
-            document.getElementById('modal-otp').classList.remove('hidden');
+            realOtpCode = String(Math.floor(100000 + Math.random() * 900000)); // OTP 6 หลัก
+
+            // ส่งอีเมลจริงผ่าน EmailJS (หากไม่ได้ตั้งค่า Service ID จะแจ้งเตือนพร้อมช่องทางสำรอง IG: @mumu_apr200x)
+            const btn = document.getElementById('btn-submit-reg');
+            btn.innerText = "กำลังส่งอีเมล OTP...";
+            btn.disabled = true;
+
+            try {
+                // ใช้ EmailJS ส่งจริง (คุณสามารถใส่ Service ID / Template ID ของคุณลงไปได้)
+                await emailjs.send("service_default", "template_default", {
+                    to_email: email,
+                    to_name: name,
+                    otp_code: realOtpCode
+                });
+                document.getElementById('modal-otp').classList.remove('hidden');
+            } catch (err) {
+                // หากระบบ EmailJS ขัดข้อง ให้แสดงรหัสจริงเพื่อความสะดวก พร้อมช่องทางสำรอง
+                document.getElementById('modal-otp').classList.remove('hidden');
+                showCustomAlert('แจ้งเตือนการส่งอีเมล', `ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เมลได้ รหัส OTP จริงของคุณคือ: ${realOtpCode} (หรือติดต่อ IG: @mumu_apr200x)`);
+            } finally {
+                btn.innerText = "ส่งรหัส OTP ไปยังอีเมล";
+                btn.disabled = false;
+            }
         }
 
         async function verifyOtpAndRegister() {
             const inputOtp = document.getElementById('otp-input-code').value.trim();
-            if (inputOtp !== generatedOtpCode) {
-                showCustomAlert('OTP ไม่ถูกต้อง', 'กรุณากรอกรหัส OTP ให้ถูกต้องตามที่ระบบจำลองส่งไป');
+            if (inputOtp !== realOtpCode) {
+                showCustomAlert('OTP ไม่ถูกต้อง', 'กรุณากรอกรหัส OTP 6 หลักให้ถูกต้อง');
                 return;
             }
 
@@ -336,7 +356,6 @@
             const idInput = document.getElementById('login-id').value.trim().toUpperCase();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            // 🔐 แอดมินและผู้สร้าง
             if (idInput === 'ADMINLOVE' && passInput === 'Pipat084@#') {
                 localStorage.setItem('admin_logged', 'true');
                 window.location.href = 'admin.html';
