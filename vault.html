@@ -144,7 +144,7 @@
             </div>
         </section>
 
-        <!-- VIEW 2: PROPOSAL WIZARD INTERFACE (ปุ่มปฏิเสธนิ่ง และมีปุ่มเปลี่ยนใจ) -->
+        <!-- VIEW 2: PROPOSAL WIZARD INTERFACE -->
         <section id="view-proposal-wizard" class="w-full max-w-xl glass-card p-8 rounded-3xl text-center space-y-6 hidden">
             <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart"><i class="fa-solid fa-ring"></i></div>
             <div class="space-y-2">
@@ -183,7 +183,6 @@
         </div>
     </div>
 
-    <!-- MODAL REJECT (เพิ่มปุ่มเปลี่ยนใจและปุ่มยืนยันการปฏิเสธตามสั่ง) -->
     <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart-crack text-rose-500 mr-1"></i> ปฏิเสธคำขอเป็นแฟน</h3>
@@ -197,6 +196,7 @@
         </div>
     </div>
 
+    <!-- NOTIFICATION MODAL (แก้ไขให้กดเปิดแล้วอัปเดตเป็นอ่านแล้ว ตัวเลขหายทันที) -->
     <div id="modal-notif" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -242,7 +242,23 @@
         function closeNoteModal() { document.getElementById('modal-note').classList.add('hidden'); }
         function openUploadModal() { document.getElementById('modal-upload').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('modal-upload').classList.add('hidden'); }
-        function openNotificationModal() { document.getElementById('modal-notif').classList.remove('hidden'); }
+
+        // 🔔 เปิดกล่องแจ้งเตือน พร้อมเปลี่ยนสถานะเป็นอ่านแล้วเพื่อให้ตัวเลขแจ้งเตือนหายไปทันที
+        async function openNotificationModal() {
+            if (currentUser && currentUser.notifications) {
+                currentUser.notifications.forEach(n => n.read = true);
+                const db = await getDB();
+                const uIndex = db.users.findIndex(u => u.id === currentUser.id);
+                if (uIndex !== -1) {
+                    db.users[uIndex].notifications = currentUser.notifications;
+                    await saveDB(db);
+                }
+                localStorage.setItem('current_user', JSON.stringify(currentUser));
+                renderNotifications();
+            }
+            document.getElementById('modal-notif').classList.remove('hidden');
+        }
+
         function closeNotificationModal() { document.getElementById('modal-notif').classList.add('hidden'); }
 
         function showCustomAlert(title, message) {
@@ -362,23 +378,17 @@
 
         async function handleProposalCodeLoad(code) {
             currentProposalCode = code;
-            document.getElementById('view-profile').classList.add('hidden');
-            document.getElementById('view-proposal-wizard').classList.remove('hidden');
-
             const db = await getDB();
             const proposal = db.proposalCodes ? db.proposalCodes[code] : null;
-            if (!proposal) {
-                document.getElementById('proposal-title-text').innerText = 'ไม่พบโค้ดนี้ในระบบ ❌';
-                document.getElementById('proposal-desc-text').innerText = 'โค้ดอาจไม่ถูกต้องหรือถูกใช้งานไปแล้ว';
-                document.getElementById('proposal-action-box').innerHTML = '<a href="index.html" class="px-6 py-2.5 bg-rose-500 text-white rounded-xl text-xs font-bold">กลับหน้าแรก</a>';
-                return;
-            }
-            if (proposal.status !== 'PENDING') {
-                document.getElementById('proposal-title-text').innerText = 'โค้ดนี้ถูกใช้งานไปแล้วครับ ⚠️';
-                document.getElementById('proposal-action-box').innerHTML = '<a href="index.html" class="px-6 py-2.5 bg-rose-500 text-white rounded-xl text-xs font-bold">กลับหน้าแรก</a>';
+
+            // หากเป็นเจ้าของลิงก์เอง หรือมีคู่รักอยู่แล้ว ให้ข้ามหน้าขอเป็นแฟนไปหน้าโปรไฟล์ปกติทันที
+            if (!proposal || proposal.status !== 'PENDING' || proposal.senderId === currentUser.id || currentUser.coupleId) {
+                window.location.href = 'vault.html';
                 return;
             }
 
+            document.getElementById('view-profile').classList.add('hidden');
+            document.getElementById('view-proposal-wizard').classList.remove('hidden');
             document.getElementById('proposal-title-text').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนของคุณ 💕`;
         }
 
@@ -423,11 +433,12 @@
                     id: Date.now(),
                     type: 'PROPOSAL_REJECTED',
                     message: `${name} ปฏิเสธคำขอ เนื่องจาก: "${reason}"`,
-                    time: new Date().toLocaleString()
+                    time: new Date().toLocaleString(),
+                    read: false
                 });
             }
             await saveDB(db);
-            window.location.href = 'index.html';
+            window.location.href = 'vault.html';
         }
 
         async function acceptProposalStep() {
@@ -475,6 +486,15 @@
 
             sender.coupleId = coupleCardID;
             receiver.coupleId = coupleCardID;
+
+            if (!sender.notifications) sender.notifications = [];
+            sender.notifications.push({
+                id: Date.now(),
+                type: 'PROPOSAL_ACCEPTED',
+                message: `${receiver.name} ได้ตกลงรับคำขอเป็นแฟนของคุณแล้ว! ยินดีด้วยนะครับ ❤️`,
+                time: new Date().toLocaleString(),
+                read: false
+            });
 
             await saveDB(db);
             localStorage.setItem('current_user', JSON.stringify(receiver));
@@ -627,9 +647,16 @@
 
         function renderNotifications() {
             const notifs = currentUser.notifications || [];
+            // นับเฉพาะแจ้งเตือนที่ยังไม่ได้อ่าน (read !== true)
+            const unreadCount = notifs.filter(n => !n.read).length;
             const badge = document.getElementById('notif-badge');
-            if (notifs.length > 0) { badge.innerText = notifs.length; badge.classList.remove('hidden'); }
-            else { badge.classList.add('hidden'); }
+            
+            if (unreadCount > 0) {
+                badge.innerText = unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
 
             const listElem = document.getElementById('notif-list');
             listElem.innerHTML = '';
