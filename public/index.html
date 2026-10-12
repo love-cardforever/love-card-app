@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Card - ระบบบัตรคู่รัก</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- ไลบรารีแปลง div บัตรเป็นรูปภาพดาวน์โหลด -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h2>💖 Love Card System 💖</h2>
+        
+        <!-- ส่วนที่ 1: ช่องเข้าสู่ระบบ / ใส่ไอดีบัตร / รหัสแอดมิน -->
+        <div class="section-box" id="loginSection">
+            <h3>🔑 เข้าสู่ระบบ / ใส่ไอดีบัตร</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="loginInput" placeholder="กรอกไอดีบัตร หรือ รหัสแอดมิน" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="passwordInput" placeholder="รหัสผ่าน (ถ้ามี เช่น แอดมิน)">
+                </div>
+                <button type="submit" class="btn-primary">เข้าสู่ระบบ</button>
+            </form>
+            <p style="margin-top: 10px;"><a href="#" id="forgotPassLink" style="font-size: 13px; color: #ff4d79; text-decoration: none;">⚠️ ลืมรหัสผ่าน? (ส่งอีเมลแอดมิน)</a></p>
+            
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+            <button type="button" id="showCreateBtn" class="btn-secondary">✨ ยังไม่มีบัตร? สร้างบัตรคู่รักใหม่</button>
+        </div>
+
+        <!-- ส่วนที่ 2: ฟอร์มสร้างบัตรความรักใหม่ (ซ่อนไว้ก่อน) -->
+        <div class="section-box hidden" id="createSection">
+            <h3>📝 สร้างบัตรความรักของคุณ</h3>
+            <form id="cardForm">
+                <div class="form-group">
+                    <label>ชื่อแฟนคนที่ 1:</label>
+                    <input type="text" id="partner1" required placeholder="เช่น นายเอ">
+                </div>
+                <div class="form-group">
+                    <label>ชื่อแฟนคนที่ 2:</label>
+                    <input type="text" id="partner2" required placeholder="เช่น นางสาวบี">
+                </div>
+                <div class="form-group">
+                    <label>วันที่เริ่มคบกัน:</label>
+                    <input type="date" id="startDate" required>
+                </div>
+                <button type="submit" class="btn-primary">สร้างบัตรและบันทึกข้อมูล</button>
+            </form>
+            <button type="button" id="backToLoginBtn" class="btn-secondary" style="background: #6c757d; margin-top: 10px;">⬅️ กลับไปหน้าเข้าสู่ระบบ</button>
+        </div>
+
+        <!-- ส่วนที่ 3: แสดงผลบัตรหลังสร้างเสร็จ -->
+        <div id="cardResult" class="hidden">
+            <div id="loveCard" class="card-pink">
+                <div class="card-header">💕 LOVE CARD 💕</div>
+                <div class="card-body">
+                    <p class="couple-names"><span id="p1Display"></span> ❤️ <span id="p2Display"></span></p>
+                    <p><strong>ระยะเวลาที่คบกัน:</strong> <span id="durationDisplay">กำลังคำนวณ...</span></p>
+                    <p class="card-id-text">รหัสไอดีบัตร: <span id="idDisplay"></span></p>
+                </div>
+            </div>
+            <button id="downloadBtn" class="btn-secondary">📥 บันทึกรูปภาพบัตรลงเครื่อง (บังคับ)</button>
+            <p class="notice">⚠️ บังคับดาวน์โหลดรูปภาพบัตรเก็บไว้เพื่อใช้ในฟังก์ชันอื่นๆ ต่อไป!</p>
+            <button type="button" onclick="location.reload()" class="btn-primary" style="margin-top: 10px; background: #6c757d;">🏠 กลับหน้าหลัก</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
