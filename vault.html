@@ -174,7 +174,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-book-bookmark text-rose-500 mr-2"></i> สมุดบันทึกความในใจส่วนตัว</h3>
-                        <p class="text-xs text-slate-500">เขียนโน้ตความรู้สึกเก็บไว้ (ย่ออัตโนมัติหากข้อยาว)</p>
+                        <p class="text-xs text-slate-500">เขียนโน้ตความรู้สึกเก็บไว้ (ซิงก์เรียลไทม์)</p>
                     </div>
                     <button onclick="openNoteModal()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow transition">
                         <i class="fa-solid fa-plus mr-1"></i> เขียนโน้ตใหม่
@@ -189,7 +189,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-2"></i> อัลบั้มรูปภาพแห่งความทรงจำ</h3>
-                        <p class="text-xs text-slate-500">แชร์ภาพความประทับใจร่วมกัน (มีระบบกรองความปลอดภัย)</p>
+                        <p class="text-xs text-slate-500">แชร์ภาพความประทับใจร่วมกัน (เรียลไทม์)</p>
                     </div>
                     <div class="flex gap-2">
                         <button onclick="openTrashModal()" class="relative px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-xs transition">
@@ -338,9 +338,6 @@
     </footer>
 
     <script>
-        /* ====================================================
-           SECURITY CONFIG & CORE ENGINE (ซ่อนและเข้ารหัสระบบ)
-           ================================================    */
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
         let currentSession = null;
         let timerInterval = null;
@@ -385,7 +382,6 @@
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            // 🔐 ซ่อน Admin Credential มิดชิดในระบบหลังบ้าน
             if (idInput === 'AdminLove' && passInput === 'Pipat084@#') {
                 localStorage.setItem('admin_logged', 'true');
                 window.location.href = 'admin.html';
@@ -405,6 +401,7 @@
             currentSession = { coupleId: couple.id, role: role };
             localStorage.setItem('current_session', JSON.stringify(currentSession));
             loadDashboard();
+            startRealtimeSync();
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -418,6 +415,7 @@
             }
         });
 
+        // 🔄 **ระบบซิงก์ข้อมูลแบบเรียลไทม์อัตโนมัติทุกๆ 2 วินาที (อัปเดตรูป, โน้ต, สถานะ, และแจ้งเตือนทันที)**
         function startRealtimeSync() {
             if (realtimeSyncInterval) clearInterval(realtimeSyncInterval);
             realtimeSyncInterval = setInterval(async () => {
@@ -425,10 +423,15 @@
                 const db = await getDB();
                 const couple = db.couples.find(c => c.id === currentSession.coupleId);
                 if (couple) {
-                    checkNotificationsCount(couple);
+                    const myName = currentSession.role === 'name1' ? couple.name1 : couple.name2;
+                    // อัปเดตข้อมูลบนหน้าจออัตโนมัติแบบเรียลไทม์
                     document.getElementById('dash-quota-badge').innerText = couple.reconcileQuota ?? 3;
+                    checkNotificationsCount(couple);
+                    renderNotes(couple);
+                    renderPhotos(couple, myName);
+                    renderTrash(couple);
                 }
-            }, 5000);
+            }, 2000); 
         }
 
         function logout() {
@@ -505,7 +508,7 @@
             startTimer(couple.startDate, couple.startTime);
             renderNotes(couple);
             renderPhotos(couple, myName);
-            renderTrash(couple, couple);
+            renderTrash(couple);
             checkNotificationsCount(couple);
             startRealtimeSync();
         }
