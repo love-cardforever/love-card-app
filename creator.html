@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Master Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } } }
+    </script>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #1e1b4b 0%, #31103f 100%); min-height: 100vh; color: #fff; }
+        .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col justify-between min-h-screen">
+    <header class="max-w-6xl mx-w-6xl mx-auto w-full flex justify-between items-center border-b border-white/10 pb-4">
+        <div>
+            <h1 class="font-bold text-xl text-rose-400"><i class="fa-solid fa-crown mr-2"></i> Creator Master Dashboard</h1>
+            <p class="text-xs text-slate-400">ผู้สร้างสูงสุด (Contact IG: @mumu_apr200x)</p>
+        </div>
+        <button onclick="localStorage.removeItem('creator_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-600 text-xs font-bold rounded-xl">ออกจากระบบ</button>
+    </header>
+
+    <main class="max-w-6xl mx-auto w-full flex-1 space-y-6 pt-6">
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+            <h3 class="font-bold text-base">ตรวจสอบข้อมูลคู่รักและผู้ใช้ทั้งหมดแบบเจาะลึก</h3>
+            <div id="creator-data-view" class="space-y-3 text-xs">กำลังโหลดข้อมูลคลาวด์...</div>
+        </div>
+    </main>
+
+    <script>
+        const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (localStorage.getItem('creator_logged') !== 'true') { window.location.href = 'index.html'; return; }
+            const res = await fetch(`${FIREBASE_URL}/.json`);
+            const db = await res.json() || { couples: [], users: [] };
+            const container = document.getElementById('creator-data-view');
+            container.innerHTML = `<p>จำนวนผู้ใช้ทั้งหมด: ${db.users.length} คน | จำนวนคู่รักทั้งหมด: ${db.couples.length} คู่</p>`;
+        });
+    </script>
+</body>
+</html>
