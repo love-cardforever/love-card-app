@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <!-- SECTION: NSFW PHOTO AUDIT (คลิกดูภาพเต็มได้) -->
+        <!-- SECTION: NSFW PHOTO AUDIT -->
         <div class="glass-card p-6 rounded-3xl space-y-4 border-2 border-rose-200">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ตรวจสอบภาพลามกอนาจาร / ไม่เหมาะสม</h3>
@@ -240,10 +240,8 @@
     </footer>
 
     <script>
-        /* ====================================================
-           SECURE ADMIN PANEL ENGINE (ซ่อนและป้องกันข้อมูลหลังบ้าน)
-           ================================================    */
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
+        let adminRealtimeSyncInterval = null;
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
@@ -294,9 +292,20 @@
             }
             checkTrashAutoExpiration();
             loadAdminData();
+            startAdminRealtimeSync();
         });
 
+        // 🔄 **ระบบซิงก์หน้าแอดมินแบบเรียลไทม์อัตโนมัติทุก 2 วินาที**
+        function startAdminRealtimeSync() {
+            if (adminRealtimeSyncInterval) clearInterval(adminRealtimeSyncInterval);
+            adminRealtimeSyncInterval = setInterval(async () => {
+                await checkTrashAutoExpiration();
+                loadAdminData();
+            }, 2000);
+        }
+
         function adminLogout() {
+            if (adminRealtimeSyncInterval) clearInterval(adminRealtimeSyncInterval);
             localStorage.removeItem('admin_logged');
             window.location.href = 'vault.html';
         }
@@ -310,7 +319,6 @@
 
         async function loadAdminData() {
             const db = await getDB();
-            await checkTrashAutoExpiration();
 
             document.getElementById('stat-total-couples').innerText = `${db.couples.length} คู่`;
             document.getElementById('stat-total-issues').innerText = `${(db.adminRequests || []).length} รายการ`;
@@ -351,7 +359,7 @@
             trashTable.innerHTML = '';
             const trashList = db.trashCouples || [];
 
-            if (trashList.length === 0) { emptyTrash.classList.remove('hidden'); }
+            if (trashList.length === 0) { emptyTrash.classList.add('hidden') ? null : emptyTrash.classList.remove('hidden'); }
             else {
                 emptyTrash.classList.add('hidden');
                 trashList.forEach(t => {
@@ -434,7 +442,6 @@
             }
         }
 
-        // --- NSFW PHOTO AUDIT & ADMIN ZOOM ---
         function renderNSFWAudit(db) {
             const grid = document.getElementById('nsfw-audit-grid');
             const empty = document.getElementById('empty-nsfw');
