@@ -7,28 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, deleteDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyC5Avh3Z39CVwXNLbhdVhTssAMzstlhZkM",
-            authDomain: "love-card-app-86e20.firebaseapp.com",
-            projectId: "love-card-app-86e20",
-            storageBucket: "love-card-app-86e20.firebasestorage.app",
-            messagingSenderId: "997011275927",
-            appId: "1:997011275927:web:8f887ad1405750829e29d2",
-            measurementId: "G-9X7E8KS6M2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.firebaseDB = { db, collection, getDocs, doc, deleteDoc, setDoc, updateDoc };
-    </script>
-
     <script>
         tailwind.config = {
             theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } }
@@ -49,10 +27,14 @@
             </div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Pro Admin Dashboard</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบหลังบ้านออนไลน์ (Cloud)</p>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบจัดการและควบคุมระบบหลังบ้านแบบครบวงจร</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="openDonateModal()" class="relative px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                <i class="fa-solid fa-mug-hot"></i> โดเนท Tipme
+                <span id="donate-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white text-[9px] rounded-full flex items-center justify-center font-bold hidden">0</span>
+            </button>
             <a href="vault.html" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-semibold rounded-xl transition">
                 <i class="fa-solid fa-vault mr-1"></i> ห้องความทรงจำ
             </a>
@@ -64,38 +46,94 @@
 
     <main class="w-full max-w-6xl mx-auto flex-1 space-y-6">
 
-        <!-- STATS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- STATS OVERVIEW -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="glass-card p-4 rounded-3xl flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg shadow-inner">
-                    <i class="fa-solid fa-users"></i>
-                </div>
+                <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-users"></i></div>
                 <div>
                     <span class="text-[11px] text-slate-500 font-medium block">คู่รักทั้งหมด</span>
                     <h3 id="stat-total-couples" class="text-xl font-bold text-slate-800">0 คู่</h3>
                 </div>
             </div>
             <div class="glass-card p-4 rounded-3xl flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg shadow-inner">
-                    <i class="fa-solid fa-headset"></i>
-                </div>
+                <div class="w-10 h-10 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-headset"></i></div>
                 <div>
                     <span class="text-[11px] text-slate-500 font-medium block">แจ้งปัญหา</span>
                     <h3 id="stat-total-issues" class="text-xl font-bold text-slate-800">0 รายการ</h3>
                 </div>
             </div>
             <div class="glass-card p-4 rounded-3xl flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-slate-200 text-slate-700 flex items-center justify-center text-lg shadow-inner">
-                    <i class="fa-solid fa-trash-can-arrow-up"></i>
-                </div>
+                <div class="w-10 h-10 rounded-2xl bg-slate-200 text-slate-700 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-trash-can-arrow-up"></i></div>
                 <div>
                     <span class="text-[11px] text-slate-500 font-medium block">ถังขยะบัญชีคู่รัก</span>
                     <h3 id="stat-total-trash" class="text-xl font-bold text-slate-800">0 บัญชี</h3>
                 </div>
             </div>
+            <div class="glass-card p-4 rounded-3xl flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg shadow-inner"><i class="fa-solid fa-coins"></i></div>
+                <div>
+                    <span class="text-[11px] text-slate-500 font-medium block">ยอดโดเนทรวม</span>
+                    <h3 id="stat-total-donate" class="text-xl font-bold text-slate-800">0.00 บาท</h3>
+                </div>
+            </div>
         </div>
 
-        <!-- COUPLES TABLE -->
+        <!-- NSFW AUDIT -->
+        <div class="glass-card p-6 rounded-3xl space-y-4 border-2 border-rose-200">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-rose-700"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ตรวจสอบภาพลามกอนาจาร / ไม่เหมาะสม</h3>
+                <span id="badge-nsfw-count" class="px-2.5 py-1 bg-rose-500 text-white text-xs font-bold rounded-full">0 รายการ</span>
+            </div>
+            <div id="nsfw-audit-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            <div id="empty-nsfw" class="text-center py-8 text-slate-400 text-xs hidden">ไม่มีภาพถ่ายที่ไม่เหมาะสมรอการตรวจสอบ</div>
+        </div>
+
+        <!-- BROADCAST -->
+        <div class="glass-card p-6 rounded-3xl space-y-4">
+            <div class="border-b pb-3">
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-bullhorn text-rose-500 mr-2"></i> ระบบส่งข้อความ / ประกาศ / ข่าวสาร</h3>
+                <p class="text-xs text-slate-500">เลือกกลุ่มเป้าหมายและส่งประกาศตรงถึงผู้ใช้งานระบบ</p>
+            </div>
+            <form onsubmit="sendBroadcast(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">กลุ่มเป้าหมาย</label>
+                        <select id="bc-target-type" onchange="toggleTargetSelect()" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none bg-white">
+                            <option value="ALL">ประกาศถึงทุกคู่รัก</option>
+                            <option value="SPECIFIC_COUPLE">เจาะจงเฉพาะคู่รัก (Couple ID)</option>
+                            <option value="SPECIFIC_PERSON">เจาะจงเฉพาะบุคคล (ระบุ ID และฝ่าย)</option>
+                        </select>
+                    </div>
+                    <div id="wrapper-couple-id" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ระบุ Couple ID</label>
+                        <input type="text" id="bc-couple-id" placeholder="เช่น 12A1000122026#01" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono">
+                    </div>
+                    <div id="wrapper-person-side" class="hidden">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">เลือกฝ่ายที่ต้องการส่งถึง</label>
+                        <select id="bc-person-side" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none bg-white">
+                            <option value="name1">ฝ่ายที่ 1 (Name 1)</option>
+                            <option value="name2">ฝ่ายที่ 2 (Name 2)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">เนื้อหาประกาศ / ข้อความข่าวสาร</label>
+                    <textarea id="bc-content" rows="3" required placeholder="พิมพ์ข้อความประกาศที่ต้องการส่ง..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit" class="px-5 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow transition text-xs">
+                        <i class="fa-solid fa-paper-plane mr-1"></i> ส่งประกาศทันที
+                    </button>
+                </div>
+            </form>
+            <div class="pt-4 border-t border-rose-100 space-y-3">
+                <h4 class="font-bold text-xs text-slate-700 uppercase tracking-wider"><i class="fa-solid fa-list-ul mr-1 text-rose-500"></i> ประวัติประกาศที่ส่งแล้วทั้งหมด</h4>
+                <div id="admin-broadcasts-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                <div id="empty-broadcasts" class="text-center py-4 text-slate-400 text-xs hidden">ยังไม่มีประวัติประกาศ</div>
+            </div>
+        </div>
+
+        <!-- COUPLES MANAGEMENT -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart text-rose-500 mr-2"></i> จัดการคู่รักและเพิ่มโควต้าขอคืนดี</h3>
@@ -108,39 +146,115 @@
                             <th class="py-3 px-3">ชื่อคู่รัก</th>
                             <th class="py-3 px-3">สถานะ</th>
                             <th class="py-3 px-3">โควต้าขอคืนดี</th>
-                            <th class="py-3 px-3 text-right">จัดการ</th>
+                            <th class="py-3 px-3 text-right">จัดการโควต้า & ลบ</th>
                         </tr>
                     </thead>
                     <tbody id="admin-couples-table"></tbody>
                 </table>
             </div>
-            <div id="empty-couples" class="text-center py-8 text-slate-400 text-xs hidden">ยังไม่มีข้อมูลคู่รัก</div>
+            <div id="empty-couples" class="text-center py-8 text-slate-400 text-xs hidden">ยังไม่มีข้อมูลคู่รักในระบบ</div>
         </div>
 
-        <!-- ISSUES -->
+        <!-- TRASH BIN -->
         <div class="glass-card p-6 rounded-3xl space-y-4">
-            <div class="border-b pb-3">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i> รายการแจ้งปัญหาจากผู้ใช้</h3>
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-trash-can-arrow-up text-slate-600 mr-2"></i> ถังขยะบัญชีคู่รัก</h3>
             </div>
-            <div id="admin-issues-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
-            <div id="empty-issues" class="text-center py-8 text-slate-400 text-xs hidden">ไม่มีรายการแจ้งปัญหา</div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs md:text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-slate-500 font-semibold">
+                            <th class="py-3 px-3">Couple ID</th>
+                            <th class="py-3 px-3">ชื่อคู่รัก</th>
+                            <th class="py-3 px-3">วันที่ถูกลบ / กำหนดลบถาวร</th>
+                            <th class="py-3 px-3 text-right">จัดการบัญชี</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-trash-table"></tbody>
+                </table>
+            </div>
+            <div id="empty-trash" class="text-center py-8 text-slate-400 text-xs hidden">ถังขยะว่างเปล่า ไม่มีบัญชีที่ถูกลบ</div>
         </div>
 
+        <!-- ISSUES & AUDIT LOG -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <div class="border-b pb-3">
+                    <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-amber-500 mr-2"></i> รายการแจ้งปัญหาจากผู้ใช้ / ผู้เยี่ยมชม</h3>
+                </div>
+                <div id="admin-issues-list" class="space-y-3 max-h-80 overflow-y-auto"></div>
+                <div id="empty-issues" class="text-center py-8 text-slate-400 text-xs hidden">ไม่มีรายการแจ้งปัญหา</div>
+            </div>
+
+            <div class="glass-card p-6 rounded-3xl space-y-4">
+                <div class="border-b pb-3">
+                    <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-clipboard-list text-slate-700 mr-2"></i> ประวัติการทำงานของแอดมิน (Audit Log)</h3>
+                </div>
+                <div id="admin-logs-list" class="space-y-2 max-h-80 overflow-y-auto"></div>
+                <div id="empty-logs" class="text-center py-8 text-slate-400 text-xs hidden">ยังไม่มีประวัติการทำงาน</div>
+            </div>
+        </div>
     </main>
 
-    <!-- CUSTOM ALERT MODAL -->
+    <!-- MODALS -->
+    <div id="modal-delete-option" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4 shadow-2xl text-center">
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3 class="font-bold text-base text-slate-800">เลือกระยะเวลาการลบ</h3>
+            <p class="text-xs text-slate-500">คุณต้องการจัดการบัญชีคู่รัก ID: <span id="del-modal-id" class="font-mono font-bold text-rose-600"></span> อย่างไร?</p>
+            <div class="space-y-2 pt-2">
+                <button onclick="confirmDeleteProcess('instant')" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs transition shadow">ลบถาวรทันที</button>
+                <button onclick="confirmDeleteProcess('7days')" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition shadow">เก็บไว้ในถังขยะ 7 วัน</button>
+                <button onclick="confirmDeleteProcess('15days')" class="w-full py-2.5 bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-xl text-xs transition shadow">เก็บไว้ในถังขยะ 15 วัน</button>
+                <button onclick="closeDeleteModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">ยกเลิก</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-donate" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-mug-hot text-amber-500 mr-1"></i> ประวัติการโดเนทผ่าน Tipme</h3>
+                <button onclick="closeDonateModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="donate-list" class="space-y-3"></div>
+            <div class="pt-2">
+                <button onclick="simulateNewDonation()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-900 font-bold rounded-xl text-xs transition shadow">
+                    <i class="fa-solid fa-plus mr-1"></i> จำลองมีคนโดเนทเข้ามาใหม่
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
-                <i class="fa-solid fa-shield-heart"></i>
-            </div>
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-shield-heart"></i></div>
             <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือนระบบ</h3>
             <p id="alert-message" class="text-xs text-slate-600 leading-relaxed">รายละเอียดข้อความ...</p>
             <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
         </div>
     </div>
 
+    <footer class="w-full max-w-6xl mx-auto mt-8 text-center text-xs text-slate-500">
+        Love Vault Pro Admin Panel &copy; 2026
+    </footer>
+
     <script>
+        const STORAGE_KEY = 'love_card_app_db_v1';
+
+        function getDB() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return { couples: [], globalCounter: 1, adminRequests: [], trashCouples: [], adminLogs: [], donations: [], broadcasts: [], adminReportedPhotos: [] };
+            const db = JSON.parse(raw);
+            if (!db.trashCouples) db.trashCouples = [];
+            if (!db.adminLogs) db.adminLogs = [];
+            if (!db.donations) db.donations = [];
+            if (!db.broadcasts) db.broadcasts = [];
+            if (!db.adminReportedPhotos) db.adminReportedPhotos = [];
+            return db;
+        }
+        function saveDB(db) { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+
         function showCustomAlert(title, message) {
             document.getElementById('alert-title').innerText = title;
             document.getElementById('alert-message').innerText = message;
@@ -149,11 +263,13 @@
         function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('admin_logged') !== 'true') {
-                alert('กรุณาเข้าสู่ระบบแอดมินก่อน');
+            const isAdminLogged = localStorage.getItem('admin_logged');
+            if (isAdminLogged !== 'true') {
+                alert('กรุณาเข้าสู่ระบบแอดมินก่อนใช้งาน');
                 window.location.href = 'vault.html';
                 return;
             }
+            checkTrashAutoExpiration();
             loadAdminData();
         });
 
@@ -162,106 +278,421 @@
             window.location.href = 'vault.html';
         }
 
-        async function loadAdminData() {
-            try {
-                const { db, collection, getDocs } = window.firebaseDB;
-                
-                // โหลด couples
-                const coupleSnap = await getDocs(collection(db, "couples"));
-                const couples = [];
-                coupleSnap.forEach(doc => couples.push(doc.data()));
+        function logAction(actionText) {
+            const db = getDB();
+            if (!db.adminLogs) db.adminLogs = [];
+            db.adminLogs.push({ id: Date.now(), action: actionText, time: new Date().toLocaleString() });
+            saveDB(db);
+        }
 
-                // โหลด issues
-                const issueSnap = await getDocs(collection(db, "adminRequests"));
-                const issues = [];
-                issueSnap.forEach(doc => issues.push({ firestoreId: doc.id, ...doc.data() }));
+        function loadAdminData() {
+            const db = getDB();
+            checkTrashAutoExpiration();
 
-                document.getElementById('stat-total-couples').innerText = `${couples.length} คู่`;
-                document.getElementById('stat-total-issues').innerText = `${issues.length} รายการ`;
+            document.getElementById('stat-total-couples').innerText = `${db.couples.length} คู่`;
+            document.getElementById('stat-total-issues').innerText = `${(db.adminRequests || []).length} รายการ`;
+            document.getElementById('stat-total-trash').innerText = `${(db.trashCouples || []).length} บัญชี`;
 
-                // Render Couples
-                const tableBody = document.getElementById('admin-couples-table');
-                const emptyCouples = document.getElementById('empty-couples');
-                tableBody.innerHTML = '';
+            const totalDonate = (db.donations || []).reduce((sum, d) => sum + d.amount, 0);
+            document.getElementById('stat-total-donate').innerText = `${totalDonate.toFixed(2)} บาท`;
 
-                if (couples.length === 0) {
-                    emptyCouples.classList.remove('hidden');
-                } else {
-                    emptyCouples.classList.add('hidden');
-                    couples.forEach(c => {
-                        const quota = c.reconcileQuota !== undefined ? c.reconcileQuota : 3;
-                        const statusBadge = c.status === 'BROKEN' 
-                            ? '<span class="px-2 py-0.5 bg-zinc-200 text-zinc-700 text-[10px] font-bold rounded-full">เลิกรา</span>'
-                            : '<span class="px-2 py-0.5 bg-pink-100 text-pink-700 text-[10px] font-bold rounded-full">ปกติ</span>';
+            const unreadDonates = (db.donations || []).filter(d => !d.read);
+            const donateBadge = document.getElementById('donate-badge');
+            if (unreadDonates.length > 0) { donateBadge.innerText = unreadDonates.length; donateBadge.classList.remove('hidden'); }
+            else { donateBadge.classList.add('hidden'); }
 
-                        tableBody.innerHTML += `
-                            <tr class="border-b border-rose-50 hover:bg-rose-50/50 transition">
-                                <td class="py-3 px-3 font-mono font-bold text-rose-600">${c.id}</td>
-                                <td class="py-3 px-3 font-semibold text-slate-800">${c.name1} & ${c.name2}</td>
-                                <td class="py-3 px-3">${statusBadge}</td>
-                                <td class="py-3 px-3 font-bold text-amber-600">${quota} ครั้ง</td>
-                                <td class="py-3 px-3 text-right space-x-1">
-                                    <button onclick="addQuota('${c.id}', ${quota})" class="px-2.5 py-1 bg-amber-500 text-white text-xs font-bold rounded-lg">เพิ่มโควต้า</button>
-                                    <button onclick="deleteCouple('${c.id}')" class="px-2.5 py-1 bg-rose-500 text-white text-xs font-bold rounded-lg">ลบ</button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                }
+            renderNSFWAudit();
 
-                // Render Issues
-                const issuesList = document.getElementById('admin-issues-list');
-                const emptyIssues = document.getElementById('empty-issues');
-                issuesList.innerHTML = '';
+            const tableBody = document.getElementById('admin-couples-table');
+            const emptyCouples = document.getElementById('empty-couples');
+            tableBody.innerHTML = '';
 
-                if (issues.length === 0) {
-                    emptyIssues.classList.remove('hidden');
-                } else {
-                    emptyIssues.classList.add('hidden');
-                    issues.forEach(req => {
-                        issuesList.innerHTML += `
-                            <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-100 shadow-xs flex justify-between items-start gap-3">
-                                <div class="space-y-1">
-                                    <div class="text-[11px] text-slate-500 flex items-center gap-2">
-                                        <span>${req.time}</span>
-                                        <span>| ผู้แจ้ง: <strong class="text-slate-800">${req.names}</strong></span>
-                                    </div>
-                                    <p class="text-xs text-slate-800 font-medium">${req.content}</p>
-                                </div>
-                                <button onclick="deleteIssue('${req.firestoreId}')" class="px-2.5 py-1 bg-slate-200 hover:bg-rose-500 hover:text-white text-slate-700 text-xs font-bold rounded-xl transition">ปิดงาน</button>
+            if (db.couples.length === 0) { emptyCouples.classList.remove('hidden'); }
+            else {
+                emptyCouples.classList.add('hidden');
+                db.couples.forEach(c => {
+                    if (c.reconcileQuota === undefined) c.reconcileQuota = 3;
+                    const statusBadge = c.status === 'BROKEN' 
+                        ? '<span class="px-2 py-0.5 bg-zinc-200 text-zinc-700 text-[10px] font-bold rounded-full">เลิกรา</span>'
+                        : '<span class="px-2 py-0.5 bg-pink-100 text-pink-700 text-[10px] font-bold rounded-full">ปกติ</span>';
+
+                    tableBody.innerHTML += `
+                        <tr class="border-b border-rose-50 hover:bg-rose-50/50 transition">
+                            <td class="py-3 px-3 font-mono font-bold text-rose-600">${c.id}</td>
+                            <td class="py-3 px-3 font-semibold text-slate-800">${c.name1} & ${c.name2}</td>
+                            <td class="py-3 px-3">${statusBadge}</td>
+                            <td class="py-3 px-3 font-bold text-amber-600">${c.reconcileQuota} ครั้ง</td>
+                            <td class="py-3 px-3 text-right space-x-1">
+                                <button onclick="addQuota('${c.id}')" class="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-xs transition"><i class="fa-solid fa-plus"></i> เพิ่มโควต้า</button>
+                                <button onclick="openDeleteModal('${c.id}')" class="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-lg shadow-xs transition"><i class="fa-solid fa-trash-can"></i> ลบ</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const trashTable = document.getElementById('admin-trash-table');
+            const emptyTrash = document.getElementById('empty-trash');
+            trashTable.innerHTML = '';
+            const trashList = db.trashCouples || [];
+
+            if (trashList.length === 0) { emptyTrash.classList.remove('hidden'); }
+            else {
+                emptyTrash.classList.add('hidden');
+                trashList.forEach(t => {
+                    const expireText = t.expireAt ? `ลบถาวรใน: ${new Date(t.expireAt).toLocaleDateString()}` : 'เก็บถาวร';
+                    trashTable.innerHTML += `
+                        <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                            <td class="py-3 px-3 font-mono font-bold text-slate-600">${t.id}</td>
+                            <td class="py-3 px-3 font-semibold text-slate-800">${t.name1} & ${t.name2}</td>
+                            <td class="py-3 px-3 text-slate-500 text-xs">${t.deletedAtTime} <br><span class="text-amber-600 font-semibold">${expireText}</span></td>
+                            <td class="py-3 px-3 text-right space-x-1">
+                                <button onclick="restoreCouple('${t.id}')" class="px-2.5 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-lg shadow-xs transition"><i class="fa-solid fa-rotate-left mr-1"></i> กู้คืน</button>
+                                <button onclick="deleteForever('${t.id}')" class="px-2.5 py-1 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-lg shadow-xs transition"><i class="fa-solid fa-xmark mr-1"></i> ลบถาวร</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const bcList = document.getElementById('admin-broadcasts-list');
+            const emptyBc = document.getElementById('empty-broadcasts');
+            bcList.innerHTML = '';
+            const broadcasts = db.broadcasts || [];
+
+            if (broadcasts.length === 0) { emptyBc.classList.remove('hidden'); }
+            else {
+                emptyBc.classList.add('hidden');
+                broadcasts.slice().reverse().forEach(b => {
+                    bcList.innerHTML += `
+                        <div class="p-3 rounded-2xl bg-white/80 border border-rose-100 shadow-2xs flex justify-between items-center text-xs">
+                            <div>
+                                <div class="text-[10px] text-slate-400 flex gap-2"><span>${b.time}</span><span class="font-bold text-rose-500 uppercase">เป้าหมาย: ${b.targetType}</span></div>
+                                <p class="text-slate-800 font-medium mt-0.5">${b.content}</p>
                             </div>
-                        `;
-                    });
-                }
-            } catch (err) { console.error(err); }
-        }
+                            <button onclick="deleteBroadcast(${b.id})" class="px-2.5 py-1 bg-rose-100 hover:bg-rose-500 hover:text-white text-rose-600 font-bold rounded-xl transition shrink-0"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    `;
+                });
+            }
 
-        async function addQuota(coupleId, currentQuota) {
-            try {
-                const { db, doc, updateDoc } = window.firebaseDB;
-                await updateDoc(doc(db, "couples", coupleId), { reconcileQuota: currentQuota + 1 });
-                showCustomAlert('สำเร็จ', 'เพิ่มโควต้าสำเร็จ');
-                loadAdminData();
-            } catch (err) { console.error(err); }
-        }
+            const issuesList = document.getElementById('admin-issues-list');
+            const emptyIssues = document.getElementById('empty-issues');
+            issuesList.innerHTML = '';
+            const requests = db.adminRequests || [];
 
-        async function deleteCouple(coupleId) {
-            if (confirm(`ยืนยันการลบบัญชี ID: ${coupleId}?`)) {
-                try {
-                    const { db, doc, deleteDoc } = window.firebaseDB;
-                    await deleteDoc(doc(db, "couples", coupleId));
-                    showCustomAlert('สำเร็จ', 'ลบบัญชีเรียบร้อย');
-                    loadAdminData();
-                } catch (err) { console.error(err); }
+            if (requests.length === 0) { emptyIssues.classList.remove('hidden'); }
+            else {
+                emptyIssues.classList.add('hidden');
+                requests.slice().reverse().forEach(req => {
+                    const isVisitor = req.coupleId === 'ผู้เยี่ยมชมเว็บ (Visitor)';
+                    const badgeHtml = isVisitor ? `<span class="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-[10px] font-bold rounded">ผู้เยี่ยมชมเว็บ</span>` : `ID: <strong class="font-mono text-rose-600">${req.coupleId}</strong> (${req.names})`;
+
+                    issuesList.innerHTML += `
+                        <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-100 shadow-xs flex justify-between items-start gap-3">
+                            <div class="space-y-1">
+                                <div class="text-[11px] text-slate-500 flex items-center gap-2 flex-wrap">
+                                    <span><i class="fa-solid fa-clock mr-1"></i>${req.time}</span>
+                                    <span>| ผู้แจ้ง: <strong class="text-slate-800">${req.names}</strong></span>
+                                    <span>${badgeHtml}</span>
+                                </div>
+                                <p class="text-xs text-slate-800 font-medium">${req.content}</p>
+                            </div>
+                            <button onclick="deleteIssue(${req.id})" class="px-2.5 py-1 bg-slate-200 hover:bg-rose-500 hover:text-white text-slate-700 text-xs font-bold rounded-xl transition shrink-0">ปิดงาน</button>
+                        </div>
+                    `;
+                });
+            }
+
+            const logsList = document.getElementById('admin-logs-list');
+            const emptyLogs = document.getElementById('empty-logs');
+            logsList.innerHTML = '';
+            const logs = db.adminLogs || [];
+
+            if (logs.length === 0) { emptyLogs.classList.remove('hidden'); }
+            else {
+                emptyLogs.classList.add('hidden');
+                logs.slice().reverse().forEach(l => {
+                    logsList.innerHTML += `
+                        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-0.5">
+                            <span class="text-[10px] text-slate-400 block"><i class="fa-solid fa-clock mr-1"></i>${l.time}</span>
+                            <p class="text-slate-700 font-medium">${l.action}</p>
+                        </div>
+                    `;
+                });
             }
         }
 
-        async function deleteIssue(firestoreId) {
-            try {
-                const { db, doc, deleteDoc } = window.firebaseDB;
-                await deleteDoc(doc(db, "adminRequests", firestoreId));
+        function renderNSFWAudit() {
+            const db = getDB();
+            const grid = document.getElementById('nsfw-audit-grid');
+            const empty = document.getElementById('empty-nsfw');
+            const badge = document.getElementById('badge-nsfw-count');
+            grid.innerHTML = '';
+
+            const list = db.adminReportedPhotos || [];
+            badge.innerText = `${list.length} รายการ`;
+
+            if (list.length === 0) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            list.slice().reverse().forEach(item => {
+                grid.innerHTML += `
+                    <div class="bg-white p-3 rounded-2xl border border-rose-200 shadow-sm space-y-3 flex flex-col justify-between">
+                        <div class="relative">
+                            <img src="${item.url}" class="w-full h-40 object-cover rounded-xl filter blur-xs hover:blur-none transition cursor-pointer" title="คลิกเพื่อดูรูปเต็ม">
+                            <span class="absolute top-2 left-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-md">ภาพเบลอเพื่อความปลอดภัย</span>
+                        </div>
+                        <div class="space-y-1 text-xs">
+                            <p class="font-bold text-slate-800 truncate">คำบรรยาย: ${item.caption}</p>
+                            <p class="text-slate-500">คู่รัก ID: <span class="font-mono text-rose-600">${item.coupleId}</span></p>
+                            <p class="text-slate-500">ผู้อัปโหลด: ${item.uploader} (${item.coupleNames})</p>
+                            <span class="text-[10px] text-slate-400 block"><i class="fa-solid fa-clock mr-1"></i>${item.time}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 pt-1">
+                            <button onclick="warnUserNSFW('${item.coupleId}', '${item.uploader}')" class="py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition shadow-2xs"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ส่งคำเตือน</button>
+                            <button onclick="deleteNSFWPhoto(${item.id})" class="py-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs transition shadow-2xs"><i class="fa-solid fa-trash-can mr-1"></i> ลบถาวร</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function warnUserNSFW(coupleId, uploaderName) {
+            const db = getDB();
+            const couple = db.couples.find(c => c.id === coupleId);
+            if (couple) {
+                const targetRole = couple.name1 === uploaderName ? 'name1' : 'name2';
+                if (!couple.notifications) couple.notifications = [];
+                couple.notifications.push({
+                    id: Date.now(),
+                    targetRole: targetRole,
+                    type: 'WARNING_NSFW',
+                    message: `⚠️ ประกาศตักเตือนจากแอดมิน: คุณได้ทำการอัปโหลดรูปภาพเข้าข่ายลามกอนาจาร/ไม่เหมาะสม ซึ่งฝ่าฝืนกฎการใช้งานระบบ`,
+                    time: new Date().toLocaleString(),
+                    status: 'INFO'
+                });
+                saveDB(db);
+                logAction(`ส่งคำเตือนเรื่องภาพไม่เหมาะสมไปยัง ${uploaderName} (ID: ${coupleId})`);
+                showCustomAlert('ส่งคำเตือนสำเร็จ', `ส่งข้อความตักเตือนไปยัง ${uploaderName} เรียบร้อยแล้ว`);
+            }
+        }
+
+        function deleteNSFWPhoto(photoId) {
+            const db = getDB();
+            db.adminReportedPhotos = (db.adminReportedPhotos || []).filter(p => p.id !== photoId);
+            saveDB(db);
+            logAction(`ลบภาพไม่เหมาะสม/ลามกอนาจาร ID: ${photoId} ถาวร`);
+            loadAdminData();
+            showCustomAlert('ลบสำเร็จ', 'ลบภาพออกจากระบบอย่างถาวรเรียบร้อยแล้ว');
+        }
+
+        let selectedCoupleIdForDelete = null;
+        function openDeleteModal(coupleId) {
+            selectedCoupleIdForDelete = coupleId;
+            document.getElementById('del-modal-id').innerText = coupleId;
+            document.getElementById('modal-delete-option').classList.remove('hidden');
+        }
+        function closeDeleteModal() {
+            document.getElementById('modal-delete-option').classList.add('hidden');
+            selectedCoupleIdForDelete = null;
+        }
+
+        function confirmDeleteProcess(mode) {
+            const db = getDB();
+            const index = db.couples.findIndex(c => c.id === selectedCoupleIdForDelete);
+            if (index === -1) { closeDeleteModal(); return; }
+
+            const couple = db.couples.splice(index, 1)[0];
+            couple.deletedAtTime = new Date().toLocaleString();
+
+            if (mode === 'instant') {
+                logAction(`ลบถาวรบัญชีคู่รัก ID: ${selectedCoupleIdForDelete}`);
+                saveDB(db);
+                closeDeleteModal();
                 loadAdminData();
-            } catch (err) { console.error(err); }
+                showCustomAlert('สำเร็จ', 'ลบบัญชีคู่รักถาวรเรียบร้อยแล้ว');
+                return;
+            }
+
+            let days = mode === '15days' ? 15 : 7;
+            const expireDate = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
+            couple.expireAt = expireDate;
+
+            if (!db.trashCouples) db.trashCouples = [];
+            db.trashCouples.push(couple);
+
+            saveDB(db);
+            logAction(`ย้ายบัญชีคู่รัก ID: ${selectedCoupleIdForDelete} ลงถังขยะ (${days} วัน)`);
+            closeDeleteModal();
+            loadAdminData();
+            showCustomAlert('สำเร็จ', `ย้ายบัญชีไปถังขยะเรียบร้อย (ลบอัตโนมัติใน ${days} วัน)`);
+        }
+
+        function checkTrashAutoExpiration() {
+            const db = getDB();
+            if (!db.trashCouples) return;
+            const now = new Date().getTime();
+            const initialLen = db.trashCouples.length;
+            db.trashCouples = db.trashCouples.filter(t => !t.expireAt || now < t.expireAt);
+            if (db.trashCouples.length < initialLen) {
+                logAction('ระบบลบถาวรบัญชีในถังขยะอัตโนมัติเนื่องจากหมดอายุ');
+                saveDB(db);
+            }
+        }
+
+        function deleteForever(coupleId) {
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบบัญชี ID: ${coupleId} ออกจากถังขยะอย่างถาวร?`)) {
+                const db = getDB();
+                db.trashCouples = db.trashCouples.filter(t => t.id !== coupleId);
+                saveDB(db);
+                logAction(`ลบถาวรบัญชี ID: ${coupleId} จากถังขยะ`);
+                loadAdminData();
+                showCustomAlert('สำเร็จ', 'ลบบัญชีถาวรเรียบร้อยแล้ว');
+            }
+        }
+
+        function addQuota(coupleId) {
+            const db = getDB();
+            const couple = db.couples.find(c => c.id === coupleId);
+            if (couple) {
+                if (couple.reconcileQuota === undefined) couple.reconcileQuota = 3;
+                couple.reconcileQuota += 1;
+                saveDB(db);
+                logAction(`เพิ่มโควต้าขอคืนดีให้คู่รัก ID: ${coupleId} เป็น ${couple.reconcileQuota} ครั้ง`);
+                loadAdminData();
+                showCustomAlert('สำเร็จ', `เพิ่มโควต้าให้คู่รัก ${coupleId} เรียบร้อยแล้ว`);
+            }
+        }
+
+        function restoreCouple(coupleId) {
+            const db = getDB();
+            const index = db.trashCouples.findIndex(t => t.id === coupleId);
+            if (index !== -1) {
+                const couple = db.trashCouples.splice(index, 1)[0];
+                delete couple.deletedAtTime;
+                delete couple.expireAt;
+                db.couples.push(couple);
+                saveDB(db);
+                logAction(`กู้คืนบัญชีคู่รัก ID: ${coupleId} จากถังขยะ`);
+                loadAdminData();
+                showCustomAlert('สำเร็จ', 'กู้คืนบัญชีคู่รักสำเร็จ');
+            }
+        }
+
+        function deleteIssue(issueId) {
+            const db = getDB();
+            db.adminRequests = (db.adminRequests || []).filter(r => r.id !== issueId);
+            saveDB(db);
+            loadAdminData();
+        }
+
+        function toggleTargetSelect() {
+            const type = document.getElementById('bc-target-type').value;
+            const coupleWrapper = document.getElementById('wrapper-couple-id');
+            const sideWrapper = document.getElementById('wrapper-person-side');
+            coupleWrapper.classList.add('hidden');
+            sideWrapper.classList.add('hidden');
+            if (type === 'SPECIFIC_COUPLE') coupleWrapper.classList.remove('hidden');
+            else if (type === 'SPECIFIC_PERSON') { coupleWrapper.classList.remove('hidden'); sideWrapper.classList.remove('hidden'); }
+        }
+
+        function sendBroadcast(e) {
+            e.preventDefault();
+            const type = document.getElementById('bc-target-type').value;
+            const content = document.getElementById('bc-content').value.trim();
+            const coupleId = document.getElementById('bc-couple-id').value.trim();
+            const side = document.getElementById('bc-person-side').value;
+
+            const db = getDB();
+            let targetRole = 'ALL';
+            let targetCoupleId = null;
+
+            if (type === 'SPECIFIC_COUPLE' || type === 'SPECIFIC_PERSON') {
+                if (!db.couples.some(c => c.id === coupleId)) { showCustomAlert('ไม่พบข้อมูล', 'ไม่พบ Couple ID นี้ในระบบ'); return; }
+                targetCoupleId = coupleId;
+                if (type === 'SPECIFIC_PERSON') targetRole = side;
+            }
+
+            const broadcastId = Date.now();
+            if (!db.broadcasts) db.broadcasts = [];
+            db.broadcasts.push({ id: broadcastId, targetType: type, targetCoupleId: targetCoupleId, targetRole: targetRole, content: content, time: new Date().toLocaleString() });
+
+            db.couples.forEach(c => {
+                if (!targetCoupleId || c.id === targetCoupleId) {
+                    if (!c.notifications) c.notifications = [];
+                    c.notifications.push({ id: broadcastId, targetRole: targetRole, type: 'ANNOUNCEMENT', message: `📢 ประกาศจากแอดมิน: ${content}`, time: new Date().toLocaleString(), status: 'INFO' });
+                }
+            });
+
+            saveDB(db);
+            logAction(`ส่งประกาศ (${type}): "${content}"`);
+            document.getElementById('bc-content').value = '';
+            showCustomAlert('ส่งประกาศสำเร็จ', 'ประกาศถูกส่งไปยังผู้ใช้งานเรียบร้อยแล้ว');
+            loadAdminData();
+        }
+
+        function deleteBroadcast(broadcastId) {
+            const db = getDB();
+            db.broadcasts = (db.broadcasts || []).filter(b => b.id !== broadcastId);
+            db.couples.forEach(c => { if (c.notifications) c.notifications = c.notifications.filter(n => n.id !== broadcastId); });
+            saveDB(db);
+            logAction(`ลบประกาศ ID: ${broadcastId}`);
+            loadAdminData();
+            showCustomAlert('สำเร็จ', 'ลบประกาศออกจากระบบเรียบร้อยแล้ว');
+        }
+
+        function openDonateModal() {
+            const db = getDB();
+            db.donations.forEach(d => d.read = true);
+            saveDB(db);
+            renderDonateModalContent();
+            document.getElementById('modal-donate').classList.remove('hidden');
+            loadAdminData();
+        }
+        function closeDonateModal() { document.getElementById('modal-donate').classList.add('hidden'); }
+
+        function renderDonateModalContent() {
+            const db = getDB();
+            const list = document.getElementById('donate-list');
+            list.innerHTML = '';
+            const donations = db.donations || [];
+
+            if (donations.length === 0) { list.innerHTML = '<div class="text-center py-8 text-slate-400 text-xs">ยังไม่มีประวัติการโดเนท</div>'; }
+            else {
+                donations.slice().reverse().forEach(d => {
+                    list.innerHTML += `
+                        <div class="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200 flex justify-between items-center text-xs">
+                            <div>
+                                <span class="font-bold text-slate-800 block"><i class="fa-solid fa-mug-hot text-amber-600 mr-1"></i> ผู้สนับสนุน: ${d.sender}</span>
+                                <p class="text-slate-600 mt-0.5">ข้อความ: "${d.message}"</p>
+                                <span class="text-[10px] text-slate-400 mt-1 block">${d.time}</span>
+                            </div>
+                            <span class="font-bold text-emerald-600 text-sm bg-white px-3 py-1.5 rounded-xl shadow-2xs">+${d.amount.toFixed(2)} ฿</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function simulateNewDonation() {
+            const db = getDB();
+            const names = ['พี่ปั๊ป', 'คุณเอ', 'น้องบี', 'แฟนคลับผู้ไม่ออกนาม', 'คู่รักสุขสันต์'];
+            const messages = ['สู้ๆ ครับแอด ระบบน่ารักมาก!', 'โดเนทเป็นค่ากาแฟครับ', 'ชอบฟีเจอร์ฉีกบัตรมาก เท่สุดๆ', 'พัฒนาต่อไปนะครับ!', 'สนับสนุนผลงานครับ'];
+            const amounts = [20, 50, 100, 300, 500];
+
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            const randomAmt = amounts[Math.floor(Math.random() * amounts.length)];
+
+            if (!db.donations) db.donations = [];
+            db.donations.push({ id: Date.now(), sender: randomName, message: randomMsg, amount: randomAmt, time: new Date().toLocaleString(), read: false });
+
+            saveDB(db);
+            logAction(`รับเงินโดเนทจาก ${randomName} จำนวน ${randomAmt} บาท`);
+            renderDonateModalContent();
+            loadAdminData();
+            showCustomAlert('💰 ยอดโดเนทเข้า!', `มีผู้สนับสนุน "${randomName}" โดเนทเข้ามา ${randomAmt} บาท`);
         }
     </script>
 </body>
