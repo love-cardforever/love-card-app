@@ -9,6 +9,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5Avh3Z39CVwXNLbhdVhTssAMzstlhZkM",
+            authDomain: "love-card-app-86e20.firebaseapp.com",
+            projectId: "love-card-app-86e20",
+            storageBucket: "love-card-app-86e20.firebasestorage.app",
+            messagingSenderId: "997011275927",
+            appId: "1:997011275927:web:8f887ad1405750829e29d2",
+            measurementId: "G-9X7E8KS6M2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.firebaseDB = { db, doc, setDoc, getDoc, updateDoc, collection };
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -61,11 +82,10 @@
             </div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Forever Love Card</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบออกบัตรออนไลน์</p>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบออกบัตรออนไลน์ (Cloud)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <!-- ปุ่มแจ้งปัญหา -->
             <button onclick="openIssueModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-black text-white text-xs font-semibold rounded-xl transition shadow">
                 <i class="fa-solid fa-headset mr-1"></i> แจ้งแอดมิน
             </button>
@@ -77,7 +97,7 @@
 
     <main class="w-full max-w-xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
 
-        <!-- STAGE 1: PROPOSAL PAGE (หน้าขอเป็นแฟน) -->
+        <!-- STAGE 1: PROPOSAL PAGE -->
         <section id="stage-proposal" class="w-full glass-card p-6 md:p-8 rounded-3xl text-center space-y-6">
             <div class="relative inline-block my-2">
                 <div class="w-24 h-24 rounded-full bg-rose-100 flex items-center justify-center mx-auto text-4xl text-rose-500 animate-heart-glow">
@@ -170,15 +190,13 @@
                 </div>
 
                 <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm mt-3">
-                    <i class="fa-solid fa-id-card mr-1"></i> สร้างบัตรและดาวน์โหลดทันที
+                    <i class="fa-solid fa-id-card mr-1"></i> สร้างบัตรและบันทึกลง Cloud ทันที
                 </button>
             </form>
         </section>
 
-        <!-- STAGE 3: RESULT STAGE (CARD + SEPARATE TIMER) -->
+        <!-- STAGE 3: RESULT STAGE -->
         <section id="stage-result" class="hidden w-full space-y-4">
-            
-            <!-- SEPARATE TIMER BOX -->
             <div class="bg-gradient-to-r from-rose-500 to-pink-500 text-white p-5 rounded-2xl shadow-lg text-center space-y-1">
                 <span class="text-xs uppercase tracking-widest font-medium opacity-90">ระยะเวลาที่เราคบกัน</span>
                 <div id="counter-display" class="font-bold text-sm md:text-lg tracking-wide">
@@ -186,7 +204,6 @@
                 </div>
             </div>
 
-            <!-- OFFICIAL ID CARD -->
             <div id="couple-card-element" class="w-full rounded-3xl p-6 md:p-8 bg-gradient-to-br from-white via-rose-50 to-pink-100 border-2 border-rose-300 shadow-2xl relative overflow-hidden space-y-4">
                 <div class="absolute -right-10 -bottom-10 text-rose-200/40 text-9xl pointer-events-none select-none">
                     <i class="fa-solid fa-heart"></i>
@@ -214,11 +231,11 @@
                     <div class="grid grid-cols-2 gap-3 bg-white/95 px-4 py-4 rounded-2xl border border-rose-200/80 text-slate-900 shadow-inner items-center">
                         <div class="space-y-1">
                             <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 1</span>
-                            <span id="card-n1" class="font-bold text-base md:text-lg text-slate-800 block truncate leading-normal" style="padding: 2px 0;">--</span>
+                            <span id="card-n1" class="font-bold text-base md:text-lg text-slate-800 block truncate leading-normal">--</span>
                         </div>
                         <div class="space-y-1 border-l border-rose-100 pl-3">
                             <span class="text-[10px] text-rose-500 font-bold block uppercase">ฝ่ายที่ 2</span>
-                            <span id="card-n2" class="font-bold text-base md:text-lg text-slate-800 block truncate leading-normal" style="padding: 2px 0;">--</span>
+                            <span id="card-n2" class="font-bold text-base md:text-lg text-slate-800 block truncate leading-normal">--</span>
                         </div>
                     </div>
 
@@ -233,7 +250,6 @@
                 </div>
             </div>
 
-            <!-- ACTION BUTTONS -->
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="forceDownloadCard()" class="py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow transition">
                     <i class="fa-solid fa-download mr-1"></i> บันทึกรูปภาพบัตรลงเครื่อง
@@ -249,7 +265,7 @@
 
     </main>
 
-    <!-- MODAL: ISSUE / REPORT -->
+    <!-- MODAL: ISSUE -->
     <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-triangle-exclamation text-rose-500 mr-1"></i> แจ้งปัญหาหรือข้อเสนอแนะถึงแอดมิน</h3>
@@ -281,12 +297,10 @@
     </div>
 
     <footer class="w-full max-w-2xl mx-auto mt-8 text-center text-xs text-slate-500">
-        Love Card App &copy; 2026 by @mumu_apr200x​
+        Love Card App &copy; 2026 by @mumu_apr200x
     </footer>
 
-    <!-- SCRIPT -->
     <script>
-        const STORAGE_KEY = 'love_card_app_db_v1';
         let currentCoupleData = null;
         let timerInterval = null;
         let noCount = 0;
@@ -397,18 +411,7 @@
             fpBtn.addEventListener('touchend', stopScan);
         }
 
-        const DBManager = {
-            getDB() {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (!raw) return { couples: [], globalCounter: 1, adminRequests: [] };
-                try { return JSON.parse(raw); } catch (e) { return { couples: [], globalCounter: 1, adminRequests: [] }; }
-            },
-            saveDB(db) {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-            }
-        };
-
-        function createCoupleCard(e) {
+        async function createCoupleCard(e) {
             e.preventDefault();
             const n1 = document.getElementById('name-1').value.trim();
             const n2 = document.getElementById('name-2').value.trim();
@@ -421,11 +424,7 @@
             const [yyyy, mm, dd] = dateVal.split('-');
             const [hh, min] = timeVal.split(':');
             
-            const db = DBManager.getDB();
-            let countStr = String(db.globalCounter || 1).padStart(2, '0');
-            const coupleID = `${dd}A${mm}${min}${hh}${yyyy}#${countStr}`;
-
-            db.globalCounter = (db.globalCounter || 1) + 1;
+            const coupleID = `${dd}A${mm}${min}${hh}${yyyy}#01`;
 
             const newCouple = {
                 id: coupleID,
@@ -438,23 +437,27 @@
                 pass2: pass2,
                 status: 'ACTIVE',
                 breakupCount: 0,
-                breakupReason: '',
-                reconcileReason: '',
-                rejectReason: '',
                 reconcileQuota: 3,
                 photos: [],
+                trashPhotos: [],
+                notifications: [],
                 createdTime: new Date().toISOString()
             };
 
-            db.couples.push(newCouple);
-            DBManager.saveDB(db);
+            try {
+                const { db, doc, setDoc } = window.firebaseDB;
+                await setDoc(doc(db, "couples", coupleID), newCouple);
+                
+                currentCoupleData = newCouple;
+                renderResultView(newCouple);
 
-            currentCoupleData = newCouple;
-            renderResultView(newCouple);
-
-            setTimeout(() => {
-                forceDownloadCard();
-            }, 600);
+                setTimeout(() => {
+                    forceDownloadCard();
+                }, 600);
+            } catch (error) {
+                console.error(error);
+                showCustomAlert('เกิดข้อผิดพลาด', 'ไม่สามารถบันทึกข้อมูลลง Cloud ได้ กรุณาลองใหม่อีกครั้ง');
+            }
         }
 
         function renderResultView(data) {
@@ -517,48 +520,42 @@
 
         function copyCardID() {
             if (!currentCoupleData) return;
-            const tempInput = document.createElement('textarea');
-            tempInput.value = currentCoupleData.id;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            alert(`คัดลอกเฉพาะ ID สำเร็จ: ${currentCoupleData.id}`);
+            navigator.clipboard.writeText(currentCoupleData.id);
+            showCustomAlert('สำเร็จ', `คัดลอก ID สำเร็จ: ${currentCoupleData.id}`);
         }
 
-        // --- ISSUE MODAL FUNCTIONS ---
-        function openIssueModal() {
-            document.getElementById('modal-issue').classList.remove('hidden');
-        }
-        function closeIssueModal() {
-            document.getElementById('modal-issue').classList.add('hidden');
-        }
-        function submitIssue() {
+        function openIssueModal() { document.getElementById('modal-issue').classList.remove('hidden'); }
+        function closeIssueModal() { document.getElementById('modal-issue').classList.add('hidden'); }
+        
+        async function submitIssue() {
             const senderName = document.getElementById('issue-sender-name').value.trim();
             const text = document.getElementById('issue-text').value.trim();
 
             if (!senderName || !text) {
-                showCustomAlert('แจ้งเตือน', 'กรุณากรอกชื่อผู้แจ้งและรายละเอียดปัญหาให้ครบถ้วน');
+                showCustomAlert('แจ้งเตือน', 'กรุณากรอกชื่อผู้แจ้งและรายละเอียดปัญหา');
                 return;
             }
 
-            const db = DBManager.getDB();
-            if (!db.adminRequests) db.adminRequests = [];
+            try {
+                const { db, doc, setDoc } = window.firebaseDB;
+                const issueId = 'issue_' + Date.now();
+                await setDoc(doc(db, "adminRequests", issueId), {
+                    id: Date.now(),
+                    coupleId: 'ผู้เยี่ยมชมเว็บ (Visitor)',
+                    names: senderName,
+                    type: 'ISSUE',
+                    content: text,
+                    time: new Date().toLocaleString()
+                });
 
-            db.adminRequests.push({
-                id: Date.now(),
-                coupleId: 'ผู้เยี่ยมชมเว็บ (Visitor)',
-                names: senderName,
-                type: 'ISSUE',
-                content: text,
-                time: new Date().toLocaleString()
-            });
-
-            DBManager.saveDB(db);
-            closeIssueModal();
-            document.getElementById('issue-sender-name').value = '';
-            document.getElementById('issue-text').value = '';
-            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อยแล้ว ขอบคุณสำหรับข้อเสนอแนะครับ');
+                closeIssueModal();
+                document.getElementById('issue-sender-name').value = '';
+                document.getElementById('issue-text').value = '';
+                showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อยแล้ว ขอบคุณครับ');
+            } catch (err) {
+                console.error(err);
+                showCustomAlert('เกิดข้อผิดพลาด', 'ไม่สามารถส่งข้อความได้');
+            }
         }
     </script>
 </body>
