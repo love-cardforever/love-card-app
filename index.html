@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forever Love Card - ขอเป็นแฟน & สร้างบัตรคู่รักออนไลน์</title>
+    <title>Forever Love - ลงทะเบียน & เข้าสู่ระบบ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,115 +15,155 @@
     <style>
         body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%); min-height: 100vh; }
         .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
     </style>
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- HEADER -->
     <header class="w-full max-w-4xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart">
                 <i class="fa-solid fa-heart"></i>
             </div>
             <div>
-                <h1 class="font-bold text-base text-slate-800">Forever Love Card</h1>
-                <p class="text-[11px] text-rose-500 font-medium">พื้นที่ขอเป็นแฟนและบันทึกความทรงจำคู่รัก</p>
+                <h1 class="font-bold text-base text-slate-800">Forever Love System</h1>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบลงทะเบียนและสร้างความทรงจำคู่รักออนไลน์</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
             <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
                 <i class="fa-solid fa-wallet text-amber-900"></i> โดเนทสนับสนุน
             </button>
-            <a href="vault.html" class="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold rounded-xl shadow transition">
-                <i class="fa-solid fa-vault mr-1"></i> เข้าห้องความทรงจำ
-            </a>
+            <button onclick="openCodeLinkModal()" class="px-3.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow transition">
+                <i class="fa-solid fa-key mr-1"></i> ใส่โค้ดขอเป็นแฟน
+            </button>
         </div>
     </header>
 
-    <main class="w-full max-w-xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
+    <main class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
 
-        <!-- STAGE 1: ลูกเล่นหน้าขอเป็นแฟน -->
-        <section id="proposal-section" class="w-full glass-card p-8 rounded-3xl text-center space-y-6">
-            <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart">
-                <i class="fa-solid fa-ring"></i>
+        <!-- TOGGLE TABS -->
+        <div class="w-full bg-white/60 p-1.5 rounded-2xl flex shadow-sm">
+            <button onclick="switchTab('login')" id="tab-login-btn" class="flex-1 py-2 text-xs font-bold rounded-xl bg-rose-500 text-white transition shadow">เข้าสู่ระบบ</button>
+            <button onclick="switchTab('register')" id="tab-reg-btn" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-600 transition">สมัครสมาชิก</button>
+        </div>
+
+        <!-- LOGIN SECTION -->
+        <section id="login-section" class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5">
+            <div class="text-center space-y-1">
+                <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2"><i class="fa-solid fa-lock"></i></div>
+                <h2 class="text-2xl font-bold text-slate-800">เข้าสู่ระบบส่วนตัว</h2>
+                <p class="text-xs text-slate-500">กรอก ID ส่วนตัวและรหัสผ่านของคุณ</p>
             </div>
-            <div class="space-y-2">
-                <h2 class="text-2xl md:text-3xl font-bold text-slate-800">เป็นแฟนกันนะ? 💕</h2>
-                <p class="text-xs md:text-sm text-slate-600">เค้าตั้งใจทำเว็บนี้ขึ้นมาเพื่อเธอคนเดียวเลยนะ ตกลงเป็นแฟนกันน้าาา</p>
-            </div>
-            <div id="proposal-buttons" class="flex justify-center items-center gap-4 pt-4 relative min-h-[60px]">
-                <button onclick="acceptProposal()" class="px-8 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow-lg transition text-base scale-100 hover:scale-105">
-                    <i class="fa-solid fa-heart mr-2"></i> ตกลงเป็นแฟนกัน! 🥰
+
+            <form onsubmit="handleLogin(event)" class="space-y-4 pt-2">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">User ID ของคุณ</label>
+                    <input type="text" id="login-id" required placeholder="เช่น 1100000A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
+                    <input type="password" id="login-pass" required placeholder="รหัสผ่านของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                </div>
+                <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
+                    <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
                 </button>
-                <button id="btn-reject" onmouseover="moveRejectButton()" onclick="moveRejectButton()" class="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">
-                    ขอคิดดูก่อน 😜
-                </button>
-            </div>
+                <div class="flex justify-between text-xs pt-2">
+                    <button type="button" onclick="openForgotModal()" class="text-rose-500 hover:underline">ลืมรหัสผ่าน?</button>
+                    <button type="button" onclick="openIssueModal()" class="text-slate-500 hover:underline">แจ้งปัญหาการใช้งาน</button>
+                </div>
+            </form>
         </section>
 
-        <!-- STAGE 2: ฟอร์มกรอกข้อมูลสร้างบัตรคู่รัก -->
-        <section id="form-section" class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5 hidden">
+        <!-- REGISTER SECTION -->
+        <section id="register-section" class="w-full glass-card p-6 md:p-8 rounded-3xl space-y-5 hidden">
             <div class="text-center space-y-1">
-                <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2">
-                    <i class="fa-solid fa-file-contract"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800">เย้! เป็นแฟนกันแล้วนะ 🎉</h2>
-                <p class="text-xs text-slate-500">กรอกข้อมูลของคุณและคนรักเพื่อออกบัตรคู่รักและเปิดห้องความทรงจำออนไลน์</p>
+                <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner mb-2"><i class="fa-solid fa-user-plus"></i></div>
+                <h2 class="text-2xl font-bold text-slate-800">สมัครสมาชิกใหม่</h2>
+                <p class="text-xs text-slate-500">กรอกข้อมูลส่วนตัวเพื่อรับ User ID เฉพาะตัว</p>
             </div>
 
-            <form onsubmit="handleCreateCard(event)" class="space-y-4 pt-2">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อคุณ (ฝ่ายที่ 1)</label>
-                        <input type="text" id="name1" required placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัวของคุณ</label>
-                        <input type="password" id="pass1" required placeholder="รหัสผ่านส่วนตัว" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อแฟน (ฝ่ายที่ 2)</label>
-                        <input type="text" id="name2" required placeholder="ชื่อแฟนของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัวของแฟน</label>
-                        <input type="password" id="pass2" required placeholder="รหัสผ่านส่วนตัวของแฟน" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่คบกัน (วันครบรอบ)</label>
-                        <input type="date" id="start-date" required class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400 bg-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">เวลาที่คบกัน</label>
-                        <input type="time" id="start-time" required value="12:00" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400 bg-white">
-                    </div>
-                </div>
-
+            <form onsubmit="handleRegister(event)" class="space-y-4 pt-2">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลสำหรับกู้คืนรหัสผ่าน</label>
-                    <input type="email" id="email" required placeholder="example@email.com" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-rose-400">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อของคุณ</label>
+                    <input type="text" id="reg-name" required placeholder="ชื่อเล่นหรือชื่อจริง" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 </div>
-
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ (ติ๊กเลือก)</label>
+                    <div class="grid grid-cols-3 gap-2 pt-1">
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50">
+                            <input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> ชาย (11)
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50">
+                            <input type="radio" name="reg-gender" value="female" class="accent-rose-500"> หญิง (10)
+                        </label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50">
+                            <input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ (12)
+                        </label>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2002)</label>
+                        <input type="number" id="reg-birthyear" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
+                        <input type="password" id="reg-pass" required placeholder="รหัสผ่าน" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลสำหรับกู้รหัสผ่านและรับ OTP</label>
+                    <input type="email" id="reg-email" required placeholder="example@email.com" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                </div>
                 <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
-                    <i class="fa-solid fa-heart mr-1"></i> ออกบัตรคู่รักและเปิดห้องความทรงจำ
+                    <i class="fa-solid fa-check mr-1"></i> สมัครสมาชิกและรับ ID
                 </button>
             </form>
         </section>
     </main>
 
-    <!-- MODAL: DONATE -->
+    <!-- MODALS -->
+    <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-envelope-circle-check"></i></div>
+            <h3 class="font-bold text-base text-slate-800">ยืนยันรหัส OTP ทางอีเมล</h3>
+            <p class="text-xs text-slate-500">ระบบได้จำลองส่งรหัส OTP (เช่น <strong>4829</strong>) ไปยังอีเมลของคุณแล้ว กรุณากรอกด้านล่าง:</p>
+            <div id="otp-display-box" class="font-mono font-bold text-rose-600 bg-rose-50 p-2 rounded-xl text-sm">รหัสจำลอง OTP: <span id="mock-otp-code">----</span></div>
+            <input type="text" id="otp-input-code" placeholder="กรอก OTP 4 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
+            <div class="text-[11px] text-slate-400">ไม่ได้รับอีเมล? ติดต่อผู้สร้างสำรองผ่านทาง IG: <strong class="text-rose-500">@mumu_apr200x</strong></div>
+            <div class="flex gap-2">
+                <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="verifyOtpAndRegister()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน OTP</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-success-reg" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-check"></i></div>
+            <h3 class="font-bold text-lg text-slate-800">สมัครสมาชิกสำเร็จ! 🎉</h3>
+            <p class="text-xs text-slate-500">User ID เฉพาะตัวของคุณคือ (โปรดจดจำไว้ใช้เข้าสู่ระบบ):</p>
+            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
+                <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
+            </div>
+            <button onclick="closeSuccessRegModal()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ไปหน้าเข้าสู่ระบบ</button>
+        </div>
+    </div>
+
+    <!-- MODAL: FORGOT & CODE LINK & ISSUE -->
+    <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
+            <input type="text" id="input-proposal-code" placeholder="กรอกโค้ด 7 หลัก เช่น 4829102" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
+            <div class="flex gap-2">
+                <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="goToProposalPage()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบโค้ด</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
@@ -135,45 +175,72 @@
                 <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-base">208-5886021</span></p>
                 <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
             </div>
-            <p class="text-[10px] text-slate-400">*ขอขอบพระคุณทุกท่านที่สนับสนุนครับ ❤️</p>
         </div>
     </div>
 
-    <!-- MODAL: SUCCESS -->
-    <div id="modal-success" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto text-2xl shadow-inner">
-                <i class="fa-solid fa-check"></i>
-            </div>
-            <h3 class="font-bold text-lg text-slate-800">สร้างบัตรคู่รักสำเร็จ!</h3>
-            <p class="text-xs text-slate-500">บันทึกข้อมูลลงระบบเรียบร้อย กรุณาจดจำ Couple ID นี้ไว้เข้าสู่ระบบ:</p>
-            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
-                <span class="text-[10px] font-bold text-rose-500 uppercase">COUPLE ID ของคุณ</span>
-                <div id="success-couple-id" class="font-mono font-black text-xl text-rose-700 tracking-wider">--</div>
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button onclick="closeSuccessModal()" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ปิด</button>
-                <a href="vault.html" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center shadow">ไปหน้าเข้าสู่ระบบ</a>
+    <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-1"></i> แจ้งปัญหาการใช้งาน</h3>
+            <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            <div class="text-[11px] text-slate-500">หรือติดต่อช่องทางสำรองผู้สร้าง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: CUSTOM ALERT -->
+    <div id="modal-forgot" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> กู้คืนรหัสผ่าน</h3>
+            <input type="text" id="forgot-id" placeholder="User ID ของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
+            <input type="email" id="forgot-email" placeholder="อีเมลที่ลงทะเบียนไว้" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            <div class="text-[11px] text-slate-500">ติดต่อสำรอง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งรหัสผ่าน</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-heart"></i></div>
             <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือน</h3>
             <p id="alert-message" class="text-xs text-slate-600 leading-relaxed"></p>
-            <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
+            <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
         </div>
     </div>
 
     <script>
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
+        let pendingUserRegData = null;
+        let generatedOtpCode = "";
+
+        function switchTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('login-section').classList.remove('hidden');
+                document.getElementById('register-section').classList.add('hidden');
+                document.getElementById('tab-login-btn').className = "flex-1 py-2 text-xs font-bold rounded-xl bg-rose-500 text-white transition shadow";
+                document.getElementById('tab-reg-btn').className = "flex-1 py-2 text-xs font-bold rounded-xl text-slate-600 transition";
+            } else {
+                document.getElementById('register-section').classList.remove('hidden');
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('tab-reg-btn').className = "flex-1 py-2 text-xs font-bold rounded-xl bg-rose-500 text-white transition shadow";
+                document.getElementById('tab-login-btn').className = "flex-1 py-2 text-xs font-bold rounded-xl text-slate-600 transition";
+            }
+        }
 
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
-        function closeSuccessModal() { document.getElementById('modal-success').classList.add('hidden'); }
+        function openCodeLinkModal() { document.getElementById('modal-code-link').classList.remove('hidden'); }
+        function closeCodeLinkModal() { document.getElementById('modal-code-link').classList.add('hidden'); }
+        function openIssueModal() { document.getElementById('modal-issue').classList.remove('hidden'); }
+        function closeIssueModal() { document.getElementById('modal-issue').classList.add('hidden'); }
+        function openForgotModal() { document.getElementById('modal-forgot').classList.remove('hidden'); }
+        function closeForgotModal() { document.getElementById('modal-forgot').classList.add('hidden'); }
+        function closeOtpModal() { document.getElementById('modal-otp').classList.add('hidden'); }
+        function closeSuccessRegModal() { document.getElementById('modal-success-reg').classList.add('hidden'); switchTab('login'); }
 
         function showCustomAlert(title, message) {
             document.getElementById('alert-title').innerText = title;
@@ -182,30 +249,20 @@
         }
         function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
 
-        function moveRejectButton() {
-            const btn = document.getElementById('btn-reject');
-            const x = Math.random() * 200 - 100;
-            const y = Math.random() * 100 - 50;
-            btn.style.transform = `translate(${x}px, ${y}px)`;
-        }
-
-        function acceptProposal() {
-            document.getElementById('proposal-section').classList.add('hidden');
-            document.getElementById('form-section').classList.remove('hidden');
-        }
-
         async function getDB() {
             try {
                 const res = await fetch(`${FIREBASE_URL}/.json`);
                 const val = await res.json();
-                if (!val) return { couples: [], globalCounter: 1, adminRequests: [] };
+                if (!val) return { users: [], couples: [], globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [] };
                 return {
+                    users: val.users || [],
                     couples: val.couples || [],
-                    globalCounter: val.globalCounter || 1,
+                    globalUserCounter: val.globalUserCounter || 0,
+                    globalGroupChar: val.globalGroupChar || 'A',
                     adminRequests: val.adminRequests || []
                 };
             } catch (e) {
-                return { couples: [], globalCounter: 1, adminRequests: [] };
+                return { users: [], couples: [], globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [] };
             }
         }
 
@@ -217,52 +274,119 @@
             });
         }
 
-        async function handleCreateCard(e) {
+        // --- ระบบสร้าง ID ตามกฎที่กำหนด ---
+        async function handleRegister(e) {
             e.preventDefault();
-            const pass1 = document.getElementById('pass1').value.trim();
-            const pass2 = document.getElementById('pass2').value.trim();
+            const name = document.getElementById('reg-name').value.trim();
+            const gender = document.querySelector('input[name="reg-gender"]:checked').value;
+            const birthyear = document.getElementById('reg-birthyear').value.trim();
+            const password = document.getElementById('reg-pass').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
 
-            if (pass1 === pass2) {
-                showCustomAlert('รหัสผ่านซ้ำกัน', 'รหัสผ่านส่วนตัวของทั้งสองฝ่ายต้องไม่เหมือนกัน เพื่อความปลอดภัยในการเข้าใช้งานแยกบัญชี');
-                return;
-            }
-
-            const dateVal = document.getElementById('start-date').value;
-            const timeVal = document.getElementById('start-time').value;
-            const [yyyy, mm, dd] = dateVal.split('-');
-            const [hh, min] = timeVal.split(':');
+            let genderPrefix = "12";
+            if (gender === 'male') genderPrefix = "11";
+            else if (gender === 'female') genderPrefix = "10";
 
             const db = await getDB();
-            let countStr = String(db.globalCounter || 1).padStart(2, '0');
-            const coupleID = `${dd}A${mm}${min}${hh}${yyyy}#${countStr}`;
-            db.globalCounter = (db.globalCounter || 1) + 1;
+            let counter = db.globalUserCounter || 0;
+            let groupChar = db.globalGroupChar || 'A';
 
-            const newCouple = {
-                id: coupleID,
-                name1: document.getElementById('name1').value.trim(),
-                pass1: pass1,
-                name2: document.getElementById('name2').value.trim(),
-                pass2: pass2,
-                startDate: dateVal,
-                startTime: timeVal,
-                email: document.getElementById('email').value.trim(),
-                status: 'ACTIVE',
-                breakupCount: 0,
-                reconcileQuota: 3,
-                notes: [],
-                photos: [],
-                trashPhotos: [],
-                notifications: [],
+            let countStr = String(counter).padStart(3, '0');
+            const birthYearLastDigit = birthyear.slice(-1);
+            const userID = `${genderPrefix}${birthYearLastDigit}${countStr}${groupChar}`;
+
+            pendingUserRegData = {
+                id: userID, name, gender, birthyear, password, email,
+                coupleId: null,
                 createdTime: new Date().toISOString()
             };
 
-            if (!db.couples) db.couples = [];
-            db.couples.push(newCouple);
+            // จำลองส่ง OTP
+            generatedOtpCode = String(Math.floor(1000 + Math.random() * 9000));
+            document.getElementById('mock-otp-code').innerText = generatedOtpCode;
+            document.getElementById('modal-otp').classList.remove('hidden');
+        }
 
+        async function verifyOtpAndRegister() {
+            const inputOtp = document.getElementById('otp-input-code').value.trim();
+            if (inputOtp !== generatedOtpCode) {
+                showCustomAlert('OTP ไม่ถูกต้อง', 'กรุณากรอกรหัส OTP ให้ถูกต้องตามที่ระบบจำลองส่งไป');
+                return;
+            }
+
+            const db = await getDB();
+            db.globalUserCounter = (db.globalUserCounter || 0) + 1;
+            if (db.globalUserCounter > 999) {
+                db.globalUserCounter = 0;
+                let charCode = (db.globalGroupChar || 'A').charCodeAt(0) + 1;
+                db.globalGroupChar = String.fromCharCode(charCode);
+            }
+
+            if (!db.users) db.users = [];
+            db.users.push(pendingUserRegData);
             await saveDB(db);
 
-            document.getElementById('success-couple-id').innerText = coupleID;
-            document.getElementById('modal-success').classList.remove('hidden');
+            closeOtpModal();
+            document.getElementById('success-user-id').innerText = pendingUserRegData.id;
+            document.getElementById('modal-success-reg').classList.remove('hidden');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('login-id').value.trim().toUpperCase();
+            const passInput = document.getElementById('login-pass').value.trim();
+
+            // 🔐 แอดมินและผู้สร้าง
+            if (idInput === 'ADMINLOVE' && passInput === 'Pipat084@#') {
+                localStorage.setItem('admin_logged', 'true');
+                window.location.href = 'admin.html';
+                return;
+            }
+            if (idInput === 'CREATOR' && passInput === 'Creator084@#') {
+                localStorage.setItem('creator_logged', 'true');
+                window.location.href = 'creator.html';
+                return;
+            }
+
+            const db = await getDB();
+            const user = db.users.find(u => u.id === idInput && u.password === passInput);
+            if (!user) {
+                showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'User ID หรือรหัสผ่านไม่ถูกต้อง');
+                return;
+            }
+
+            localStorage.setItem('current_user', JSON.stringify(user));
+            window.location.href = 'vault.html';
+        }
+
+        function goToProposalPage() {
+            const code = document.getElementById('input-proposal-code').value.trim();
+            if (!code) return;
+            window.location.href = `vault.html?proposalCode=${code}`;
+        }
+
+        async function submitIssue() {
+            const text = document.getElementById('issue-text').value.trim();
+            if (!text) return;
+            const db = await getDB();
+            if (!db.adminRequests) db.adminRequests = [];
+            db.adminRequests.push({ id: Date.now(), userId: 'GUEST', content: text, time: new Date().toLocaleString() });
+            await saveDB(db);
+            closeIssueModal();
+            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อย (หรือติดต่อ IG: @mumu_apr200x)');
+        }
+
+        async function sendRecoveryEmail() {
+            const id = document.getElementById('forgot-id').value.trim().toUpperCase();
+            const email = document.getElementById('forgot-email').value.trim();
+            const db = await getDB();
+            const user = db.users.find(u => u.id === id && u.email === email);
+            if (!user) {
+                showCustomAlert('ไม่พบข้อมูล', 'User ID หรืออีเมลไม่ถูกต้อง');
+                return;
+            }
+            showCustomAlert('กู้คืนสำเร็จ', `รหัสผ่านของคุณคือ: ${user.password} (ติดต่อสำรอง IG: @mumu_apr200x)`);
+            closeForgotModal();
         }
     </script>
 </body>
