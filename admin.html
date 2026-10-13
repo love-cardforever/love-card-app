@@ -137,15 +137,14 @@
 
         let activeChatUserId = null;
 
-        // ฟังก์ชันตรวจสอบรหัสผ่านแอดมินโดยไม่เปิดเผยข้อความตรงๆ ในโค้ด
+        // ฟังก์ชันตรวจสอบรหัสผ่านแอดมินใหม่ (MumuAdmin / 0802540900mumupt)
         function handleAdminLogin(e) {
             e.preventDefault();
             const uInput = document.getElementById('admin-user-input').value.trim();
             const pInput = document.getElementById('admin-pass-input').value.trim();
 
-            // ตรวจสอบค่าเทียบเท่า AdminLove และ Pipat084@ แบบปลอดภัย
-            const isValidUser = uInput === ["Admin", "Love"].join("");
-            const isValidPass = pInput === ["Pipat", "084", "@"].join("");
+            const isValidUser = uInput === ["Mumu", "Admin"].join("");
+            const isValidPass = pInput === ["0802540900", "mumupt"].join("");
 
             if (isValidUser && isValidPass) {
                 localStorage.setItem('is_admin_logged', 'true');
