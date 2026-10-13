@@ -36,7 +36,7 @@
             </div>
         </header>
 
-        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟน (เร็วขึ้น 100%) -->
+        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟนที่กู้คืนมาแล้ว -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -54,7 +54,7 @@
             </div>
         </section>
 
-        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (สะอาด ไม่มีปุ่มรก) -->
+        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ -->
         <section class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -89,10 +89,9 @@
             </div>
         </section>
 
-        <!-- 4. แผงควบคุมคู่รัก (ปุ่มขอคืนดี & ขอเลิกรา จะอยู่ที่นี่ และถูกล็อกไว้หากยังไม่มีคู่) -->
+        <!-- 4. แผงควบคุมคู่รัก (ปุ่มขอคืนดี & ขอเลิกรา แยกอยู่นอกบัตร และถูกล็อกไว้หากยังไม่มีคู่) -->
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
             
-            <!-- แผงปุ่มสถานะคู่รัก (ปิดใช้งานอัตโนมัติหากเงื่อนไขไม่ตรง) -->
             <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
                 <button id="btn-reconcile" onclick="requestReconcile()" disabled class="flex-1 py-2.5 bg-amber-200 text-slate-500 font-bold rounded-2xl text-xs shadow-xs transition cursor-not-allowed opacity-60"><i class="fa-solid fa-dove mr-1"></i> ขอคืนดี (-1 โควต้า)</button>
                 <button id="btn-breakup" onclick="openBreakupModal()" disabled class="flex-1 py-2.5 bg-slate-200 text-slate-400 font-bold rounded-2xl text-xs transition cursor-not-allowed opacity-60"><i class="fa-solid fa-heart-crack mr-1"></i> ขอเลิกรา</button>
@@ -244,7 +243,7 @@
             }
         });
 
-        // สร้างโค้ดขอเป็นแฟนแบบเร็ว (ยิงตรงผ่าน Firebase Path ทันที ไม่โหลดหนัก)
+        // ฟังก์ชันสร้างโค้ดขอเป็นแฟนแบบรวดเร็ว (ยิงตรงผ่าน Firebase Path ทันที ไม่มีหน่วง)
         async function generateProposalCodeFast() {
             const code = Math.random().toString(36).substring(2, 9).toUpperCase();
             await dbRef.child('proposalCodes/' + code).set({
@@ -281,7 +280,7 @@
             document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
             document.getElementById('text-couple-status').className = "font-bold text-rose-600";
             
-            // เงื่อนไขเปิดใช้งานปุ่มขอคืนดี & ขอเลิกรา: ต้องมีคู่รักแล้วเท่านั้น
+            // เปิดใช้งานปุ่มขอคืนดี & ขอเลิกราเฉพาะเมื่อมีคู่แล้ว
             const btnReconcile = document.getElementById('btn-reconcile');
             const btnBreakup = document.getElementById('btn-breakup');
             
