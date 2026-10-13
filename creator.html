@@ -15,8 +15,8 @@
         @keyframes pulse-fast {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.4; transform: scale(1.02); }
-        .blink-warning { animation: pulse-fast 1s infinite; }
         }
+        .blink-warning { animation: pulse-fast 1s infinite; }
     </style>
 </head>
 <body class="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
@@ -60,7 +60,7 @@
     <header class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
-            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชทแจ้งปัญหา ประกาศหมวดหมู่ และสถิติกราฟเพศ/ความสัมพันธ์</p>
+            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชทแจ้งปัญหา ประกาศหมวดหมู่ และระบบแคชเบราว์เซอร์</p>
         </div>
         <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ออกจากระบบ</button>
     </header>
@@ -71,6 +71,23 @@
         <div>
             <h4 class="font-bold text-xs text-red-200">⚠️ คำเตือนระบบ: พื้นที่ฐานข้อมูลถูกใช้งานเกิน 75% แล้ว!</h4>
             <p class="text-[11px] text-red-300">กรุณาตรวจสอบและเคลียร์ข้อมูลที่ไม่จำเป็นเพื่อป้องกันระบบล่ม</p>
+        </div>
+    </div>
+
+    <!-- ส่วนจัดการแคชเบราว์เซอร์ (Browser Cache Management) -->
+    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
+        <div class="flex flex-wrap justify-between items-center gap-3">
+            <div>
+                <h3 class="font-bold text-sm text-amber-300"><i class="fa-solid fa-database mr-2"></i> ข้อมูลแคชเบราว์เซอร์ (Browser & Local Cache)</h3>
+                <p class="text-xs text-slate-400 mt-0.5">ตรวจสอบขนาดและจัดการล้างแคชข้อมูลชั่วคราวในเครื่องผู้ใช้งาน</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="viewCacheDetails()" class="px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-eye mr-1"></i> ดูข้อมูลแคช</button>
+                <button onclick="clearBrowserCache()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-broom mr-1"></i> ล้างแคชทั้งหมด</button>
+            </div>
+        </div>
+        <div id="cache-info-box" class="hidden bg-slate-900 p-4 rounded-xl border border-slate-700 text-xs space-y-1 text-slate-300">
+            <!-- ข้อมูลแคชจะแสดงที่นี่ -->
         </div>
     </div>
 
@@ -97,14 +114,11 @@
             </div>
         </div>
 
-        <!-- 📊 พื้นที่แสดงกราฟทั้ง 2 รูปแบบ -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- กราฟสถิติเพศผู้ใช้ -->
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 relative h-64">
                 <p class="text-xs font-bold text-slate-300 mb-2 text-center">สถิติสัดส่วนเพศของผู้ใช้งาน</p>
                 <canvas id="genderStatsChart"></canvas>
             </div>
-            <!-- กราฟประเภทความสัมพันธ์ -->
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 relative h-64">
                 <p class="text-xs font-bold text-slate-300 mb-2 text-center">สถิติประเภทความสัมพันธ์ของคู่รัก</p>
                 <canvas id="relationStatsChart"></canvas>
@@ -203,8 +217,34 @@
             }
         });
 
+        function viewCacheDetails() {
+            const box = document.getElementById('cache-info-box');
+            box.classList.toggle('hidden');
+            
+            let html = '<p class="font-bold text-amber-300 mb-1">📦 รายละเอียดข้อมูลแคชในเบราว์เซอร์ปัจจุบัน:</p>';
+            let totalSize = 0;
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const val = localStorage.getItem(key);
+                const size = (key.length + val.length) * 2; // คำนวณขนาดคร่าวๆ เป็น bytes
+                totalSize += size;
+                html += `<p>• Key: <b>${key}</b> | ขนาด: ${(size / 1024).toFixed(2)} KB</p>`;
+            }
+
+            html += `<p class="mt-2 pt-2 border-t border-slate-700 text-white font-bold">รวมขนาด LocalStorage ทั้งหมด: ${(totalSize / 1024).toFixed(2)} KB</p>`;
+            box.innerHTML = html;
+        }
+
+        function clearBrowserCache() {
+            if (!confirm('⚠️ ยืนยันการล้างแคชทั้งหมดในเบราว์เซอร์ (จะทำให้สถานะการเข้าสู่ระบบถูกรีเซ็ต)?')) return;
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('ล้างแคชเรียบร้อยแล้ว ระบบจะรีเฟรชหน้าใหม่');
+            window.location.reload();
+        }
+
         function initCharts() {
-            // กราฟเพศ
             const ctxGender = document.getElementById('genderStatsChart').getContext('2d');
             genderChart = new Chart(ctxGender, {
                 type: 'doughnut',
@@ -222,7 +262,6 @@
                 }
             });
 
-            // กราฟความสัมพันธ์
             const ctxRelation = document.getElementById('relationStatsChart').getContext('2d');
             relationChart = new Chart(ctxRelation, {
                 type: 'pie',
@@ -296,7 +335,6 @@
                 document.getElementById('stats-total-photos').innerText = `${totalPhotos} รูป`;
                 document.getElementById('stats-activity-today').innerText = `${activityCount} กิจกรรม`;
 
-                // คำนวณข้อมูลเพศ
                 let maleCount = 0, femaleCount = 0, otherGenderCount = 0;
                 users.forEach(u => {
                     const g = (u.gender || '').toLowerCase();
@@ -310,7 +348,6 @@
                     genderChart.update();
                 }
 
-                // คำนวณประเภทความสัมพันธ์ (ต่างเพศ vs เพศเดียวกัน)
                 let heteroCount = 0, homoCount = 0;
                 couples.forEach(c => {
                     const u1 = users.find(u => u.id === c.user1Id);
@@ -323,7 +360,7 @@
                         if (isG1Male !== isG2Male) heteroCount++;
                         else homoCount++;
                     } else {
-                        heteroCount++; // ค่าเริ่มต้นถ้าหาข้อมูลไม่พบ
+                        heteroCount++;
                     }
                 });
 
@@ -332,7 +369,6 @@
                     relationChart.update();
                 }
 
-                // คำนวณการใช้พื้นที่ DB และระบบไฟกระพริบเมื่อเกิน 75%
                 const jsonStringSize = JSON.stringify(db).length;
                 const usedKB = (jsonStringSize / 1024).toFixed(2);
                 const percent = Math.min(100, (usedKB / 102400) * 100).toFixed(2);
