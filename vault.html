@@ -31,17 +31,19 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
+            <button onclick="openIssueModal()" class="px-3.5 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1">
+                <i class="fa-solid fa-headset"></i> แจ้งปัญหา
+            </button>
             <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-wallet text-amber-900"></i> โดเนทสนับสนุน
+                <i class="fa-solid fa-wallet text-amber-900"></i> โดเนท
             </button>
             <button onclick="logout()" class="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-semibold rounded-xl transition">
-                <i class="fa-solid fa-right-from-bracket mr-1"></i> ออกจากระบบ
+                <i class="fa-solid fa-right-from-bracket"></i>
             </button>
         </div>
     </header>
 
     <main class="w-full max-w-4xl mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
-
         <section id="view-profile" class="w-full space-y-6">
             <div class="glass-card p-5 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-4">
                 <div class="flex items-center gap-3">
@@ -114,7 +116,6 @@
                 </div>
             </div>
 
-            <!-- SHARED NOTES & PHOTOS WITH TRASH BUTTON -->
             <div id="shared-features-section" class="space-y-6 opacity-50 pointer-events-none transition-all duration-500">
                 <div class="glass-card p-6 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center">
@@ -172,7 +173,6 @@
         </div>
     </div>
 
-    <!-- TRASH MODAL (ถังขยะรวมทั้งโน้ตและรูปภาพ) -->
     <div id="modal-trash" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-lg space-y-4 shadow-2xl max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -207,6 +207,19 @@
         </div>
     </div>
 
+    <!-- Modal แจ้งปัญหาการใช้งาน -->
+    <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-1"></i> แจ้งปัญหาการใช้งาน</h3>
+            <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            <div class="text-[11px] text-slate-500">หรือติดต่อช่องทางสำรองผู้สร้าง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือน</h3>
@@ -229,6 +242,20 @@
         function openUploadModal() { document.getElementById('modal-upload').classList.remove('hidden'); }
         function closeUploadModal() { document.getElementById('modal-upload').classList.add('hidden'); }
         function closeTrashModal() { document.getElementById('modal-trash').classList.add('hidden'); }
+        function openIssueModal() { document.getElementById('modal-issue').classList.remove('hidden'); }
+        function closeIssueModal() { document.getElementById('modal-issue').classList.add('hidden'); }
+
+        async function submitIssue() {
+            const text = document.getElementById('issue-text').value.trim();
+            if (!text) return;
+            const db = await getDB();
+            if (!db.adminRequests) db.adminRequests = [];
+            db.adminRequests.push({ id: Date.now(), userId: currentUser ? currentUser.id : 'VAULT_USER', content: text, time: new Date().toLocaleString() });
+            await saveDB(db);
+            closeIssueModal();
+            document.getElementById('issue-text').value = '';
+            showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อย (หรือติดต่อ IG: @mumu_apr200x)');
+        }
 
         async function openTrashModal(type) {
             currentTrashType = type;
@@ -400,7 +427,6 @@
             timerInterval = setInterval(update, 1000);
         }
 
-        // --- ระบบจัดการสมุดบันทึก (โน้ต) ---
         async function submitNote() {
             const title = document.getElementById('note-title').value.trim();
             const content = document.getElementById('note-content').value.trim();
@@ -457,7 +483,6 @@
             }
         }
 
-        // --- ระบบจัดการรูปภาพ ---
         function submitPhoto() {
             const fileInput = document.getElementById('upload-file-input');
             const caption = document.getElementById('upload-caption').value.trim() || 'ความทรงจำ';
@@ -513,7 +538,6 @@
             }
         }
 
-        // --- ระบบแสดงผลถังขยะและการกู้คืน / ลบถาวร ---
         async function renderTrashContent() {
             const db = await getDB();
             const couple = db.couples.find(c => c.id === currentUser.coupleId);
