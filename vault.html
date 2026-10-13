@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forever Love - Vault & Couple Management</title>
+    <title>Forever Love - Vault & Couple Management (Realtime Full Edition)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -23,13 +23,16 @@
         /* เอฟเฟคชื่อสลายกลายเป็นผง */
         @keyframes textDissolve { 0% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(10px); transform: translateY(-10px) scale(0.9); } }
         .dissolve-effect { animation: textDissolve 1.5s forwards ease-in-out; }
+
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
     </style>
 </head>
 <body id="vault-body" class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
     <header class="w-full max-w-4xl mx-auto mb-4 bg-white/85 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow"><i class="fa-solid fa-vault"></i></div>
+            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart"><i class="fa-solid fa-vault"></i></div>
             <div>
                 <h1 id="header-username" class="font-bold text-base text-slate-800">กำลังโหลด...</h1>
                 <p id="header-userid" class="text-[11px] text-rose-500 font-mono font-medium">ID: --</p>
@@ -43,19 +46,19 @@
 
     <main id="main-vault-container" class="w-full max-w-2xl mx-auto flex-1 flex flex-col items-center space-y-6">
         
-        <!-- บัตรคู่รัก -->
+        <!-- บัตรคู่รัก (ระบบหลัก) -->
         <div id="couple-card-box" class="w-full glass-card p-6 md:p-8 rounded-3xl text-center space-y-5 transition-all duration-500">
             <div id="card-content-area" class="space-y-4">
                 <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-heart-pulse"></i></div>
                 <h2 id="card-title" class="text-2xl font-bold text-slate-800">กำลังตรวจสอบสถานะ...</h2>
-                <p id="card-subtitle" class="text-xs text-slate-500">ระบบความทรงจำเรียลไทม์</p>
+                <p id="card-subtitle" class="text-xs text-slate-500">ระบบความทรงจำเรียลไทม์ 100%</p>
             </div>
         </div>
 
-        <!-- แผงควบคุมอัลบั้ม รูปภาพ โน้ต และถังขยะ (แสดงเฉพาะตอนมีคู่) -->
+        <!-- แผงควบคุมคู่รัก (แสดงเมื่อมีคู่) -->
         <div id="couple-features-panel" class="w-full space-y-6 hidden">
             
-            <!-- ตัวนับเวลาคบกัน -->
+            <!-- ตัวนับเวลาคบกันแบบเรียลไทม์ -->
             <div class="bg-white/80 p-5 rounded-2xl shadow-sm text-center space-y-2">
                 <p class="text-xs font-bold text-rose-500">เวลาที่เราคบกัน ❤️</p>
                 <div id="love-timer-display" class="font-mono text-xl font-bold text-slate-800">0 วัน 0 ชั่วโมง 0 นาที 0 วินาที</div>
@@ -65,7 +68,7 @@
                 </div>
             </div>
 
-            <!-- อัลบั้มรูปภาพ -->
+            <!-- อัลบั้มรูปภาพความทรงจำ -->
             <div class="bg-white/80 p-5 rounded-2xl shadow-sm space-y-4">
                 <div class="flex justify-between items-center">
                     <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-2"></i> อัลบั้มความทรงจำ</h3>
@@ -75,7 +78,7 @@
                 <div id="vault-photos-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
             </div>
 
-            <!-- โน้ตความทรงจำ -->
+            <!-- โน้ตความรู้สึก -->
             <div class="bg-white/80 p-5 rounded-2xl shadow-sm space-y-4">
                 <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-note-sticky text-rose-500 mr-2"></i> โน้ตความรู้สึก</h3>
                 <div class="space-y-2">
@@ -85,7 +88,7 @@
                 <div id="vault-notes-grid" class="space-y-2 pt-2"></div>
             </div>
 
-            <!-- ถังขยะ (รูปภาพ & โน้ต) -->
+            <!-- ถังขยะ (รูปภาพ & โน้ต - จำกัดสิทธิ์เฉพาะเจ้าของลบถาวรได้) -->
             <div class="bg-white/80 p-5 rounded-2xl shadow-sm space-y-4 border border-amber-200">
                 <h3 class="font-bold text-sm text-amber-700"><i class="fa-solid fa-trash-can mr-2"></i> ถังขยะ (เก็บรักษา 30 วัน - เฉพาะเจ้าของลบถาวรได้)</h3>
                 <div class="space-y-3">
@@ -100,7 +103,7 @@
 
     </main>
 
-    <!-- Modal ขอลบถาวร (รูปภาพหรือโน้ต) -->
+    <!-- Modal ยืนยันการลบถาวร (สำหรับถังขยะ) -->
     <div id="modal-confirm-delete" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-red-600">ยืนยันการลบถาวร?</h3>
@@ -112,15 +115,15 @@
         </div>
     </div>
 
-    <!-- Modal ขอเลิกราพร้อมเหตุผล -->
+    <!-- Modal ขอเลิกราพร้อมเหตุผล (สามารถกดยกเลิกได้) -->
     <div id="modal-breakup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">ส่งคำขอเลิกรา</h3>
-            <p class="text-xs text-slate-500">คุณสามารถระบุเหตุผลหรือไม่ก็ได้ หรือกดกดยกเลิกหากเปลี่ยนใจ</p>
+            <p class="text-xs text-slate-500">คุณสามารถระบุเหตุผลหรือไม่ก็ได้ หรือกดปุ่มยกเลิกหากมือลั่นเปลี่ยนใจ</p>
             <textarea id="breakup-reason" rows="3" placeholder="ระบุเหตุผล (ไม่บังคับ)..." class="w-full p-3 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex gap-2">
-                <button onclick="closeBreakupModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก (ไม่เลิกแล้ว)</button>
-                <button onclick="submitBreakup()" class="flex-1 py-2 bg-red-500 text-white text-xs font-bold rounded-xl shadow">ยืนยันเลิกรา</button>
+                <button onclick="closeBreakupModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl font-bold">ยกเลิก (ไม่เลิกแล้ว)</button>
+                <button onclick="submitBreakup()" class="flex-1 py-2 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl shadow text-xs">ยืนยันเลิกรา</button>
             </div>
         </div>
     </div>
@@ -148,10 +151,10 @@
         document.getElementById('header-username').innerText = currentUser.name;
         document.getElementById('header-userid').innerText = `ID: ${currentUser.id}`;
 
-        let targetDeleteTarget = null; // เก็บข้อมูลเป้าหมายที่จะลบถาวร (photo หรือ note)
+        let targetDeleteTarget = null; 
         let timerInterval = null;
 
-        // ระบบ Realtime WebSocket เฝ้าดูการเปลี่ยนแปลงข้อมูล
+        // ระบบ Realtime WebSocket 100% เฝ้าดูข้อมูลแบบวินาทีต่อวินาที
         dbRef.on('value', (snapshot) => {
             const db = snapshot.val() || {};
             
@@ -166,10 +169,10 @@
             currentUser = freshUser;
             localStorage.setItem('current_user', JSON.stringify(currentUser));
 
-            // ตรวจสอบแจ้งเตือน
+            // ตรวจสอบการแจ้งเตือน
             checkNotifications(currentUser.notifications || []);
 
-            // ตรวจสอบคู่รัก
+            // ตรวจสอบสถานะคู่รัก
             const couples = db.couples || [];
             const myCouple = couples.find(c => c.id === currentUser.coupleId && c.status === 'ACTIVE');
 
@@ -211,17 +214,19 @@
             const quota = couple.reconcileQuota ?? 3;
             document.getElementById('quota-left').innerText = quota;
             
+            // หากโควต้าหมด ให้เปลี่ยนหน้าจอเป็นสีเทาทันที (Grayscale)
             if (quota <= 0) {
                 document.getElementById('vault-body').classList.add('grayscale-mode');
             } else {
                 document.getElementById('vault-body').classList.remove('grayscale-mode');
             }
 
+            // ตัวนับเวลาคบกันแบบเรียลไทม์ (หยุดนับเมื่อโควต้าหมด)
             if (timerInterval) clearInterval(timerInterval);
             const startDateTime = new Date(`${couple.startDate}T${couple.startTime || '00:00'}:00`);
             
             timerInterval = setInterval(() => {
-                if (quota <= 0) return; // หยุดนับเวลาถ้าโควต้าหมด
+                if (quota <= 0) return; 
                 const now = new Date();
                 const diff = now - startDateTime;
                 if (diff > 0) {
@@ -236,11 +241,11 @@
             const partnerName = couple.user1Id === currentUser.id ? couple.user2Name : couple.user1Name;
             document.getElementById('card-content-area').innerHTML = `
                 <div class="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center justify-center mx-auto text-2xl shadow animate-pulse"><i class="fa-solid fa-heart"></i></div>
-                <h2 class="text-xl font-bold text-slate-800">กำลังคบหากับ: <span class="text-rose-600">${partnerName}</span></h2>
+                <h2 class="text-xl font-bold text-slate-800">กำลังคบหากับ: <span id="partner-name-text" class="text-rose-600">${partnerName}</span></h2>
                 <p class="text-xs font-mono text-slate-500">Couple ID: ${couple.id} | เริ่มต้น: ${couple.startDate}</p>
             `;
 
-            // อัลบั้มรูป
+            // อัลบั้มรูปภาพ
             const photoGrid = document.getElementById('vault-photos-grid');
             photoGrid.innerHTML = '';
             (couple.photos || []).forEach(p => {
@@ -253,7 +258,7 @@
                 `;
             });
 
-            // โน้ต
+            // โน้ตความรู้สึก
             const noteGrid = document.getElementById('vault-notes-grid');
             noteGrid.innerHTML = '';
             (couple.notes || []).forEach(n => {
@@ -265,7 +270,7 @@
                 `;
             });
 
-            // ถังขยะรูปภาพ & โน้ต (เฉพาะเจ้าของลบถาวรได้)
+            // ถังขยะรูปภาพ (จำกัดสิทธิ์เฉพาะเจ้าของรูปที่ลบถาวรได้)
             const trashPhotoGrid = document.getElementById('vault-trash-photos-grid');
             trashPhotoGrid.innerHTML = '';
             const trashPhotos = couple.trashPhotos || [];
@@ -287,6 +292,7 @@
                 });
             }
 
+            // ถังขยะโน้ต (จำกัดสิทธิ์เฉพาะเจ้าของโน้ตที่ลบถาวรได้)
             const trashNoteGrid = document.getElementById('vault-trash-notes-grid');
             trashNoteGrid.innerHTML = '';
             const trashNotes = couple.trashNotes || [];
@@ -308,7 +314,7 @@
             }
         }
 
-        // --- จัดการรูปภาพ ---
+        // --- อัปโหลดและจัดการรูปภาพ ---
         function uploadPhoto(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -402,7 +408,7 @@
             }
         }
 
-        // --- ลบถาวร (เฉพาะเจ้าของ) ---
+        // --- ลบถาวร (เฉพาะเจ้าของ) พร้อม Modal ยืนยัน ---
         function promptPermanentDelete(type, targetId, coupleId) {
             targetDeleteTarget = { type, targetId, coupleId };
             document.getElementById('modal-confirm-delete').classList.remove('hidden');
@@ -469,34 +475,40 @@
             alert('ทำรายการเลิกราสำเร็จ บัตรคู่รักถูกทำลาย');
         }
 
-        // --- ลบบัญชี & ชื่อสลาย ---
+        // --- ลบบัญชี + เอฟเฟคชื่อสลายกลายเป็นผง ---
         function openDeleteAccountModal() { document.getElementById('modal-delete-account').classList.remove('hidden'); }
         function closeDeleteAccountModal() { document.getElementById('modal-delete-account').classList.add('hidden'); }
 
         async function confirmDeleteAccount() {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
+            // เล่นเอฟเฟคชื่อแฟนสลายบนการ์ดก่อน
+            const nameEl = document.getElementById('partner-name-text');
+            if (nameEl) nameEl.classList.add('dissolve-effect');
 
-            if (currentUser.coupleId) {
-                const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-                if (couple) {
-                    couple.status = 'BROKEN';
-                    const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
-                    const partner = (db.users || []).find(u => u.id === partnerId);
-                    if (partner) {
-                        if (!partner.notifications) partner.notifications = [];
-                        partner.notifications.push({ id: Date.now(), message: `แฟนของคุณได้ลบบัญชีออกจากระบบแล้ว บัตรคู่รักถูกยกเลิก`, read: false });
-                        partner.coupleId = null;
+            setTimeout(async () => {
+                const snapshot = await dbRef.once('value');
+                const db = snapshot.val() || {};
+
+                if (currentUser.coupleId) {
+                    const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
+                    if (couple) {
+                        couple.status = 'BROKEN';
+                        const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
+                        const partner = (db.users || []).find(u => u.id === partnerId);
+                        if (partner) {
+                            if (!partner.notifications) partner.notifications = [];
+                            partner.notifications.push({ id: Date.now(), message: `แฟนของคุณได้ลบบัญชีออกจากระบบแล้ว บัตรคู่รักถูกยกเลิก`, read: false });
+                            partner.coupleId = null;
+                        }
                     }
                 }
-            }
 
-            db.users = (db.users || []).filter(u => u.id !== currentUser.id);
-            await dbRef.set(db);
+                db.users = (db.users || []).filter(u => u.id !== currentUser.id);
+                await dbRef.set(db);
 
-            localStorage.clear();
-            alert('บัญชีของคุณถูกลบถาวรเรียบร้อย');
-            window.location.href = 'index.html';
+                localStorage.clear();
+                alert('บัญชีของคุณถูกลบถาวรเรียบร้อย');
+                window.location.href = 'index.html';
+            }, 1200);
         }
 
         function logoutVault() {
