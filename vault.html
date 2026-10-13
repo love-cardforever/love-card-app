@@ -36,7 +36,7 @@
             </div>
         </header>
 
-        <!-- 2. ส่วนโปรไฟล์ & ปุ่มจัดการสถานะโสด (สร้างโค้ด / ใส่โค้ด - จะซ่อนอัตโนมัติเมื่อมีแฟนแล้ว) -->
+        <!-- 2. ส่วนโปรไฟล์ & ปุ่มจัดการสถานะโสด -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -53,14 +53,14 @@
                 <button onclick="openNotificationsModal()" class="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100 shadow-xs mb-2"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
             </div>
 
-            <!-- กลุ่มปุ่มจัดการสถานะโสด (จะหายไปทันทีเมื่อมีแฟนแล้ว) -->
+            <!-- ปุ่มสร้างโค้ด / ใส่โค้ด (จะซ่อนทันทีเมื่อมีแฟนแล้ว) -->
             <div id="single-action-panel" class="grid grid-cols-2 gap-2 pt-1">
                 <button onclick="generateProposalCodeFast()" class="py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
                 <button onclick="openAcceptProposalModal()" class="py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-heart-circle-check"></i> ใส่โค้ดขอเป็นแฟน</button>
             </div>
         </section>
 
-        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (Certificate of Love) -->
+        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (ฝ่ายที่ 1 = คนขอ, ฝ่ายที่ 2 = คนโดนขอ) -->
         <section class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -80,12 +80,12 @@
 
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white/70 p-3 rounded-2xl border border-slate-100">
-                    <p class="text-[10px] font-semibold text-slate-400">ฝ่ายที่ 1</p>
-                    <p id="card-user1-name" class="font-bold text-sm text-slate-800 truncate">ชื่อของคุณ</p>
+                    <p id="label-user1" class="text-[10px] font-semibold text-slate-400">ฝ่ายที่ 1 (ผู้ขอ)</p>
+                    <p id="card-user1-name" class="font-bold text-sm text-slate-800 truncate">--</p>
                 </div>
                 <div class="bg-white/70 p-3 rounded-2xl border border-slate-100">
-                    <p class="text-[10px] font-semibold text-slate-400">ฝ่ายที่ 2</p>
-                    <p id="card-user2-name" class="font-bold text-sm text-slate-800 truncate">ชื่อคู่รัก</p>
+                    <p id="label-user2" class="text-[10px] font-semibold text-slate-400">ฝ่ายที่ 2 (ผู้ถูกขอ)</p>
+                    <p id="card-user2-name" class="font-bold text-sm text-slate-800 truncate">--</p>
                 </div>
             </div>
 
@@ -150,7 +150,6 @@
         </div>
     </div>
 
-    <!-- Modal ใส่โค้ดขอเป็นแฟนแบบลัดใน Vault -->
     <div id="modal-accept-proposal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">กรอกโค้ดขอเป็นแฟน</h3>
@@ -321,6 +320,7 @@
                 return;
             }
 
+            // ตั้งค่าให้ผู้สร้างโค้ด (proposalObj.sender) เป็นฝ่ายที่ 1 และผู้กรอกโค้ด (currentUser) เป็นฝ่ายที่ 2
             const coupleId = `${proposalObj.senderId}#${currentUser.id}`;
             const today = new Date();
             const startDateStr = today.toISOString().split('T')[0];
@@ -328,7 +328,6 @@
 
             if (!db.couples) db.couples = [];
             
-            // ตรวจสอบว่าเคยมีคู่นี้อยู่แล้วหรือไม่ (กรณีเคยเลิกแล้วกลับมาใช้โค้ดเดิมหรือสร้างใหม่)
             let existingCouple = db.couples.find(c => c.id === coupleId);
             if (existingCouple) {
                 existingCouple.status = 'ACTIVE';
@@ -338,9 +337,9 @@
                 db.couples.push({
                     id: coupleId,
                     user1Id: proposalObj.senderId,
-                    user1Name: proposalObj.senderName,
+                    user1Name: proposalObj.senderName, // ฝ่ายที่ 1 = คนขอ
                     user2Id: currentUser.id,
-                    user2Name: currentUser.name,
+                    user2Name: currentUser.name,       // ฝ่ายที่ 2 = คนโดนขอ
                     startDate: startDateStr,
                     startTime: startTimeStr,
                     status: 'ACTIVE',
@@ -358,7 +357,6 @@
             if (!sender.notifications) sender.notifications = [];
             sender.notifications.push({ id: Date.now(), message: `${currentUser.name} ตอบรับคำขอเป็นแฟนของคุณแล้ว!`, time: new Date().toLocaleString(), read: false });
 
-            // ลบโค้ดทิ้งหลังใช้งาน
             delete db.proposalCodes[code];
 
             await dbRef.set(db);
@@ -372,7 +370,6 @@
             document.getElementById('text-couple-status').innerText = "ยังไม่มีคู่รัก";
             document.getElementById('text-couple-status').className = "font-bold text-slate-500";
             
-            // แสดงปุ่มสร้างโค้ดและใส่โค้ดเมื่อยังไม่มีคู่
             document.getElementById('single-action-panel').style.display = 'grid';
             
             document.getElementById('profile-icon-box').innerHTML = '<span class="text-rose-400 font-bold">--</span>';
@@ -393,7 +390,6 @@
             
             const isBroken = couple.status === 'BROKEN';
             
-            // ซ่อนปุ่มสร้างโค้ดและใส่โค้ดทันทีเมื่อมีแฟนแล้ว (ไม่ว่าจะ ACTIVE หรือ BROKEN)
             document.getElementById('single-action-panel').style.display = 'none';
 
             if (isBroken) {
@@ -445,6 +441,8 @@
 
             document.getElementById('profile-icon-box').innerHTML = '<i class="fa-solid fa-heart text-rose-500 text-lg"></i>';
             document.getElementById('display-couple-id').innerText = couple.id;
+            
+            // แสดงชื่อถูกต้องตามโครงสร้างออนไลน์ (ฝ่ายที่ 1 = ผู้ขอ, ฝ่ายที่ 2 = ผู้ถูกขอ)
             document.getElementById('card-user1-name').innerText = couple.user1Name;
             document.getElementById('card-user2-name').innerText = couple.user2Name;
             document.getElementById('card-start-date').innerText = couple.startDate.split('-').reverse().join('/');
