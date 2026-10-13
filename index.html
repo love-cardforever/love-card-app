@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forever Love - ลงทะเบียน & เข้าสู่ระบบ</title>
+    <title>Forever Love - ลงทะเบียน & ระบบขอเป็นแฟน</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -17,29 +17,41 @@
         tailwind.config = { theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } } }
     </script>
     <style>
-        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%); min-height: 100vh; }
+        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%); min-height: 100vh; overflow-x: hidden; }
         .glass-card { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
+        
+        /* เอฟเฟคสแกนนิ้ว */
+        @keyframes scanline { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
+        .scanner-line { position: absolute; width: 100%; height: 3px; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; animation: scanline 2s infinite ease-in-out; }
+
+        /* เอฟเฟคเรืองแสงสีทองทั่วจอ */
+        @keyframes goldGlow { 0% { background-color: rgba(251, 191, 36, 0); } 50% { background-color: rgba(251, 191, 36, 0.4); } 100% { background-color: rgba(251, 191, 36, 0); } }
+        .gold-flash { animation: goldGlow 1.5s ease-in-out; }
+
+        /* บัตรคู่รักเรืองแสง */
+        @keyframes cardGlow { 0%, 100% { box-shadow: 0 0 10px #f43f5e; border-color: #f43f5e; } 50% { box-shadow: 0 0 35px #fbbf24, 0 0 60px #f43f5e; border-color: #fbbf24; transform: scale(1.03); } }
+        .glow-card-effect { animation: cardGlow 1.2s infinite ease-in-out; }
     </style>
 </head>
-<body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
+<body id="main-body" class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen transition-colors duration-500">
 
-    <header class="w-full max-w-4xl mx-auto mb-6 bg-white/85 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
+    <header class="w-full max-w-4xl mx-auto mb-6 bg-white/85 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center z-10">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart"><i class="fa-solid fa-heart"></i></div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Forever Love System</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบลงทะเบียนและสร้างความทรงจำคู่รักออนไลน์</p>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบขอเป็นแฟน & ความทรงจำคู่รักเรียลไทม์</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"><i class="fa-solid fa-wallet text-amber-900"></i> โดเนทสนับสนุน</button>
+            <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"><i class="fa-solid fa-wallet text-amber-900"></i> โดเนท</button>
             <button onclick="openCodeLinkModal()" class="px-3.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow transition"><i class="fa-solid fa-key mr-1"></i> ใส่โค้ดขอเป็นแฟน</button>
         </div>
     </header>
 
-    <main class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center items-center space-y-6">
+    <main class="w-full max-w-md mx-auto flex-1 flex flex-col justify-center items-center space-y-6 z-10">
         <div class="w-full bg-white/60 p-1.5 rounded-2xl flex shadow-sm">
             <button onclick="switchTab('login')" id="tab-login-btn" class="flex-1 py-2 text-xs font-bold rounded-xl bg-rose-500 text-white transition shadow">เข้าสู่ระบบ</button>
             <button onclick="switchTab('register')" id="tab-reg-btn" class="flex-1 py-2 text-xs font-bold rounded-xl text-slate-600 transition">สมัครสมาชิก</button>
@@ -55,7 +67,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">User ID ของคุณ</label>
-                    <input type="text" id="login-id" required placeholder="เช่น 1100000A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
+                    <input type="text" id="login-id" required placeholder="เช่น 11202350A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
@@ -64,7 +76,7 @@
                 <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm"><i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ</button>
                 <div class="flex justify-between text-xs pt-2">
                     <button type="button" onclick="openForgotModal()" class="text-rose-500 hover:underline">ลืมรหัสผ่าน?</button>
-                    <button type="button" onclick="openIssueModal()" class="text-slate-500 hover:underline font-semibold text-rose-600"><i class="fa-solid fa-headset mr-1"></i> แจ้งปัญหาการใช้งาน</button>
+                    <button type="button" onclick="openIssueModal()" class="text-slate-500 hover:underline font-semibold text-rose-600"><i class="fa-solid fa-headset mr-1"></i> แจ้งปัญหา</button>
                 </div>
             </form>
         </section>
@@ -108,7 +120,84 @@
         </section>
     </main>
 
-    <!-- Modals ต่างๆ -->
+    <!-- 1. Modal ใส่โค้ดขอเป็นแฟน -->
+    <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
+            <input type="text" id="input-proposal-code" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
+            <div class="flex gap-2">
+                <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="verifyProposalCode()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal ถามยอมรับหรือปฏิเสธคำขอ -->
+    <div id="modal-proposal-choice" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl animate-heart"><i class="fa-solid fa-heart"></i></div>
+            <h3 id="proposal-sender-title" class="text-xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h3>
+            <div class="flex gap-3 pt-2">
+                <button onclick="handleAcceptProposalFlow()" class="flex-1 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-2xl shadow text-sm transition">ยอมรับ 🥰</button>
+                <button id="btn-reject-step" onclick="handleRejectStep()" class="flex-1 py-3.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-sm transition">ขอคิดดูก่อน 😜</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal ปฏิเสธแบบวนซ้ำ 5 รอบ -->
+    <div id="modal-reject-form" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
+            <h3 id="reject-warning-title" class="font-bold text-base text-rose-600">แน่ใจแล้วหรอที่จะปฏิเสธ? 😢</h3>
+            <p id="reject-warning-sub" class="text-xs text-slate-500">โปรดพิจารณาใหม่อีกครั้ง...</p>
+            <div id="reject-input-group" class="space-y-3 hidden pt-2">
+                <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                <textarea id="reject-reason-input" rows="3" placeholder="ระบุเหตุผลที่ปฏิเสธ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="document.getElementById('modal-reject-form').classList.add('hidden'); document.getElementById('modal-proposal-choice').classList.remove('hidden');" class="flex-1 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">กลับไปยอมรับดีกว่า</button>
+                <button id="btn-action-reject" onclick="proceedReject()" class="flex-1 py-2.5 bg-slate-700 text-white font-bold rounded-xl text-xs transition">ยืนยันปฏิเสธ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Modal สแกนลายนิ้วมือ (รอบที่ 1 และ รอบที่ 2) -->
+    <div id="modal-fingerprint" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl text-white">
+            <h3 id="fp-title" class="font-bold text-base text-rose-400">กรุณาสแกนลายนิ้วมือเพื่อยืนยัน</h3>
+            <p id="fp-subtitle" class="text-xs text-slate-400">แตะที่ไอคอนลายนิ้วมือด้านล่าง</p>
+            <div onclick="simulateFingerprintScan()" class="w-24 h-24 rounded-full bg-slate-800 border-2 border-rose-500/50 mx-auto flex items-center justify-center text-4xl text-rose-500 cursor-pointer relative overflow-hidden shadow-lg hover:scale-105 transition">
+                <div class="scanner-line"></div>
+                <i class="fa-solid fa-fingerprint"></i>
+            </div>
+            <span id="fp-status" class="text-xs text-slate-400 block">รอการสแกน...</span>
+        </div>
+    </div>
+
+    <!-- 5. Modal กรอกชื่อเหมือนสมัครบัญชีใหม่ หลังสแกนนิ้วครั้งที่ 1 -->
+    <div id="modal-accept-register" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md space-y-4 shadow-2xl">
+            <div class="text-center">
+                <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนผู้รับคำขอ</h3>
+                <p class="text-xs text-slate-500">กรอกข้อมูลส่วนตัวเพื่อผูกบัญชีคู่รัก</p>
+            </div>
+            <div class="space-y-3 pt-2">
+                <input type="text" id="acc-name" placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> ชาย (11)</label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="acc-birthyear" placeholder="ปีเกิด ค.ศ. เช่น 2002" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                    <input type="password" id="acc-pass" placeholder="รหัสผ่านส่วนตัว" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                </div>
+                <input type="email" id="acc-email" placeholder="อีเมลจริง" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                <button onclick="submitAcceptRegisterData()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs shadow transition">ดำเนินการต่อ (สแกนนิ้วครั้งที่ 2)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals พื้นฐานอื่นๆ -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
@@ -125,36 +214,6 @@
             <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนสำเร็จ! 🎉</h3>
             <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
             <button onclick="closeSuccessRegModal()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ไปหน้าเข้าสู่ระบบ</button>
-        </div>
-    </div>
-
-    <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
-            <input type="text" id="input-proposal-code" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
-            <div class="flex gap-2">
-                <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="goToProposalPage()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบ</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-proposal-popup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
-            <h3 id="popup-proposal-title" class="text-xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h3>
-            <div class="flex gap-3 pt-2">
-                <button onclick="promptLoginBeforeAccept()" class="flex-1 py-3 bg-rose-500 text-white font-bold rounded-2xl shadow text-sm">เข้าสู่ระบบ / สมัครก่อน 🥰</button>
-                <button onclick="openRejectReasonModal()" class="flex-1 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl text-sm">ขอคิดดูก่อน 😜</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
-            <h3 class="font-bold text-base text-slate-800">ปฏิเสธคำขอเป็นแฟน</h3>
-            <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-            <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
-            <button onclick="submitRejectForm()" class="w-full py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
         </div>
     </div>
 
@@ -175,7 +234,7 @@
             <h3 class="font-bold text-base text-slate-800">แจ้งปัญหาการใช้งาน</h3>
             <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
             </div>
         </div>
@@ -187,7 +246,7 @@
             <input type="text" id="forgot-id" placeholder="User ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
             <input type="email" id="forgot-email" placeholder="อีเมล" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">กู้คืน</button>
             </div>
         </div>
@@ -209,6 +268,17 @@
         let pendingUserRegData = null;
         let realOtpCode = "";
         let activeProposalCodeKey = "";
+        let proposalSenderInfo = null;
+        
+        // ตัวแปรควบคุมการปฏิเสธ 5 รอบ
+        let rejectClickCount = 0;
+        const rejectMessages = [
+            "แน่ใจแล้วหรอที่จะปฏิเสธ? 😢",
+            "คิดดูใหม่อีกรอบได้นะ คนส่งตั้งใจมากเลยนะ! 🥺",
+            "ใจร้ายจัง... ขอโอกาสให้อีกสักรอบเถอะนะ 💔",
+            "เตือนครั้งที่ 4 แล้วนะ จะกดปฏิเสธจริงๆ หรอเนี่ย 😭",
+            "นี่คือรอบสุดท้ายแล้วนะ! ถ้าใจแข็งจริงก็เชิญกดปุ่มแดงข้างล่างเลย 🛑"
+        ];
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -242,20 +312,13 @@
         }
         function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
 
-        // ระบบแยกเส้นทาง (Redirect) ไปยังหน้า Admin และ Creator ตามที่คุณกำหนด
         async function handleLogin(e) {
             e.preventDefault();
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            if (idInput === '0000' && passInput === '0000') {
-                window.location.href = 'admin.html';
-                return;
-            }
-            if (idInput === '1111' && passInput === '1111') {
-                window.location.href = 'creator.html';
-                return;
-            }
+            if (idInput === '0000' && passInput === '0000') { window.location.href = 'admin.html'; return; }
+            if (idInput === '1111' && passInput === '1111') { window.location.href = 'creator.html'; return; }
 
             const snapshot = await dbRef.once('value');
             const val = snapshot.val() || {};
@@ -264,6 +327,183 @@
 
             localStorage.setItem('current_user', JSON.stringify(user));
             window.location.href = 'vault.html';
+        }
+
+        // --- ระบบตรวจสอบโค้ดขอเป็นแฟน ---
+        async function verifyProposalCode() {
+            const code = document.getElementById('input-proposal-code').value.trim();
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            const proposal = val.proposalCodes ? val.proposalCodes[code] : null;
+            
+            if (!proposal || proposal.status !== 'PENDING') {
+                showCustomAlert('ผิดพลาด', 'โค้ดไม่ถูกต้องหรือถูกใช้งานไปแล้ว');
+                return;
+            }
+
+            activeProposalCodeKey = code;
+            proposalSenderInfo = (val.users || []).find(u => u.id === proposal.senderId);
+            
+            document.getElementById('proposal-sender-title').innerText = `${proposal.senderName} ส่งคำขอเป็นแฟนถึงคุณ! 💕`;
+            closeCodeLinkModal();
+            document.getElementById('modal-proposal-choice').classList.remove('hidden');
+        }
+
+        // --- ระบบปฏิเสธแบบ 5 รอบ ---
+        function handleRejectStep() {
+            document.getElementById('modal-proposal-choice').classList.add('hidden');
+            rejectClickCount++;
+            
+            const titleElem = document.getElementById('reject-warning-title');
+            const subElem = document.getElementById('reject-warning-sub');
+            const inputGroup = document.getElementById('reject-input-group');
+            const btnAction = document.getElementById('btn-action-reject');
+
+            if (rejectClickCount < 5) {
+                titleElem.innerText = rejectMessages[rejectClickCount - 1];
+                subElem.innerText = `พยายามปฏิเสธครั้งที่ ${rejectClickCount} / 5`;
+                inputGroup.classList.add('hidden');
+                btnAction.className = "flex-1 py-2.5 bg-slate-700 text-white font-bold rounded-xl text-xs transition";
+                btnAction.innerText = "ยืนยันปฏิเสธ";
+            } else {
+                // รอบที่ 5: ปุ่มปฏิเสธเรืองแสงสีแดง
+                titleElem.innerText = rejectMessages[4];
+                subElem.innerText = "ใจร้ายที่สุด! บังคับกรอกเหตุผลแล้วนะ 🛑";
+                inputGroup.classList.remove('hidden');
+                btnAction.className = "flex-1 py-2.5 bg-red-600 text-white font-bold rounded-xl text-xs shadow-lg animate-pulse transition";
+                btnAction.innerText = "ยืนยันปฏิเสธขั้นเด็ดขาด";
+            }
+            document.getElementById('modal-reject-form').classList.remove('hidden');
+        }
+
+        async function proceedReject() {
+            if (rejectClickCount < 5) {
+                handleRejectStep();
+                return;
+            }
+            const name = document.getElementById('reject-name-input').value.trim();
+            const reason = document.getElementById('reject-reason-input').value.trim();
+            if (!name || !reason) {
+                showCustomAlert('ข้อมูลไม่ครบ', 'กรุณากรอกชื่อและเหตุผลในการปฏิเสธ');
+                return;
+            }
+
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            if (val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
+                val.proposalCodes[activeProposalCodeKey].status = 'REJECTED';
+                val.proposalCodes[activeProposalCodeKey].rejectReason = { name, reason };
+                await dbRef.set(val);
+            }
+            document.getElementById('modal-reject-form').classList.add('hidden');
+            showCustomAlert('บันทึกผล', 'ส่งคำตอบปฏิเสธเรียบร้อยแล้ว');
+            rejectClickCount = 0;
+        }
+
+        // --- ระบบกดยอมรับ -> สแกนนิ้วครั้งที่ 1 ---
+        function handleAcceptProposalFlow() {
+            document.getElementById('modal-proposal-choice').classList.add('hidden');
+            document.getElementById('fp-title').innerText = "สแกนลายนิ้วมือครั้งที่ 1 (ยืนยันเริ่มต้นตอบรับ)";
+            document.getElementById('fp-status').innerText = "แตะเพื่อสแกนนิ้ว...";
+            window.fingerprintStage = 1;
+            document.getElementById('modal-fingerprint').classList.remove('hidden');
+        }
+
+        function simulateFingerprintScan() {
+            const statusElem = document.getElementById('fp-status');
+            statusElem.innerText = "กำลังตรวจสอบลายนิ้วมือ...";
+            
+            setTimeout(() => {
+                document.getElementById('modal-fingerprint').classList.add('hidden');
+                if (window.fingerprintStage === 1) {
+                    // เปิดหน้ากรอกข้อมูลบัญชีเหมือนสมัครใหม่
+                    document.getElementById('modal-accept-register').classList.remove('hidden');
+                } else if (window.fingerprintStage === 2) {
+                    // สแกนนิ้วครั้งที่ 2 สำเร็จ -> เริ่มเอฟเฟคแสงทอง & สร้างคู่รักแบบเรียลไทม์
+                    executeFinalAcceptEffect();
+                }
+            }, 1500);
+        }
+
+        function submitAcceptRegisterData() {
+            const name = document.getElementById('acc-name').value.trim();
+            const gender = document.querySelector('input[name="acc-gender"]:checked').value;
+            const birthyear = document.getElementById('acc-birthyear').value.trim();
+            const password = document.getElementById('acc-pass').value.trim();
+            const email = document.getElementById('acc-email').value.trim();
+
+            if (!name || !birthyear || !password || !email) {
+                showCustomAlert('ข้อมูลไม่ครบ', 'กรุณากรอกข้อมูลให้ครบทุกช่อง');
+                return;
+            }
+
+            let genderPrefix = gender === 'male' ? "11" : (gender === 'female' ? "10" : "12");
+            let uniqueRand = Math.floor(100 + Math.random() * 900);
+            let userID = `${genderPrefix}${birthyear.slice(-1)}${uniqueRand}A`;
+
+            pendingUserRegData = { id: userID, name, gender, birthyear, password, email, coupleId: null, createdTime: new Date().toISOString() };
+            document.getElementById('modal-accept-register').classList.add('hidden');
+
+            // เปิดสแกนนิ้วครั้งที่ 2 เพื่อยืนยันครั้งสุดท้าย
+            document.getElementById('fp-title').innerText = "สแกนลายนิ้วมือครั้งที่ 2 (ยืนยันตอบรับคำขอครั้งสุดท้าย)";
+            document.getElementById('fp-status').innerText = "แตะเพื่อยืนยันลายนิ้วมือ...";
+            window.fingerprintStage = 2;
+            document.getElementById('modal-fingerprint').classList.remove('hidden');
+        }
+
+        // --- เอฟเฟคหน้าจอเรืองแสงสีทอง และ บัตรคู่รักเรืองแสงแบบเรียลไทม์ ---
+        async function executeFinalAcceptEffect() {
+            const bodyElem = document.getElementById('main-body');
+            bodyElem.classList.add('gold-flash');
+
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            if (!val.users) val.users = [];
+
+            while (val.users.some(u => u.id === pendingUserRegData.id)) {
+                let uniqueRand = Math.floor(100 + Math.random() * 900);
+                pendingUserRegData.id = `${pendingUserRegData.id.slice(0,3)}${uniqueRand}A`;
+            }
+
+            val.users.push(pendingUserRegData);
+
+            if (val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
+                const proposal = val.proposalCodes[activeProposalCodeKey];
+                proposal.status = 'ACCEPTED';
+                const sender = val.users.find(u => u.id === proposal.senderId);
+                const receiver = pendingUserRegData;
+
+                let seqNum = (val.globalCoupleCounter || 0) + 1;
+                val.globalCoupleCounter = seqNum;
+                const now = new Date();
+                const coupleCardID = `${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}#${now.getDay() || 7}${String(seqNum).padStart(3,'0')}ABC`;
+
+                const newCouple = {
+                    id: coupleCardID,
+                    user1Id: sender.id, user1Name: sender.name,
+                    user2Id: receiver.id, user2Name: receiver.name,
+                    startDate: now.toISOString().split('T')[0],
+                    startTime: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                    status: 'ACTIVE', reconcileQuota: 3, notes: [], photos: [], trashPhotos: [], notifications: []
+                };
+
+                if (!val.couples) val.couples = [];
+                val.couples.push(newCouple);
+                sender.coupleId = coupleCardID;
+                receiver.coupleId = coupleCardID;
+
+                if (!sender.notifications) sender.notifications = [];
+                sender.notifications.push({ id: Date.now(), type: 'PROPOSAL_ACCEPTED', message: `${receiver.name} ตอบรับคำขอเป็นแฟนแล้ว! 💕`, time: new Date().toLocaleString(), read: false });
+            }
+
+            await dbRef.set(val);
+            localStorage.setItem('current_user', JSON.stringify(pendingUserRegData));
+
+            // แสดงเอฟเฟคบัตรคู่รักเรืองแสงก่อนวาร์ป
+            setTimeout(() => {
+                bodyElem.classList.remove('gold-flash');
+                window.location.href = 'vault.html';
+            }, 1500);
         }
 
         async function handleRegister(e) {
@@ -307,32 +547,6 @@
             closeOtpModal();
             document.getElementById('success-user-id').innerText = pendingUserRegData.id;
             document.getElementById('modal-success-reg').classList.remove('hidden');
-        }
-
-        async function goToProposalPage() {
-            const code = document.getElementById('input-proposal-code').value.trim();
-            const snapshot = await dbRef.once('value');
-            const val = snapshot.val() || {};
-            const proposal = val.proposalCodes ? val.proposalCodes[code] : null;
-            if (!proposal || proposal.status !== 'PENDING') { showCustomAlert('ผิดพลาด', 'โค้ดไม่ถูกต้องหรือถูกใช้แล้ว'); return; }
-            activeProposalCodeKey = code;
-            document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} ส่งคำขอเป็นแฟนถึงคุณ! 💕`;
-            closeCodeLinkModal();
-            document.getElementById('modal-proposal-popup').classList.remove('hidden');
-        }
-
-        function promptLoginBeforeAccept() { document.getElementById('modal-proposal-popup').classList.add('hidden'); switchTab('login'); }
-        function openRejectReasonModal() { document.getElementById('modal-proposal-popup').classList.add('hidden'); document.getElementById('modal-reject-form').classList.remove('hidden'); }
-        
-        async function submitRejectForm() {
-            const snapshot = await dbRef.once('value');
-            const val = snapshot.val() || {};
-            if (val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
-                val.proposalCodes[activeProposalCodeKey].status = 'REJECTED';
-                await dbRef.set(val);
-            }
-            document.getElementById('modal-reject-form').classList.add('hidden');
-            showCustomAlert('สำเร็จ', 'ส่งผลการปฏิเสธเรียบร้อย');
         }
 
         async function submitIssue() {
