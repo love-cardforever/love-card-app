@@ -36,7 +36,7 @@
             </div>
         </header>
 
-        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟน -->
+        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟน (จะซ่อนอัตโนมัติเมื่อมีแฟนแล้ว) -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -48,9 +48,9 @@
                 </div>
                 <button onclick="openDeleteAccountModal()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold rounded-xl shadow transition"><i class="fa-solid fa-user-slash mr-1"></i> ลบบัญชี</button>
             </div>
-            <div class="grid grid-cols-2 gap-2 pt-1">
+            <div id="profile-action-buttons" class="grid grid-cols-2 gap-2 pt-1">
                 <button onclick="openNotificationsModal()" class="py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100 shadow-xs"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
-                <button onclick="generateProposalCodeFast()" class="py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
+                <button id="btn-create-proposal" onclick="generateProposalCodeFast()" class="py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
             </div>
         </section>
 
@@ -89,7 +89,7 @@
             </div>
         </section>
 
-        <!-- 4. แผงควบคุมคู่รัก (ปุ่มขอคืนดี & ขอเลิกรา) -->
+        <!-- 4. แผงควบคุมคู่รัก -->
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
             
             <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
@@ -214,7 +214,7 @@
         let targetDeleteTarget = null;
         let timerInterval = null;
 
-        dbRef.on('value', (snapshot) => {
+        dbRef.on('value', async (snapshot) => {
             const db = snapshot.val() || {};
             const users = db.users || [];
             const freshUser = users.find(u => u.id === currentUser.id);
@@ -233,8 +233,23 @@
             renderNotificationsList(notifs);
 
             const couples = db.couples || [];
-            // ค้นหาคู่รักทั้งสถานะ ACTIVE และ BROKEN (ทิ้งร้างไว้รอขอคืนดี)
-            const myCouple = couples.find(c => c.id === currentUser.coupleId);
+            let myCouple = couples.find(c => c.id === currentUser.coupleId);
+
+            // ตรวจสอบเงื่อนไขวันหมดอายุ 30 วันหลังจากเลิกกัน
+            if (myCouple && myCouple.status === 'BROKEN' && myCouple.breakupTimestamp) {
+                const now = Date.now();
+                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+                if (now - myCouple.breakupTimestamp > thirtyDaysMs) {
+                    // หากเกิน 30 วัน ให้ลบบัตรและล้าง coupleId ของผู้ใช้ทั้งสอง
+                    db.couples = couples.filter(c => c.id !== myCouple.id);
+                    const u1 = users.find(u => u.id === myCouple.user1Id);
+                    const u2 = users.find(u => u.id === myCouple.user2Id);
+                    if (u1) u1.coupleId = null;
+                    if (u2) u2.coupleId = null;
+                    await dbRef.set(db);
+                    return;
+                }
+            }
 
             if (!myCouple) {
                 renderNoCoupleState();
@@ -264,6 +279,9 @@
             document.getElementById('text-couple-status').innerText = "ยังไม่มีคู่รัก";
             document.getElementById('text-couple-status').className = "font-bold text-slate-500";
             
+            // แสดงปุ่มสร้างโค้ดขอเป็นแฟนเมื่อยังไม่มีคู่
+            document.getElementById('btn-create-proposal').style.display = 'flex';
+            
             document.getElementById('profile-icon-box').innerHTML = '<span class="text-rose-400 font-bold">--</span>';
             document.getElementById('display-couple-id').innerText = "0000#000000";
             document.getElementById('card-user1-name').innerText = currentUser.name;
@@ -282,12 +300,21 @@
             
             const isBroken = couple.status === 'BROKEN';
             
+            // ซ่อนปุ่มสร้างโค้ดขอเป็นแฟนทันทีเมื่อมีคู่แล้ว (ไม่ว่าจะ ACTIVE หรือ BROKEN)
+            document.getElementById('btn-create-proposal').style.display = 'none';
+
             if (isBroken) {
-                document.getElementById('text-couple-status').innerText = "เลิกรากันแล้ว (ทิ้งร้างรอคืนดี)";
+                document.getElementById('text-couple-status').innerText = "เลิกรากันแล้ว (รอการคืนดีใน 30 วัน)";
                 document.getElementById('text-couple-status').className = "font-bold text-amber-600";
-                document.getElementById('card-status-badge').innerText = "สถานะ: เลิกรา";
-                document.getElementById('timer-title').innerText = "ความสัมพันธ์ถูกระงับ (รอการคืนดี)";
-                document.getElementById('love-timer-display').innerText = "หยุดนับเวลาชั่วคราว";
+                
+                // คำนวณวันหมดอายุเหลืออีกกี่วัน
+                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+                const timeLeft = thirtyDaysMs - (Date.now() - (couple.breakupTimestamp || Date.now()));
+                const daysLeft = Math.max(0, Math.ceil(timeLeft / (1000 * 60 * 60 * 24)));
+                
+                document.getElementById('card-status-badge').innerText = `บัตรหมดอายุใน ${daysLeft} วัน`;
+                document.getElementById('timer-title').innerText = "ความสัมพันธ์ถูกระงับ (บัตรถูกทิ้งร้าง)";
+                document.getElementById('love-timer-display').innerText = `เหลือเวลาขอคืนดีอีก ${daysLeft} วัน`;
                 if (timerInterval) clearInterval(timerInterval);
             } else {
                 document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
@@ -318,7 +345,7 @@
             const quota = couple.reconcileQuota ?? 3;
             document.getElementById('quota-left').innerText = quota;
             
-            if (quota <= 0 || isBroken) {
+            if (quota <= 0) {
                 document.getElementById('vault-body').classList.add('grayscale-mode');
             } else {
                 document.getElementById('vault-body').classList.remove('grayscale-mode');
@@ -561,9 +588,9 @@
                     return;
                 }
                 couple.reconcileQuota = quota - 1;
-                couple.status = 'ACTIVE'; // คืนสถานะกลับมาคบกัน
+                couple.status = 'ACTIVE'; 
+                delete couple.breakupTimestamp; // ล้างเวลาหมดอายุ 30 วันออกเมื่อคืนดีสำเร็จ
                 
-                // แจ้งเตือนแฟน
                 const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
                 const partner = (db.users || []).find(u => u.id === partnerId);
                 if (partner) {
@@ -585,18 +612,19 @@
             const db = snapshot.val() || {};
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
             if (couple) {
-                couple.status = 'BROKEN'; // เปลี่ยนสถานะเป็นเลิกรา แต่เก็บบัตรทิ้งร้างไว้
+                couple.status = 'BROKEN'; 
+                couple.breakupTimestamp = Date.now(); // บันทึกเวลาเริ่มต้นนับถอยหลัง 30 วัน
+                
                 const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
                 const partner = (db.users || []).find(u => u.id === partnerId);
                 if (partner) {
                     if (!partner.notifications) partner.notifications = [];
                     partner.notifications.push({ id: Date.now(), message: `แฟนของคุณขอเลิกรา เหตุผล: ${reason || 'ไม่มีเหตุผล'}`, time: new Date().toLocaleString(), read: false });
                 }
-                // หมายเหตุ: ไม่เคลียร์ coupleId ของ User เพื่อให้บัตรยังคงค้างอยู่และใช้ขอคืนดีต่อได้
                 await dbRef.set(db);
             }
             closeBreakupModal();
-            alert('ทำรายการเลิกราสำเร็จ บัตรถูกพักสถานะไว้ รอการขอคืนดี');
+            alert('ทำรายการเลิกราสำเร็จ บัตรจะถูกเก็บรักษาไว้ 30 วันเพื่อให้โอกาสขอคืนดี');
         }
 
         function openDeleteAccountModal() { document.getElementById('modal-delete-account').classList.remove('hidden'); }
@@ -614,12 +642,12 @@
                     const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
                     if (couple) {
                         couple.status = 'BROKEN';
+                        couple.breakupTimestamp = Date.now();
                         const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
                         const partner = (db.users || []).find(u => u.id === partnerId);
                         if (partner) {
                             if (!partner.notifications) partner.notifications = [];
-                            partner.notifications.push({ id: Date.now(), message: `แฟนของคุณได้ลบบัญชีออกจากระบบแล้ว บัตรคู่รักถูกยกเลิก`, time: new Date().toLocaleString(), read: false });
-                            partner.coupleId = null;
+                            partner.notifications.push({ id: Date.now(), message: `แฟนของคุณได้ลบบัญชีออกจากระบบแล้ว บัตรถูกพักสถานะไว้`, time: new Date().toLocaleString(), read: false });
                         }
                     }
                 }
