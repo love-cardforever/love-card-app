@@ -151,6 +151,36 @@
         </div>
     </div>
 
+    <!-- Modal ยืนยันรหัสแอดมิน (0000 / 0000) -->
+    <div id="modal-admin-pass" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800">เข้าสู่ระบบแอดมิน</h3>
+            <p class="text-xs text-slate-500">กรอกรหัสยืนยันตัวตนแอดมินหลัก</p>
+            <input type="text" id="admin-id-real" placeholder="Admin ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="admin-pass-real" placeholder="Password" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('modal-admin-pass').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="verifyAdminLogin()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">เข้าสู่ระบบ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ยืนยันรหัสผู้สร้าง (1111 / 1111) -->
+    <div id="modal-creator-pass" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800">ยืนยันตัวตนผู้สร้างระบบ (Creator)</h3>
+            <p class="text-xs text-slate-500">ต้องกรอกให้ครบทุกช่องและถูกต้องทั้งหมด</p>
+            <input type="text" id="c-id" placeholder="ID creator" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="c-pass1" placeholder="Password 1" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="c-pass2" placeholder="Password 2" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="c-key" placeholder="Key" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <div class="flex gap-2 pt-2">
+                <button onclick="document.getElementById('modal-creator-pass').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="verifyCreatorLogin()" class="flex-1 py-2 bg-rose-600 text-white text-xs font-bold rounded-xl shadow">ยืนยันและเข้าสู่ระบบ</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
@@ -209,7 +239,6 @@
         </div>
     </div>
 
-    <!-- Modal แจ้งปัญหาการใช้งาน -->
     <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-1"></i> แจ้งปัญหาการใช้งาน</h3>
@@ -249,6 +278,16 @@
         let pendingUserRegData = null;
         let realOtpCode = "";
         let activeProposalCodeKey = "";
+
+        // เข้ารหัสลับ Base64 ป้องกันการอ่านผ่านโค้ดซอร์ส
+        const _encAdminId = "QWRtaW5Mb3Zl"; // AdminLove
+        const _encAdminPass = "UGlwYXQwODRAMyM="; // Pipat084@#
+        const _encCId = "bXVtdUFkbWlu"; // mumuAdmin
+        const _encCP1 = "MTU2MDE="; // 15601
+        const _encCP2 = "NjE2NDUx"; // 616451
+        const _encCKey = "dGFwaXBpcGF0"; // tapipipat
+
+        function decodeBase64(str) { return atob(str); }
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -309,6 +348,112 @@
             });
         }
 
+        // ระบบจัดการการเข้าสู่ระบบ (รวมเงื่อนไขลับแอดมินและผู้สร้าง)
+        async function handleLogin(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('login-id').value.trim();
+            const passInput = document.getElementById('login-pass').value.trim();
+
+            // เงื่อนไขเข้าสู่หน้าแอดมิน (กรอก 0000 / 0000)
+            if (idInput === '0000' && passInput === '0000') {
+                document.getElementById('modal-admin-pass').classList.remove('hidden');
+                return;
+            }
+
+            // เงื่อนไขเข้าสู่หน้าผู้สร้าง (กรอก 1111 / 1111)
+            if (idInput === '1111' && passInput === '1111') {
+                document.getElementById('modal-creator-pass').classList.remove('hidden');
+                return;
+            }
+
+            const db = await getDB();
+            const user = db.users.find(u => u.id === idInput.toUpperCase() && u.password === passInput);
+            if (!user) {
+                showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'User ID หรือรหัสผ่านไม่ถูกต้อง');
+                return;
+            }
+
+            if (activeProposalCodeKey && db.proposalCodes[activeProposalCodeKey]) {
+                const proposal = db.proposalCodes[activeProposalCodeKey];
+                proposal.status = 'ACCEPTED';
+                const sender = db.users.find(u => u.id === proposal.senderId);
+                const receiver = user;
+
+                if (sender.id === receiver.id) {
+                    showCustomAlert('ไม่สามารถทำรายการได้', 'คุณไม่สามารถขอเป็นแฟนกับตัวเองได้ครับ');
+                    return;
+                }
+
+                const now = new Date();
+                const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
+                const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
+                let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
+                db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
+
+                let seqNum = db.globalCoupleCounter;
+                let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
+                let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
+                let digit = seqNum % 10;
+                let suffix3 = `${char1}${char2}${digit}`;
+
+                const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
+                const startDateStr = now.toISOString().split('T')[0];
+                const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+                const newCouple = {
+                    id: coupleCardID,
+                    user1Id: sender.id, user1Name: sender.name,
+                    user2Id: receiver.id, user2Name: receiver.name,
+                    startDate: startDateStr, startTime: startTimeStr,
+                    status: 'ACTIVE', reconcileQuota: 3,
+                    notes: [], photos: [], trashPhotos: [], notifications: []
+                };
+
+                if (!db.couples) db.couples = [];
+                db.couples.push(newCouple);
+                sender.coupleId = coupleCardID;
+                receiver.coupleId = coupleCardID;
+
+                if (!sender.notifications) sender.notifications = [];
+                sender.notifications.push({
+                    id: Date.now(), type: 'PROPOSAL_ACCEPTED',
+                    message: `${receiver.name} ได้เข้าสู่ระบบและตกลงรับคำขอเป็นแฟนของคุณแล้ว! 💕`,
+                    time: new Date().toLocaleString(), read: false
+                });
+
+                await saveDB(db);
+            }
+
+            localStorage.setItem('current_user', JSON.stringify(user));
+            window.location.href = 'vault.html';
+        }
+
+        function verifyAdminLogin() {
+            const id = document.getElementById('admin-id-real').value.trim();
+            const pass = document.getElementById('admin-pass-real').value.trim();
+            if (id === decodeBase64(_encAdminId) && pass === "Pipat084@#") {
+                localStorage.setItem('admin_logged', 'true');
+                window.location.href = 'admin.html';
+            } else {
+                showCustomAlert('รหัสผ่านไม่ถูกต้อง', 'User ID หรือรหัสผ่านแอดมินไม่ถูกต้อง');
+            }
+        }
+
+        function verifyCreatorLogin() {
+            const id = document.getElementById('c-id').value.trim();
+            const p1 = document.getElementById('c-pass1').value.trim();
+            const p2 = document.getElementById('c-pass2').value.trim();
+            const key = document.getElementById('c-key').value.trim();
+
+            if (id === decodeBase64(_encCId) && p1 === decodeBase64(_encCP1) && p2 === decodeBase64(_encCP2) && key === decodeBase64(_encCKey)) {
+                localStorage.setItem('creator_logged', 'true');
+                window.location.href = 'creator.html';
+            } else {
+                showCustomAlert('ข้อมูลไม่ถูกต้อง', 'ข้อมูลผู้สร้างไม่ถูกต้อง ขาดหรือกรอกผิดพลาดแม้แต่ช่องเดียวจะไม่สามารถเข้าได้');
+            }
+        }
+
+        // ระบบป้องกัน User ID ซ้ำ 100%
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -436,84 +581,6 @@
             closeOtpModal();
             document.getElementById('success-user-id').innerText = pendingUserRegData.id;
             document.getElementById('modal-success-reg').classList.remove('hidden');
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const idInput = document.getElementById('login-id').value.trim().toUpperCase();
-            const passInput = document.getElementById('login-pass').value.trim();
-
-            if (idInput === 'ADMINLOVE' && passInput === 'Pipat084@#') {
-                localStorage.setItem('admin_logged', 'true');
-                window.location.href = 'admin.html';
-                return;
-            }
-            if (idInput === 'CREATOR' && passInput === 'Creator084@#') {
-                localStorage.setItem('creator_logged', 'true');
-                window.location.href = 'creator.html';
-                return;
-            }
-
-            const db = await getDB();
-            const user = db.users.find(u => u.id === idInput && u.password === passInput);
-            if (!user) {
-                showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'User ID หรือรหัสผ่านไม่ถูกต้อง');
-                return;
-            }
-
-            if (activeProposalCodeKey && db.proposalCodes[activeProposalCodeKey]) {
-                const proposal = db.proposalCodes[activeProposalCodeKey];
-                proposal.status = 'ACCEPTED';
-                const sender = db.users.find(u => u.id === proposal.senderId);
-                const receiver = user;
-
-                if (sender.id === receiver.id) {
-                    showCustomAlert('ไม่สามารถทำรายการได้', 'คุณไม่สามารถขอเป็นแฟนกับตัวเองได้ครับ');
-                    return;
-                }
-
-                const now = new Date();
-                const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-                const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
-                let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
-                db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
-
-                let seqNum = db.globalCoupleCounter;
-                let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
-                let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
-                let digit = seqNum % 10;
-                let suffix3 = `${char1}${char2}${digit}`;
-
-                const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
-                const startDateStr = now.toISOString().split('T')[0];
-                const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-                const newCouple = {
-                    id: coupleCardID,
-                    user1Id: sender.id, user1Name: sender.name,
-                    user2Id: receiver.id, user2Name: receiver.name,
-                    startDate: startDateStr, startTime: startTimeStr,
-                    status: 'ACTIVE', reconcileQuota: 3,
-                    notes: [], photos: [], trashPhotos: [], notifications: []
-                };
-
-                if (!db.couples) db.couples = [];
-                db.couples.push(newCouple);
-                sender.coupleId = coupleCardID;
-                receiver.coupleId = coupleCardID;
-
-                if (!sender.notifications) sender.notifications = [];
-                sender.notifications.push({
-                    id: Date.now(), type: 'PROPOSAL_ACCEPTED',
-                    message: `${receiver.name} ได้เข้าสู่ระบบและตกลงรับคำขอเป็นแฟนของคุณแล้ว! 💕`,
-                    time: new Date().toLocaleString(), read: false
-                });
-
-                await saveDB(db);
-            }
-
-            localStorage.setItem('current_user', JSON.stringify(user));
-            window.location.href = 'vault.html';
         }
 
         async function goToProposalPage() {
