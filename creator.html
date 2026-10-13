@@ -60,7 +60,7 @@
     <header class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
-            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชทแจ้งปัญหา ประกาศหมวดหมู่ และระบบแคชเบราว์เซอร์</p>
+            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการสถานะผู้ใช้ล่าสุด และระบบจัดการแคช</p>
         </div>
         <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ออกจากระบบ</button>
     </header>
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-    <!-- ส่วนจัดการแคชเบราว์เซอร์ (Browser Cache Management) -->
+    <!-- ส่วนจัดการแคชเบราว์เซอร์ -->
     <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
         <div class="flex flex-wrap justify-between items-center gap-3">
             <div>
@@ -86,9 +86,7 @@
                 <button onclick="clearBrowserCache()" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-broom mr-1"></i> ล้างแคชทั้งหมด</button>
             </div>
         </div>
-        <div id="cache-info-box" class="hidden bg-slate-900 p-4 rounded-xl border border-slate-700 text-xs space-y-1 text-slate-300">
-            <!-- ข้อมูลแคชจะแสดงที่นี่ -->
-        </div>
+        <div id="cache-info-box" class="hidden bg-slate-900 p-4 rounded-xl border border-slate-700 text-xs space-y-1 text-slate-300"></div>
     </div>
 
     <!-- ส่วนสถิติ กราฟการใช้งาน และขีดจำกัดฐานข้อมูล -->
@@ -176,10 +174,10 @@
         </div>
     </div>
 
-    <!-- ส่วนจัดการผู้ใช้งานพร้อมช่องค้นหา -->
+    <!-- ส่วนจัดการผู้ใช้งานพร้อมสถานะการเข้าสู่ระบบล่าสุด -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <div class="flex flex-col md:flex-row justify-between items-center gap-3">
-            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-users mr-2"></i> รายละเอียดผู้ใช้งานทั้งหมด (Users Detail)</h3>
+            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-users mr-2"></i> รายละเอียดผู้ใช้งานทั้งหมด & เวลาเข้าสู่ระบบล่าสุด</h3>
             <input type="text" id="search-user-input" oninput="filterUsersList()" placeholder="🔍 ค้นหาด้วยชื่อหรือไอดีผู้ใช้..." class="w-full md:w-72 px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none">
         </div>
         <div id="creator-users-list" class="space-y-2 pt-2 max-h-96 overflow-y-auto pr-1"></div>
@@ -227,7 +225,7 @@
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 const val = localStorage.getItem(key);
-                const size = (key.length + val.length) * 2; // คำนวณขนาดคร่าวๆ เป็น bytes
+                const size = (key.length + val.length) * 2;
                 totalSize += size;
                 html += `<p>• Key: <b>${key}</b> | ขนาด: ${(size / 1024).toFixed(2)} KB</p>`;
             }
@@ -237,7 +235,7 @@
         }
 
         function clearBrowserCache() {
-            if (!confirm('⚠️ ยืนยันการล้างแคชทั้งหมดในเบราว์เซอร์ (จะทำให้สถานะการเข้าสู่ระบบถูกรีเซ็ต)?')) return;
+            if (!confirm('⚠️ ยืนยันการล้างแคชทั้งหมดในเบราว์เซอร์?')) return;
             localStorage.clear();
             sessionStorage.clear();
             alert('ล้างแคชเรียบร้อยแล้ว ระบบจะรีเฟรชหน้าใหม่');
@@ -411,6 +409,8 @@
                 return;
             }
 
+            const now = new Date();
+
             filtered.forEach(u => {
                 const coupleObj = couples.find(c => c.id === u.coupleId || c.user1Id === u.id || c.user2Id === u.id);
                 let partnerName = 'ยังไม่มีคู่';
@@ -422,6 +422,22 @@
                     statusText = coupleObj.status;
                 }
 
+                // คำนวณระยะเวลาไม่ได้ใช้งาน (Inactive Days)
+                let lastLoginStr = u.lastLogin || 'ไม่เคยเข้าสู่ระบบ';
+                let inactiveDaysText = '';
+                if (u.lastLogin) {
+                    const lastDate = new Date(u.lastLogin);
+                    const diffTime = Math.abs(now - lastDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    if (diffDays > 30) {
+                        inactiveDaysText = `<span class="text-red-400 font-bold">(ไม่ได้ใช้งานมานาน ${diffDays} วัน - แนะนำลบทิ้ง)</span>`;
+                    } else {
+                        inactiveDaysText = `<span class="text-slate-400">(ใช้งานล่าสุดเมื่อ ${diffDays} วันก่อน)</span>`;
+                    }
+                } else {
+                    inactiveDaysText = `<span class="text-amber-400 font-bold">(ยังไม่เคยเข้าสู่ระบบ)</span>`;
+                }
+
                 const avatarHTML = u.profileImg ? `<img src="${u.profileImg}" class="w-10 h-10 rounded-full object-cover border border-slate-700">` : `<div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-xs">${u.name.charAt(0)}</div>`;
 
                 uList.innerHTML += `
@@ -430,12 +446,13 @@
                             ${avatarHTML}
                             <div>
                                 <p class="font-bold text-white">${u.name} <span class="text-[10px] text-slate-400">(ID: ${u.id})</span></p>
-                                <p class="text-[11px] text-slate-400">คู่รัก: <b class="text-rose-400">${partnerName}</b> | สถานะบัตร: <span class="text-amber-400">${statusText}</span></p>
+                                <p class="text-[11px] text-slate-400">คู่รัก: <b class="text-rose-400">${partnerName}</b> | สถานะ: <span class="text-amber-400">${statusText}</span></p>
+                                <p class="text-[10px] mt-0.5">⏱️ ล็อกอินล่าสุด: <b>${lastLoginStr}</b> ${inactiveDaysText}</p>
                             </div>
                         </div>
                         <div class="flex gap-1.5">
                             <button onclick="openDirectChatModal('${u.id}', '${u.name}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold shadow"><i class="fa-solid fa-comment mr-1"></i> แชท DEV</button>
-                            <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[10px] font-bold shadow"><i class="fa-solid fa-trash mr-1"></i> ลบถาวร</button>
+                            <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[10px] font-bold shadow"><i class="fa-solid fa-trash mr-1"></i> ลบทิ้ง</button>
                         </div>
                     </div>
                 `;
@@ -529,7 +546,7 @@
                 });
                 photosHTML += '</div>';
 
-                let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ:</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
+                let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ (ชั่วคราว):</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
                 (c.trashPhotos || []).forEach(tp => {
                     trashHTML += `
                         <div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-80">
