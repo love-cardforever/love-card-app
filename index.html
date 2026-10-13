@@ -25,12 +25,12 @@
 </head>
 <body class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <header class="w-full max-w-4xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
+    <header class="w-full max-w-4xl mx-auto mb-6 bg-white/85 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart"><i class="fa-solid fa-heart"></i></div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Forever Love System</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบลงทะเบียนและสร้างความทรงจำคู่รักออนไลน์</p>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบลงทะเบียนและสร้างความทรงจำคู่รักออนไลน์ (Realtime)</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -108,11 +108,11 @@
         </section>
     </main>
 
-    <!-- MODALS ต่างๆ ครบถ้วน -->
+    <!-- Modals ต่างๆ -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
-            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
+            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
                 <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="verifyOtpAndRegister()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน OTP</button>
@@ -125,32 +125,6 @@
             <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนสำเร็จ! 🎉</h3>
             <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
             <button onclick="closeSuccessRegModal()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ไปหน้าเข้าสู่ระบบ</button>
-        </div>
-    </div>
-
-    <div id="modal-admin-pass" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">เข้าสู่ระบบแอดมิน</h3>
-            <input type="text" id="admin-id-real" placeholder="Admin ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="admin-pass-real" placeholder="Password" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-            <div class="flex gap-2">
-                <button onclick="document.getElementById('modal-admin-pass').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="verifyAdminLogin()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">เข้าสู่ระบบ</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-creator-pass" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">ยืนยันตัวตนผู้สร้างระบบ</h3>
-            <input type="text" id="c-id" placeholder="ID creator (mumuAdmin)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="c-pass1" placeholder="Password 1 (15601)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="c-pass2" placeholder="Password 2 (616451)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="c-key" placeholder="Key (tapipipat)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <div class="flex gap-2 pt-2">
-                <button onclick="document.getElementById('modal-creator-pass').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="verifyCreatorLogin()" class="flex-1 py-2 bg-rose-600 text-white text-xs font-bold rounded-xl shadow">เข้าสู่ระบบ</button>
-            </div>
         </div>
     </div>
 
@@ -201,7 +175,7 @@
             <h3 class="font-bold text-base text-slate-800">แจ้งปัญหาการใช้งาน</h3>
             <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
             </div>
         </div>
@@ -213,7 +187,7 @@
             <input type="text" id="forgot-id" placeholder="User ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
             <input type="email" id="forgot-email" placeholder="อีเมล" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">กู้คืน</button>
             </div>
         </div>
@@ -235,14 +209,6 @@
         let pendingUserRegData = null;
         let realOtpCode = "";
         let activeProposalCodeKey = "";
-
-        const _encAdminId = "QWRtaW5Mb3Zl";
-        const _encAdminPass = "UGlwYXQwODRAMyM=";
-        const _encCId = "bXVtdUFkbWlu";
-        const _encCP1 = "MTU2MDE=";
-        const _encCP2 = "NjE2NDUx";
-        const _encCKey = "dGFwaXBpcGF0";
-        function decodeBase64(str) { return atob(str); }
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -281,15 +247,6 @@
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            if (idInput === '0000' && passInput === '0000') {
-                document.getElementById('modal-admin-pass').classList.remove('hidden');
-                return;
-            }
-            if (idInput === '1111' && passInput === '1111') {
-                document.getElementById('modal-creator-pass').classList.remove('hidden');
-                return;
-            }
-
             const snapshot = await dbRef.once('value');
             const val = snapshot.val() || {};
             const user = (val.users || []).find(u => u.id === idInput.toUpperCase() && u.password === passInput);
@@ -327,20 +284,6 @@
 
             localStorage.setItem('current_user', JSON.stringify(user));
             window.location.href = 'vault.html';
-        }
-
-        function verifyAdminLogin() {
-            if (document.getElementById('admin-id-real').value.trim() === decodeBase64(_encAdminId) && document.getElementById('admin-pass-real').value.trim() === "Pipat084@#") {
-                localStorage.setItem('admin_logged', 'true');
-                window.location.href = 'admin.html';
-            } else { showCustomAlert('ผิดพลาด', 'รหัสผ่านแอดมินไม่ถูกต้อง'); }
-        }
-
-        function verifyCreatorLogin() {
-            if (document.getElementById('c-id').value.trim() === decodeBase64(_encCId) && document.getElementById('c-pass1').value.trim() === decodeBase64(_encCP1) && document.getElementById('c-pass2').value.trim() === decodeBase64(_encCP2) && document.getElementById('c-key').value.trim() === decodeBase64(_encCKey)) {
-                localStorage.setItem('creator_logged', 'true');
-                window.location.href = 'creator.html';
-            } else { showCustomAlert('ผิดพลาด', 'ข้อมูลผู้สร้างไม่ถูกต้อง'); }
         }
 
         async function handleRegister(e) {
