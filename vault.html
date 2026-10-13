@@ -192,6 +192,20 @@
         </div>
     </div>
 
+    <!-- Modal ติดต่อแอดมิน -->
+    <div id="modal-admin-contact" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-headset"></i></div>
+            <h3 class="font-bold text-base text-slate-800">ช่องทางติดต่อแอดมินระบบ</h3>
+            <p class="text-xs text-slate-500">หากพบคดียุ่งยากหรือบัญชีถูกระงับ ติดต่อเจ้าหน้าที่ได้ที่นี่</p>
+            <div class="bg-indigo-50 p-4 rounded-2xl text-left space-y-2 text-xs text-slate-700">
+                <p><i class="fa-brands fa-line text-green-600 mr-1.5 text-sm"></i> <strong>Line ID:</strong> <span class="font-mono font-bold">@lovevault_admin</span></p>
+                <p><i class="fa-solid fa-envelope text-rose-500 mr-1.5 text-sm"></i> <strong>Email:</strong> support@lovevault.app</p>
+            </div>
+            <button onclick="closeAdminContactModal()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+
     <!-- Modal แก้ไขวันเวลาคบกัน -->
     <div id="modal-edit-anniversary" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
@@ -367,12 +381,10 @@
                 const partnerId = myCouple.user1Id === currentUser.id ? myCouple.user2Id : myCouple.user1Id;
                 const partnerObj = users.find(u => u.id === partnerId);
 
-                // หากอีกฝ่ายถูกลบจาก database จริงๆ (ลบบัญชีหรือถูกแบน)
                 if (!partnerObj && myCouple.status !== 'PARTNER_DELETED') {
                     myCouple.status = 'PARTNER_DELETED';
                     myCouple.deletedTimestamp = Date.now();
 
-                    // ตรวจสอบเพื่อไม่ให้แจ้งเตือนซ้ำซ้อน
                     const alreadyNotified = (currentUser.notifications || []).some(n => n.message.includes('คู่รักของคุณได้ลบบัญชี'));
                     if (!alreadyNotified) {
                         if (!currentUser.notifications) currentUser.notifications = [];
@@ -567,8 +579,9 @@
                 document.getElementById('text-couple-status').innerText = "คู่รักลบบัญชี / ถูกแบน";
                 document.getElementById('text-couple-status').className = "font-bold text-red-600";
                 
+                // ปุ่มติดต่อแอดมิน (เรียกฟังก์ชันเปิด Modal แอดมิน)
                 actionContainer.innerHTML = `
-                    <button onclick="openPromptPayModal()" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-headset mr-1"></i> ติดต่อแอดมิน</button>
+                    <button onclick="openAdminContactModal()" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-headset mr-1"></i> ติดต่อแอดมิน</button>
                     <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ตัดขาดความสัมพันธ์</button>
                 `;
 
@@ -750,6 +763,14 @@
             }
         }
 
+        // ฟังก์ชันเปิด-ปิด Modal ติดต่อแอดมิน
+        function openAdminContactModal() {
+            document.getElementById('modal-admin-contact').classList.remove('hidden');
+        }
+        function closeAdminContactModal() {
+            document.getElementById('modal-admin-contact').classList.add('hidden');
+        }
+
         function openEditAnniversaryModal() {
             document.getElementById('modal-edit-anniversary').classList.remove('hidden');
         }
@@ -771,7 +792,6 @@
             const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
             if (!couple.editHistory) couple.editHistory = [];
 
-            // กรองประวัติการแก้ไขในช่วง 7 วันที่ผ่านมา
             const recentEdits = couple.editHistory.filter(t => now - t < oneWeekMs);
             if (recentEdits.length >= 2) {
                 alert('คุณแก้ไขวันเวลาคบกันครบ 2 ครั้งในรอบ 1 สัปดาห์แล้ว กรุณารอรอบสัปดาห์ถัดไป');
