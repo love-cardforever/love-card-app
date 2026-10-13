@@ -250,7 +250,12 @@
             if (!text) return;
             const db = await getDB();
             if (!db.adminRequests) db.adminRequests = [];
-            db.adminRequests.push({ id: Date.now(), userId: currentUser ? currentUser.id : 'VAULT_USER', content: text, time: new Date().toLocaleString() });
+            db.adminRequests.push({ 
+                id: Date.now(), 
+                userId: currentUser ? currentUser.id : 'VAULT_USER', 
+                content: text, 
+                time: new Date().toLocaleString() 
+            });
             await saveDB(db);
             closeIssueModal();
             document.getElementById('issue-text').value = '';
@@ -292,16 +297,18 @@
             try {
                 const res = await fetch(`${FIREBASE_URL}/.json`);
                 const val = await res.json();
-                if (!val) return { users: [], couples: [], proposalCodes: {}, adminRequests: [], globalCoupleCounter: 0 };
+                if (!val) return { users: [], couples: [], proposalCodes: {}, adminRequests: [], globalCoupleCounter: 0, globalUserCounter: 0, globalGroupChar: 'A' };
                 return {
                     users: val.users || [],
                     couples: val.couples || [],
                     proposalCodes: val.proposalCodes || {},
                     adminRequests: val.adminRequests || [],
-                    globalCoupleCounter: val.globalCoupleCounter || 0
+                    globalCoupleCounter: val.globalCoupleCounter || 0,
+                    globalUserCounter: val.globalUserCounter || 0,
+                    globalGroupChar: val.globalGroupChar || 'A'
                 };
             } catch (e) {
-                return { users: [], couples: [], proposalCodes: {}, adminRequests: [], globalCoupleCounter: 0 };
+                return { users: [], couples: [], proposalCodes: {}, adminRequests: [], globalCoupleCounter: 0, globalUserCounter: 0, globalGroupChar: 'A' };
             }
         }
 
