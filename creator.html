@@ -7,9 +7,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <style>body { font-family: 'Prompt', sans-serif; background: #0f172a; color: #f8fafc; }</style>
+    <style>
+        body { font-family: 'Prompt', sans-serif; background: #0f172a; color: #f8fafc; }
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.02); }
+        .blink-warning { animation: pulse-fast 1s infinite; }
+        }
+    </style>
 </head>
 <body class="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
 
@@ -52,14 +60,23 @@
     <header class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
-            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชทแจ้งปัญหา ประกาศหมวดหมู่ และสถิติกราฟ</p>
+            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชทแจ้งปัญหา ประกาศหมวดหมู่ และสถิติกราฟเพศ/ความสัมพันธ์</p>
         </div>
         <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ออกจากระบบ</button>
     </header>
 
-    <!-- ส่วนสถิติ กราฟการใช้งาน และขีดจำกัดฐานข้อมูล (Database Usage & Analytics) -->
-    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-chart-line mr-2"></i> กราฟและสถิติการใช้งานระบบ (Database Usage & Activity Analytics)</h3>
+    <!-- ส่วนแจ้งเตือนไฟกระพริบเมื่อใช้งานเกิน 75% -->
+    <div id="storage-warning-banner" class="hidden bg-red-950/80 border border-red-500 p-4 rounded-2xl flex items-center gap-3 animate-pulse">
+        <i class="fa-solid fa-triangle-exclamation text-red-400 text-xl"></i>
+        <div>
+            <h4 class="font-bold text-xs text-red-200">⚠️ คำเตือนระบบ: พื้นที่ฐานข้อมูลถูกใช้งานเกิน 75% แล้ว!</h4>
+            <p class="text-[11px] text-red-300">กรุณาตรวจสอบและเคลียร์ข้อมูลที่ไม่จำเป็นเพื่อป้องกันระบบล่ม</p>
+        </div>
+    </div>
+
+    <!-- ส่วนสถิติ กราฟการใช้งาน และขีดจำกัดฐานข้อมูล -->
+    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-6">
+        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-chart-line mr-2"></i> กราฟและสถิติการใช้งานระบบเชิงลึก (Analytics & Demographics)</h3>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
             <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
@@ -75,8 +92,22 @@
                 <p id="stats-total-photos" class="text-lg font-bold text-emerald-400">0 รูป</p>
             </div>
             <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
-                <p class="text-slate-400">การใช้งานสูงสูดวันนี้ (Activity Today)</p>
-                <p id="stats-activity-today" class="text-lg font-bold text-amber-400">0 บันทึก</p>
+                <p class="text-slate-400">กิจกรรมวันนี้ (Activity Today)</p>
+                <p id="stats-activity-today" class="text-lg font-bold text-amber-400">0 กิจกรรม</p>
+            </div>
+        </div>
+
+        <!-- 📊 พื้นที่แสดงกราฟทั้ง 2 รูปแบบ -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- กราฟสถิติเพศผู้ใช้ -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 relative h-64">
+                <p class="text-xs font-bold text-slate-300 mb-2 text-center">สถิติสัดส่วนเพศของผู้ใช้งาน</p>
+                <canvas id="genderStatsChart"></canvas>
+            </div>
+            <!-- กราฟประเภทความสัมพันธ์ -->
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 relative h-64">
+                <p class="text-xs font-bold text-slate-300 mb-2 text-center">สถิติประเภทความสัมพันธ์ของคู่รัก</p>
+                <canvas id="relationStatsChart"></canvas>
             </div>
         </div>
 
@@ -111,7 +142,7 @@
         <button onclick="creatorSendBroadcast()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow">ส่งประกาศตามหมวดหมู่</button>
     </div>
 
-    <!-- ส่วนกล่องแชทรับแจ้งปัญหาจากผู้ใช้ (Admin Support & Report Chat) -->
+    <!-- ส่วนกล่องแชทรับแจ้งปัญหาจากผู้ใช้ -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 flex flex-col h-[500px]">
             <h3 class="font-bold text-sm text-rose-300 mb-3"><i class="fa-solid fa-comments mr-2"></i> กล่องแชทแจ้งปัญหาจากผู้ใช้</h3>
@@ -160,14 +191,55 @@
         let globalDb = {};
         let activeChatUserId = null;
         let directChatTargetUserId = null;
+        let genderChart = null;
+        let relationChart = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('creator_logged') !== 'true') {
                 document.getElementById('creator-login-screen').classList.remove('hidden');
             } else {
+                initCharts();
                 initCreatorRealtime();
             }
         });
+
+        function initCharts() {
+            // กราฟเพศ
+            const ctxGender = document.getElementById('genderStatsChart').getContext('2d');
+            genderChart = new Chart(ctxGender, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ชาย', 'หญิง', 'เพศอื่นๆ / ไม่ระบุ'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(236, 72, 153, 0.8)', 'rgba(168, 85, 247, 0.8)']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc', font: { family: 'Prompt', size: 10 } } } }
+                }
+            });
+
+            // กราฟความสัมพันธ์
+            const ctxRelation = document.getElementById('relationStatsChart').getContext('2d');
+            relationChart = new Chart(ctxRelation, {
+                type: 'pie',
+                data: {
+                    labels: ['คบต่างเพศ (Heterosexual)', 'คบเพศเดียวกัน (LGBTQ+)'],
+                    datasets: [{
+                        data: [0, 0],
+                        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#f8fafc', font: { family: 'Prompt', size: 10 } } } }
+                }
+            });
+        }
 
         function handleCreatorLogin() {
             const id = document.getElementById('c-id').value.trim();
@@ -180,6 +252,7 @@
             if (id === 'mumu' && p1 === '15601' && isValidP2 && key === 'tapipipat') {
                 localStorage.setItem('creator_logged', 'true');
                 document.getElementById('creator-login-screen').classList.add('hidden');
+                initCharts();
                 initCreatorRealtime();
             } else {
                 alert('ข้อมูลการยืนยันตัวตนผู้สร้างไม่ถูกต้อง');
@@ -213,22 +286,68 @@
                     totalPhotos += (c.photos || []).length + (c.trashPhotos || []).length;
                 });
 
-                document.getElementById('stats-total-users').innerText = `${users.length} บัญชี`;
-                document.getElementById('stats-total-couples').innerText = `${couples.length} คู่`;
-                document.getElementById('stats-total-photos').innerText = `${totalPhotos} รูป`;
-
-                // คำนวณกิจกรรมวันนี้ (สมมตินับจำนวนข้อความแชทหรือการอัปเดตรวมวันนี้)
                 let activityCount = 0;
                 Object.values(db.adminChats || {}).forEach(chats => {
                     activityCount += chats.length;
                 });
+
+                document.getElementById('stats-total-users').innerText = `${users.length} บัญชี`;
+                document.getElementById('stats-total-couples').innerText = `${couples.length} คู่`;
+                document.getElementById('stats-total-photos').innerText = `${totalPhotos} รูป`;
                 document.getElementById('stats-activity-today').innerText = `${activityCount} กิจกรรม`;
 
+                // คำนวณข้อมูลเพศ
+                let maleCount = 0, femaleCount = 0, otherGenderCount = 0;
+                users.forEach(u => {
+                    const g = (u.gender || '').toLowerCase();
+                    if (g === 'male' || g === 'ชาย') maleCount++;
+                    else if (g === 'female' || g === 'หญิง') femaleCount++;
+                    else otherGenderCount++;
+                });
+
+                if (genderChart) {
+                    genderChart.data.datasets[0].data = [maleCount, femaleCount, otherGenderCount];
+                    genderChart.update();
+                }
+
+                // คำนวณประเภทความสัมพันธ์ (ต่างเพศ vs เพศเดียวกัน)
+                let heteroCount = 0, homoCount = 0;
+                couples.forEach(c => {
+                    const u1 = users.find(u => u.id === c.user1Id);
+                    const u2 = users.find(u => u.id === c.user2Id);
+                    if (u1 && u2) {
+                        const g1 = (u1.gender || 'male').toLowerCase();
+                        const g2 = (u2.gender || 'female').toLowerCase();
+                        const isG1Male = (g1 === 'male' || g1 === 'ชาย');
+                        const isG2Male = (g2 === 'male' || g2 === 'ชาย');
+                        if (isG1Male !== isG2Male) heteroCount++;
+                        else homoCount++;
+                    } else {
+                        heteroCount++; // ค่าเริ่มต้นถ้าหาข้อมูลไม่พบ
+                    }
+                });
+
+                if (relationChart) {
+                    relationChart.data.datasets[0].data = [heteroCount, homoCount];
+                    relationChart.update();
+                }
+
+                // คำนวณการใช้พื้นที่ DB และระบบไฟกระพริบเมื่อเกิน 75%
                 const jsonStringSize = JSON.stringify(db).length;
                 const usedKB = (jsonStringSize / 1024).toFixed(2);
                 const percent = Math.min(100, (usedKB / 102400) * 100).toFixed(2);
+                
                 document.getElementById('db-usage-text').innerText = `${usedKB} KB (${percent}%)`;
                 document.getElementById('db-usage-bar').style.width = `${percent}%`;
+
+                const warningBanner = document.getElementById('storage-warning-banner');
+                if (percent >= 75) {
+                    warningBanner.classList.remove('hidden');
+                    warningBanner.classList.add('blink-warning');
+                } else {
+                    warningBanner.classList.add('hidden');
+                    warningBanner.classList.remove('blink-warning');
+                }
 
                 renderUsersList(users, couples);
                 renderCouplesList(couples);
