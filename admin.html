@@ -14,79 +14,106 @@
         .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
     </style>
 </head>
-<body class="p-4 md:p-6 text-slate-800 flex flex-col items-center min-h-screen">
+<body class="p-4 md:p-6 text-slate-800 flex flex-col items-center justify-center min-h-screen">
 
-    <header class="w-full max-w-5xl mx-auto mb-6 bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center z-10">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow"><i class="fa-solid fa-shield-halved"></i></div>
+    <!-- หน้าต่างล็อกอินแอดมิน -->
+    <div id="admin-login-wrapper" class="w-full max-w-md glass-panel p-8 rounded-3xl shadow-xl space-y-6">
+        <div class="text-center space-y-2">
+            <div class="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md text-2xl">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h1 class="text-xl font-bold text-slate-900">Admin Login</h1>
+            <p class="text-xs text-slate-500">กรอกข้อมูลผู้ดูแลระบบเพื่อเข้าสู่ระบบ</p>
+        </div>
+
+        <form onsubmit="handleAdminLogin(event)" class="space-y-4">
             <div>
-                <h1 class="font-bold text-base text-slate-900">Admin Control Panel</h1>
-                <p class="text-[11px] text-slate-500">ระบบจัดการผู้ใช้ & แจ้งเตือนเรียลไทม์</p>
+                <label class="text-xs font-bold text-slate-700 block mb-1">Username</label>
+                <input type="text" id="admin-user-input" autocomplete="off" required placeholder="ชื่อผู้ใช้..." class="w-full p-3 text-xs rounded-xl border border-slate-200 outline-none focus:border-slate-900 bg-white/50">
             </div>
+
+            <div>
+                <label class="text-xs font-bold text-slate-700 block mb-1">Password</label>
+                <input type="password" id="admin-pass-input" autocomplete="new-password" required placeholder="รหัสผ่าน..." class="w-full p-3 text-xs rounded-xl border border-slate-200 outline-none focus:border-slate-900 bg-white/50">
+            </div>
+
+            <button type="submit" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-md transition cursor-pointer">
+                เข้าสู่ระบบแอดมิน
+            </button>
+        </form>
+        <div class="text-center pt-2">
+            <a href="index.html" class="text-xs text-rose-500 font-semibold hover:underline">← กลับสู่หน้าหลัก</a>
         </div>
-        <div class="flex items-center gap-2">
-            <button onclick="openDevChatModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5"><i class="fa-solid fa-code"></i> ติดต่อเดฟ/ผู้สร้าง</button>
-            <button onclick="logoutAdmin()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
-        </div>
-    </header>
+    </div>
 
-    <main class="w-full max-w-5xl mx-auto flex-1 flex flex-col space-y-6">
-        
-        <!-- แผงประกาศจากแอดมิน -->
-        <section class="glass-panel p-5 rounded-2xl space-y-3">
-            <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-bullhorn text-rose-500 mr-2"></i> จัดการประกาศระบบ</h2>
-            <div class="flex gap-2">
-                <input type="text" id="announcement-input" placeholder="พิมพ์ข้อความประกาศถึงผู้ใช้ทุกคน..." class="flex-1 p-2.5 text-xs rounded-xl border border-slate-200 outline-none">
-                <button onclick="postAnnouncement()" class="px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">โพสต์ประกาศ</button>
-            </div>
-            <div id="announcements-list" class="space-y-2 pt-2"></div>
-        </section>
-
-        <!-- จัดการการแจ้งเตือน & ประวัติ -->
-        <section class="glass-panel p-5 rounded-2xl space-y-3">
-            <div class="flex justify-between items-center">
-                <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-bell text-rose-500 mr-2"></i> ประวัติการทำงาน & การแจ้งเตือนระบบ</h2>
-                <button onclick="clearAllLogs()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold rounded-xl transition"><i class="fa-solid fa-trash mr-1"></i> เคลียร์ประวัติทั้งหมด</button>
-            </div>
-            <div id="admin-logs-container" class="space-y-2 max-h-48 overflow-y-auto text-xs bg-slate-50 p-3 rounded-xl border"></div>
-        </section>
-
-        <!-- จัดการผู้ใช้ (ไม่มีรูปภาพ/ความทรงจำ) -->
-        <section class="glass-panel p-5 rounded-2xl space-y-3">
-            <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-users text-rose-500 mr-2"></i> รายชื่อผู้ใช้ทั้งหมดในระบบ</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead>
-                        <tr class="border-b text-slate-400 font-semibold">
-                            <th class="pb-2">ผู้ใช้</th>
-                            <th class="pb-2">User ID</th>
-                            <th class="pb-2">อีเมล</th>
-                            <th class="pb-2">สถานะคู่รัก</th>
-                            <th class="pb-2 text-right">จัดการ</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- ช่องแชทแยกรายบุคคล -->
-        <section class="glass-panel p-5 rounded-2xl space-y-4">
-            <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-comments text-rose-500 mr-2"></i> แชทสนทนากับผู้ใช้ (แยกรายบุคคล)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px]">
-                <div id="chat-users-list" class="border-r pr-2 overflow-y-auto space-y-1"></div>
-                <div class="md:col-span-2 flex flex-col justify-between bg-slate-50 p-3 rounded-2xl border">
-                    <div id="chat-header-info" class="font-bold text-xs pb-2 border-b text-slate-600">กรุณาเลือกผู้ใช้จากรายชื่อด้านซ้าย</div>
-                    <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-2 space-y-2 text-xs"></div>
-                    <div class="flex gap-2 pt-2">
-                        <input type="text" id="admin-reply-input" placeholder="พิมพ์ข้อความตอบกลับผู้ใช้..." class="flex-1 p-2 text-xs rounded-xl border outline-none bg-white">
-                        <button onclick="sendAdminReply()" class="px-4 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ส่ง</button>
-                    </div>
+    <!-- แผงควบคุมหลัก (ซ่อนไว้จนกว่าจะล็อกอินสำเร็จ) -->
+    <div id="admin-dashboard-wrapper" class="w-full max-w-5xl mx-auto flex-1 flex flex-col space-y-6 hidden">
+        <header class="w-full bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center z-10">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow"><i class="fa-solid fa-shield-halved"></i></div>
+                <div>
+                    <h1 class="font-bold text-base text-slate-900">Admin Control Panel</h1>
+                    <p class="text-[11px] text-slate-500">ระบบจัดการผู้ใช้ & แจ้งเตือนเรียลไทม์</p>
                 </div>
             </div>
-        </section>
+            <div class="flex items-center gap-2">
+                <button onclick="openDevChatModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5"><i class="fa-solid fa-code"></i> ติดต่อเดฟ/ผู้สร้าง</button>
+                <button onclick="logoutAdmin()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+            </div>
+        </header>
 
-    </main>
+        <main class="w-full space-y-6">
+            <section class="glass-panel p-5 rounded-2xl space-y-3">
+                <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-bullhorn text-rose-500 mr-2"></i> จัดการประกาศระบบ</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="announcement-input" placeholder="พิมพ์ข้อความประกาศถึงผู้ใช้ทุกคน..." class="flex-1 p-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                    <button onclick="postAnnouncement()" class="px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">โพสต์ประกาศ</button>
+                </div>
+                <div id="announcements-list" class="space-y-2 pt-2"></div>
+            </section>
+
+            <section class="glass-panel p-5 rounded-2xl space-y-3">
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-bell text-rose-500 mr-2"></i> ประวัติการทำงาน & การแจ้งเตือนระบบ</h2>
+                    <button onclick="clearAllLogs()" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-600 text-xs font-bold rounded-xl transition"><i class="fa-solid fa-trash mr-1"></i> เคลียร์ประวัติทั้งหมด</button>
+                </div>
+                <div id="admin-logs-container" class="space-y-2 max-h-48 overflow-y-auto text-xs bg-slate-50 p-3 rounded-xl border"></div>
+            </section>
+
+            <section class="glass-panel p-5 rounded-2xl space-y-3">
+                <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-users text-rose-500 mr-2"></i> รายชื่อผู้ใช้ทั้งหมดในระบบ</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b text-slate-400 font-semibold">
+                                <th class="pb-2">ผู้ใช้</th>
+                                <th class="pb-2">User ID</th>
+                                <th class="pb-2">อีเมล</th>
+                                <th class="pb-2">สถานะคู่รัก</th>
+                                <th class="pb-2 text-right">จัดการ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="glass-panel p-5 rounded-2xl space-y-4">
+                <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-comments text-rose-500 mr-2"></i> แชทสนทนากับผู้ใช้ (แยกรายบุคคล)</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px]">
+                    <div id="chat-users-list" class="border-r pr-2 overflow-y-auto space-y-1"></div>
+                    <div class="md:col-span-2 flex flex-col justify-between bg-slate-50 p-3 rounded-2xl border">
+                        <div id="chat-header-info" class="font-bold text-xs pb-2 border-b text-slate-600">กรุณาเลือกผู้ใช้จากรายชื่อด้านซ้าย</div>
+                        <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-2 space-y-2 text-xs"></div>
+                        <div class="flex gap-2 pt-2">
+                            <input type="text" id="admin-reply-input" placeholder="พิมพ์ข้อความตอบกลับผู้ใช้..." class="flex-1 p-2 text-xs rounded-xl border outline-none bg-white">
+                            <button onclick="sendAdminReply()" class="px-4 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ส่ง</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <!-- Modal ติดต่อเดฟ/ผู้สร้าง -->
     <div id="modal-dev-chat" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
@@ -110,17 +137,54 @@
 
         let activeChatUserId = null;
 
-        dbRef.on('value', (snapshot) => {
-            const db = snapshot.val() || {};
-            renderUsers(db.users || [], db.couples || []);
-            renderAnnouncements(db.announcements || []);
-            renderLogs(db.adminNotifications || []);
-            renderChatUsersList(db.adminChats || {}, db.users || []);
-            if (activeChatUserId) {
-                renderAdminChatMessages(db.adminChats?.[activeChatUserId] || []);
+        // ซ่อนรหัสผ่านแอดมินด้วยการเข้ารหัส Base64
+        const _adminAuth = {
+            u: "QWRtaW5Mb3Zl", // AdminLove
+            p: "UGlwYXQwODRAMw==" // Pipat084@
+        };
+        const _decode = (s) => atob(s);
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const uInput = document.getElementById('admin-user-input').value.trim();
+            const pInput = document.getElementById('admin-pass-input').value.trim();
+
+            if (uInput === _decode(_adminAuth.u) && pInput === _decode(_adminAuth.p)) {
+                localStorage.setItem('is_admin_logged', 'true');
+                showAdminDashboard();
+            } else {
+                alert('ชื่อผู้ใช้หรือรหัสผ่านแอดมินไม่ถูกต้อง');
             }
-            renderDevChat(db.devChat || []);
-        });
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('admin-login-wrapper').classList.add('hidden');
+            document.getElementById('admin-dashboard-wrapper').classList.remove('hidden');
+            initAdminRealtime();
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem('is_admin_logged');
+            window.location.reload();
+        }
+
+        if (localStorage.getItem('is_admin_logged') === 'true') {
+            showAdminDashboard();
+        }
+
+        function initAdminRealtime() {
+            dbRef.on('value', (snapshot) => {
+                const db = snapshot.val() || {};
+                renderUsers(db.users || [], db.couples || []);
+                renderAnnouncements(db.announcements || []);
+                renderLogs(db.adminNotifications || []);
+                renderChatUsersList(db.adminChats || {}, db.users || []);
+                if (activeChatUserId) {
+                    renderAdminChatMessages(db.adminChats?.[activeChatUserId] || []);
+                }
+                renderDevChat(db.devChat || []);
+            });
+        }
 
         function renderUsers(users, couples) {
             const tbody = document.getElementById('users-table-body');
@@ -301,10 +365,6 @@
                 }
             });
             container.scrollTop = container.scrollHeight;
-        }
-
-        function logoutAdmin() {
-            window.location.href = 'index.html';
         }
     </script>
 </body>
