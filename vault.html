@@ -131,10 +131,7 @@
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
             
             <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
-                <!-- ปุ่มขอคืนดี / ปุ่มขอโควต้าแอดมิน / ปุ่มขอตัดขาดความสัมพันธ์ -->
-                <div id="action-buttons-container" class="w-full flex gap-2">
-                    <!-- จะถูกควบคุมด้วย JavaScript ตามสถานะและโควต้า -->
-                </div>
+                <div id="action-buttons-container" class="w-full flex gap-2"></div>
             </div>
 
             <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
@@ -229,7 +226,6 @@
         </div>
     </div>
 
-    <!-- Modal เตือนใจ 3 ครั้ง (เลิกรา) -->
     <div id="modal-breakup-warning" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl border-2 border-red-200">
             <div class="w-12 h-12 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -242,16 +238,13 @@
         </div>
     </div>
 
-    <!-- Modal แสดงความทรงจำก่อนตัดขาดความสัมพันธ์ -->
     <div id="modal-cut-off-memories" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md max-h-[85vh] overflow-y-auto text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-box-archive"></i></div>
             <h3 class="font-bold text-base text-slate-800">ย้อนดูความทรงจำก่อนตัดขาด</h3>
             <p class="text-xs text-slate-500">ภาพถ่ายและโน้ตทั้งหมดที่คุณเคยสร้างร่วมกันมาตลอดความสัมพันธ์...</p>
             
-            <div id="cut-off-memories-container" class="space-y-3 text-left bg-slate-50 p-3 rounded-2xl max-h-48 overflow-y-auto border">
-                <!-- แทรกรูปและโน้ตตรงนี้ -->
-            </div>
+            <div id="cut-off-memories-container" class="space-y-3 text-left bg-slate-50 p-3 rounded-2xl max-h-48 overflow-y-auto border"></div>
 
             <div class="flex gap-2 pt-2">
                 <button onclick="document.getElementById('modal-cut-off-memories').classList.add('hidden')" class="flex-1 py-2.5 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก (เก็บรักษาไว้)</button>
@@ -260,7 +253,6 @@
         </div>
     </div>
 
-    <!-- Modal เตือนสติ 7 รอบ (ตัดขาดความสัมพันธ์) -->
     <div id="modal-cutoff-warning-7" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl border-4 border-red-500">
             <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-heart-crack"></i></div>
@@ -312,11 +304,9 @@
             document.getElementById('profile-icon-box').innerHTML = currentUser.name.charAt(0).toUpperCase();
         }
 
-        let targetDeleteTarget = null;
         let timerInterval = null;
         let currentBreakupWarningStep = 1;
         let pendingBreakupCoupleId = null;
-
         let currentCutoffStep = 1;
         let pendingCutoffCoupleId = null;
 
@@ -345,7 +335,14 @@
             renderNotificationsList(notifs, db);
 
             const couples = db.couples || [];
-            let myCouple = couples.find(c => c.id === currentUser.coupleId);
+            // ค้นหาคู่รักทั้งจาก coupleId ของผู้ใช้ หรือค้นหาจากฐานข้อมูลคู่รักที่ผู้ใช้นี้เป็น user1 หรือ user2
+            let myCouple = couples.find(c => c.id === currentUser.coupleId || c.user1Id === currentUser.id || c.user2Id === currentUser.id);
+
+            // ถ้าในฐานข้อมูลมีคู่รักที่ผูกกับ User คนนี้อยู่ แต่ Localstorage ยังไม่อัปเดต ให้ทำการซิงค์อัตโนมัติทันที
+            if (myCouple && currentUser.coupleId !== myCouple.id) {
+                currentUser.coupleId = myCouple.id;
+                localStorage.setItem('current_user', JSON.stringify(currentUser));
+            }
 
             if (myCouple && myCouple.status === 'BROKEN' && myCouple.breakupTimestamp) {
                 const now = Date.now();
@@ -427,12 +424,13 @@
             }
 
             const sender = (db.users || []).find(u => u.id === proposalObj.senderId);
-            if (!sender) {
-                alert('ไม่พบผู้สร้างโค้ดนี้ในระบบ');
+            const freshMe = (db.users || []).find(u => u.id === currentUser.id);
+            if (!sender || !freshMe) {
+                alert('ไม่พบข้อมูลผู้ใช้ในระบบ');
                 return;
             }
 
-            const coupleId = `${proposalObj.senderId}#${currentUser.id}`;
+            const coupleId = `${proposalObj.senderId}#${freshMe.id}`;
             const today = new Date();
             const startDateStr = today.toISOString().split('T')[0];
             const startTimeStr = today.toTimeString().substring(0, 5);
@@ -449,8 +447,8 @@
                     id: coupleId,
                     user1Id: proposalObj.senderId,
                     user1Name: proposalObj.senderName,
-                    user2Id: currentUser.id,
-                    user2Name: currentUser.name,
+                    user2Id: freshMe.id,
+                    user2Name: freshMe.name,
                     startDate: startDateStr,
                     startTime: startTimeStr,
                     status: 'ACTIVE',
@@ -463,10 +461,12 @@
             }
 
             sender.coupleId = coupleId;
-            currentUser.coupleId = coupleId;
+            freshMe.coupleId = coupleId;
+            currentUser = freshMe;
+            localStorage.setItem('current_user', JSON.stringify(currentUser));
 
             if (!sender.notifications) sender.notifications = [];
-            sender.notifications.push({ id: Date.now(), message: `${currentUser.name} ตอบรับคำขอเป็นแฟนของคุณแล้ว!`, time: new Date().toLocaleString(), read: false });
+            sender.notifications.push({ id: Date.now(), message: `${freshMe.name} ตอบรับคำขอเป็นแฟนของคุณแล้ว!`, time: new Date().toLocaleString(), read: false });
 
             delete db.proposalCodes[code];
 
@@ -484,7 +484,6 @@
             document.getElementById('single-action-panel').style.display = 'grid';
             
             document.getElementById('display-couple-id').innerText = "0000#000000";
-            // ชื่อบนบัตรจะไม่แสดงจนกว่าจะมีคู่รักหรือกำลังเลิกรา
             document.getElementById('card-user1-name').innerText = "--";
             document.getElementById('card-user2-name').innerText = "--";
             document.getElementById('card-u1-avatar').innerHTML = "--";
@@ -515,13 +514,11 @@
                 document.getElementById('vault-body').classList.add('grayscale-mode');
                 
                 if (quota > 0) {
-                    // มีโควต้าเหลือ แสดงปุ่มขอคืนดี + ปุ่มขอเลิกรา (หรือปุ่มตัดขาด)
                     actionContainer.innerHTML = `
                         <button onclick="requestReconcile()" class="flex-1 py-2.5 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-dove mr-1"></i> ขอคืนดี (-1 โควต้า)</button>
                         <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ขอตัดขาดความสัมพันธ์</button>
                     `;
                 } else {
-                    // โควต้าหมดแล้ว แสดงปุ่มขอโควต้าจากแอดมิน + ปุ่มขอตัดขาดความสัมพันธ์
                     actionContainer.innerHTML = `
                         <button onclick="requestAdminQuota('${couple.id}')" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-user-shield mr-1"></i> ขอโควต้าจากแอดมิน</button>
                         <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ขอตัดขาดความสัมพันธ์</button>
@@ -541,7 +538,6 @@
                 document.getElementById('text-couple-status').className = "font-bold text-rose-600";
                 document.getElementById('vault-body').classList.remove('grayscale-mode');
                 
-                // คบกันปกติ แสดงปุ่มขอเลิกรา
                 actionContainer.innerHTML = `
                     <button onclick="openBreakupModal()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-heart-crack mr-1"></i> ขอเลิกรา</button>
                 `;
@@ -664,7 +660,7 @@
                 return;
             }
             container.innerHTML = '';
-            notifs.slice().reverse().forEach((n, index) => {
+            notifs.slice().reverse().forEach((n) => {
                 let actionButtons = '';
                 if (n.type === 'BREAKUP_REQUEST' && !n.handled) {
                     actionButtons = `
@@ -836,7 +832,6 @@
             closeConfirmDeleteModal();
         }
 
-        // --- ขอโควต้าจากแอดมิน ---
         async function requestAdminQuota(coupleId) {
             const snapshot = await dbRef.once('value');
             const db = snapshot.val() || {};
@@ -856,7 +851,6 @@
             }
         }
 
-        // --- ระบบขอเลิกรา ---
         function openBreakupModal() { document.getElementById('modal-breakup').classList.remove('hidden'); }
         function closeBreakupModal() { document.getElementById('modal-breakup').classList.add('hidden'); }
 
@@ -969,7 +963,6 @@
             }
         }
 
-        // --- ระบบขอตัดขาดความสัมพันธ์ (7 รอบ) ---
         async function triggerCutOffProcess(coupleId) {
             pendingCutoffCoupleId = coupleId;
             const snapshot = await dbRef.once('value');
@@ -1011,7 +1004,6 @@
                 currentCutoffStep++;
                 updateCutoffWarning7Content();
             } else {
-                // ครบ 7 รอบ ส่งคำขอตัดขาดไปยังอีกฝ่าย
                 document.getElementById('modal-cutoff-warning-7').classList.add('hidden');
                 sendCutoffRequestToPartner(pendingCutoffCoupleId);
             }
@@ -1062,7 +1054,6 @@
                 return;
             }
 
-            // ถ้าอีกฝ่ายกดยอมรับ แสดงแอนิเมชั่นฉีกบัตรทิ้งของทั้งคู่
             closeNotificationsModal();
             const overlay = document.getElementById('tear-card-overlay');
             const cardEl = document.getElementById('card-to-tear');
@@ -1070,7 +1061,6 @@
             cardEl.classList.add('tear-animation');
 
             setTimeout(async () => {
-                // ล้างข้อมูลความสัมพันธ์และข้อมูลคู่รักทิ้งถาวร
                 const couple = (db.couples || []).find(c => c.id === coupleId);
                 if (couple) {
                     const u1 = (db.users || []).find(u => u.id === couple.user1Id);
@@ -1089,7 +1079,6 @@
             }, 2200);
         }
 
-        // --- ระบบขอคืนดี ---
         async function requestReconcile() {
             const snapshot = await dbRef.once('value');
             const db = snapshot.val() || {};
