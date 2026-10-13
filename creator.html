@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creator Master - Forever Love</title>
+    <title>Creator Master Dashboard - Forever Love</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,9 +11,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>body { font-family: 'Prompt', sans-serif; background: #0f172a; color: #f8fafc; }</style>
 </head>
-<body class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+<body class="p-4 md:p-8 max-w-7xl mx-auto space-y-6">
 
-    <!-- หน้าจอเข้าสู่ระบบผู้สร้างแยกต่างหาก (ซ่อนข้อความรหัสผ่านแล้ว) -->
+    <!-- หน้าจอเข้าสู่ระบบผู้สร้าง -->
     <div id="creator-login-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-md space-y-5 text-slate-100">
             <div class="text-center space-y-1">
@@ -32,44 +32,102 @@
         </div>
     </div>
 
-    <div class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
+    <header class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
-            <p class="text-xs text-slate-400">ควบคุมข้อมูลเชิงลึกทั้งหมดและป่าวประกาศระบบ</p>
+            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชท รูปภาพ โควต้า และประกาศหมวดหมู่</p>
         </div>
-        <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
+        <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ออกจากระบบ</button>
+    </header>
+
+    <!-- กราฟและแถบแสดงสถานะฐานข้อมูลพร้อมขีดจำกัด -->
+    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
+        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-chart-pie mr-2"></i> สถิติและการใช้ข้อมูลฐานข้อมูล (Database Usage Analytics)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
+                <p class="text-slate-400">จำนวนผู้ใช้ทั้งหมดในระบบ</p>
+                <p id="stats-total-users" class="text-lg font-bold text-white">0 บัญชี</p>
+            </div>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
+                <p class="text-slate-400">จำนวนคู่รักในระบบ</p>
+                <p id="stats-total-couples" class="text-lg font-bold text-rose-400">0 คู่</p>
+            </div>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
+                <p class="text-slate-400">จำนวนรูปภาพทั้งหมด</p>
+                <p id="stats-total-photos" class="text-lg font-bold text-emerald-400">0 รูป</p>
+            </div>
+        </div>
+        <div class="space-y-1 pt-2">
+            <div class="flex justify-between text-xs text-slate-300">
+                <span>โควต้าขีดจำกัดพื้นที่ฐานข้อมูล (Firebase Free Tier Limit: 1 GB)</span>
+                <span id="db-usage-text">0%</span>
+            </div>
+            <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-700">
+                <div id="db-usage-bar" class="bg-gradient-to-r from-rose-500 to-indigo-500 h-full w-[0%] transition-all duration-500"></div>
+            </div>
+        </div>
     </div>
 
+    <!-- ส่วนส่งประกาศตามหมวดหมู่ -->
     <div class="bg-slate-800/80 p-6 rounded-2xl border border-rose-500/50 space-y-3">
-        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศด่วนจากผู้สร้างถึงทุกคน</h3>
-        <textarea id="creator-broadcast" rows="3" placeholder="พิมพ์ประกาศสำคัญจากผู้สร้าง..." class="w-full p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none"></textarea>
-        <button onclick="creatorSendBroadcast()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ส่งประกาศจากผู้สร้าง</button>
+        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศด่วนจากผู้สร้าง (เลือกหมวดหมู่)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <select id="broadcast-category" class="p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none">
+                <option value="ALL">📢 ประกาศให้ทุกคนเห็น</option>
+                <option value="COUPLES">❤️ ประกาศเฉพาะคู่รัก</option>
+                <option value="SINGLES">👤 ประกาศเฉพาะผู้ใช้เดี่ยว (ยังไม่มีคู่)</option>
+                <option value="ADMINS">🛡️ ประกาศเฉพาะแอดมิน</option>
+            </select>
+        </div>
+        <textarea id="creator-broadcast" rows="2" placeholder="พิมพ์ข้อความประกาศ..." class="w-full p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none"></textarea>
+        <button onclick="creatorSendBroadcast()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow">ส่งประกาศตามหมวดหมู่</button>
     </div>
 
-    <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <details class="group" open>
-            <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
-                <span>📁 โฟลเดอร์: ข้อมูลผู้ใช้งานทั้งหมดแบบละเอียด (Users)</span>
-                <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
-            </summary>
-            <div id="creator-users-list" class="space-y-2 pt-4"></div>
-        </details>
+    <!-- ส่วนกล่องแชทจากแอดมิน (Creator Live Chat) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 flex flex-col h-[500px]">
+            <h3 class="font-bold text-sm text-rose-300 mb-3"><i class="fa-solid fa-comments mr-2"></i> กล่องแชทรวมผู้ใช้</h3>
+            <div id="admin-chat-user-list" class="flex-1 overflow-y-auto space-y-2 pr-1 text-xs">
+                <p class="text-center text-slate-400 py-10">ยังไม่มีข้อความแชท</p>
+            </div>
+        </div>
+        <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 md:col-span-2 flex flex-col h-[500px]">
+            <div id="active-chat-title" class="pb-3 border-b border-slate-700 text-xs font-bold text-slate-300">เลือกผู้ใช้ทางซ้ายเพื่อเริ่มสนทนาแชท</div>
+            <div id="admin-chat-box-messages" class="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-900 rounded-xl my-3 text-xs border border-slate-800">
+                <div class="text-center text-slate-400 py-20">โปรดเลือกแชทผู้ใช้</div>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="admin-reply-input" placeholder="พิมพ์ข้อความตอบกลับ..." class="flex-1 p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none" disabled>
+                <button onclick="sendAdminReply()" id="admin-send-btn" class="px-5 py-3 bg-indigo-600 text-white font-bold rounded-xl text-xs shadow" disabled><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
     </div>
 
+    <!-- ส่วนจัดการผู้ใช้งานพร้อมช่องค้นหา -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <details class="group" open>
-            <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
-                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะเก็บรักษา)</span>
-                <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
-            </summary>
-            <div id="creator-couples-list" class="space-y-4 pt-4"></div>
-        </details>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3">
+            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-users mr-2"></i> รายละเอียดผู้ใช้งานทั้งหมด (Users Detail)</h3>
+            <input type="text" id="search-user-input" oninput="filterUsersList()" placeholder="🔍 ค้นหาด้วยชื่อหรือไอดีผู้ใช้..." class="w-full md:w-72 px-3.5 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white outline-none">
+        </div>
+        <div id="creator-users-list" class="space-y-2 pt-2 max-h-96 overflow-y-auto pr-1"></div>
+    </div>
+
+    <!-- ส่วนจัดการรูปภาพคู่รัก (ล้างทั้งหมด / ลบทีละภาพ / ดาวน์โหลด) -->
+    <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
+        <div class="flex justify-between items-center">
+            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-images mr-2"></i> คลังรูปภาพคู่รัก & ถังขยะ</h3>
+            <button onclick="purgeAllPhotos()" class="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-trash-can mr-1"></i> ล้างรูปภาพทั้งหมดในระบบ</button>
+        </div>
+        <div id="creator-couples-list" class="space-y-4 pt-2"></div>
     </div>
 
     <script>
         const firebaseConfig = { databaseURL: "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app" };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref();
+
+        let globalDb = {};
+        let activeChatUserId = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('creator_logged') !== 'true') {
@@ -104,90 +162,304 @@
         function initCreatorRealtime() {
             dbRef.on('value', (snapshot) => {
                 const db = snapshot.val() || {};
+                globalDb = db;
 
-                const uList = document.getElementById('creator-users-list');
-                uList.innerHTML = '';
+                // คำนวณ Analytics สถิติ
                 const users = db.users || [];
-                if (users.length === 0) {
-                    uList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีผู้ใช้งานในระบบ</div>';
-                } else {
-                    users.forEach(u => {
-                        uList.innerHTML += `
-                            <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
-                                <div><b>ID: ${u.id}</b> | ชื่อ: ${u.name} | อีเมล: ${u.email || '-'} | คู่รักID: ${u.coupleId || 'ไม่มี'}</div>
-                                <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1 bg-red-600 text-white rounded-lg text-[10px] font-bold">ลบถาวร</button>
-                            </div>
-                        `;
-                    });
-                }
-
-                const cList = document.getElementById('creator-couples-list');
-                cList.innerHTML = '';
                 const couples = db.couples || [];
-                if (couples.length === 0) {
-                    cList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีข้อมูลคู่รัก</div>';
-                } else {
-                    couples.forEach(c => {
-                        let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
-                        (c.photos || []).forEach(p => {
-                            photosHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1"><img src="${p.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${p.uploaderName}</p><a href="${p.url}" download class="block text-center bg-blue-600 text-white rounded py-1 text-[10px]">ดาวน์โหลด</a></div>`;
-                        });
-                        photosHTML += '</div>';
+                let totalPhotos = 0;
+                couples.forEach(c => {
+                    totalPhotos += (c.photos || []).length + (c.trashPhotos || []).length;
+                });
 
-                        let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ:</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
-                        (c.trashPhotos || []).forEach(tp => {
-                            trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
-                        });
-                        trashHTML += '</div>';
+                document.getElementById('stats-total-users').innerText = `${users.length} บัญชี`;
+                document.getElementById('stats-total-couples').innerText = `${couples.length} คู่`;
+                document.getElementById('stats-total-photos').innerText = `${totalPhotos} รูป`;
 
-                        cList.innerHTML += `
-                            <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
-                                <div class="font-bold text-rose-400">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
-                                <div class="text-xs text-slate-400">สถานะ: ${c.status} | โควต้าคืนดี: ${c.reconcileQuota}</div>
-                                ${photosHTML}
-                                ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
-                            </div>
-                        `;
-                    });
+                // จำลองปริมาณการใช้ DB (สมมติ 1 GB = 1024 MB คิดจากจำนวนข้อมูลดิบ)
+                const jsonStringSize = JSON.stringify(db).length;
+                const usedKB = (jsonStringSize / 1024).toFixed(2);
+                const percent = Math.min(100, (usedKB / 102400) * 100).toFixed(2); // สมมติขีดจำกัดฟรี 100MB
+                document.getElementById('db-usage-text').innerText = `${usedKB} KB (${percent}%)`;
+                document.getElementById('db-usage-bar').style.width = `${percent}%`;
+
+                renderUsersList(users, couples);
+                renderCouplesList(couples);
+                renderAdminChatList(db.adminChats || {});
+                if (activeChatUserId) {
+                    renderAdminChatMessages(db.adminChats?.[activeChatUserId] || []);
                 }
             });
         }
 
+        function renderUsersList(users, couples, filterText = '') {
+            const uList = document.getElementById('creator-users-list');
+            uList.innerHTML = '';
+            
+            const filtered = users.filter(u => 
+                u.name.toLowerCase().includes(filterText.toLowerCase()) || 
+                u.id.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                uList.innerHTML = '<div class="text-xs text-slate-400 text-center py-4">ไม่พบผู้ใช้งานในระบบ</div>';
+                return;
+            }
+
+            filtered.forEach(u => {
+                const coupleObj = couples.find(c => c.id === u.coupleId || c.user1Id === u.id || c.user2Id === u.id);
+                let partnerName = 'ยังไม่มีคู่';
+                let statusText = 'ปกติ';
+                if (coupleObj) {
+                    const pId = coupleObj.user1Id === u.id ? coupleObj.user2Id : coupleObj.user1Id;
+                    const pObj = users.find(x => x.id === pId);
+                    partnerName = pObj ? pObj.name : 'ไม่ทราบชื่อ';
+                    statusText = coupleObj.status;
+                }
+
+                const avatarHTML = u.profileImg ? `<img src="${u.profileImg}" class="w-10 h-10 rounded-full object-cover border border-slate-700">` : `<div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-xs">${u.name.charAt(0)}</div>`;
+
+                uList.innerHTML += `
+                    <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
+                        <div class="flex items-center gap-3">
+                            ${avatarHTML}
+                            <div>
+                                <p class="font-bold text-white">${u.name} <span class="text-[10px] text-slate-400">(ID: ${u.id})</span></p>
+                                <p class="text-[11px] text-slate-400">คู่รัก: <b class="text-rose-400">${partnerName}</b> | สถานะบัตร: <span class="text-amber-400">${statusText}</span></p>
+                            </div>
+                        </div>
+                        <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[10px] font-bold shadow">ลบบัญชีถาวร</button>
+                    </div>
+                `;
+            });
+        }
+
+        function filterUsersList() {
+            const query = document.getElementById('search-user-input').value;
+            const users = globalDb.users || [];
+            const couples = globalDb.couples || [];
+            renderUsersList(users, couples, query);
+        }
+
+        function renderCouplesList(couples) {
+            const cList = document.getElementById('creator-couples-list');
+            cList.innerHTML = '';
+            if (couples.length === 0) {
+                cList.innerHTML = '<div class="text-xs text-slate-400 text-center py-4">ยังไม่มีข้อมูลคู่รักในระบบ</div>';
+                return;
+            }
+
+            couples.forEach(c => {
+                const quota = c.reconcileQuota ?? 3;
+                let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
+                (c.photos || []).forEach(p => {
+                    photosHTML += `
+                        <div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1">
+                            <img src="${p.url}" class="w-full h-20 object-cover rounded">
+                            <p class="text-[10px] truncate text-slate-300">เจ้าของ: ${p.uploaderName}</p>
+                            <div class="flex gap-1">
+                                <a href="${p.url}" download="photo_${p.id}.jpg" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white rounded py-1 text-[10px] font-bold"><i class="fa-solid fa-download"></i></a>
+                                <button onclick="deleteSinglePhoto('${c.id}', ${p.id}, false)" class="flex-1 bg-red-600 hover:bg-red-700 text-white rounded py-1 text-[10px] font-bold"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+                photosHTML += '</div>';
+
+                let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ:</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
+                (c.trashPhotos || []).forEach(tp => {
+                    trashHTML += `
+                        <div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-80">
+                            <img src="${tp.url}" class="w-full h-20 object-cover rounded">
+                            <p class="text-[10px] truncate text-slate-300">เจ้าของ: ${tp.uploaderName}</p>
+                            <div class="flex gap-1">
+                                <button onclick="restorePhoto('${c.id}', ${tp.id})" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded py-1 text-[10px] font-bold">กู้คืน</button>
+                                <button onclick="deleteSinglePhoto('${c.id}', ${tp.id}, true)" class="flex-1 bg-red-600 hover:bg-red-700 text-white rounded py-1 text-[10px] font-bold">ลบ</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                trashHTML += '</div>';
+
+                cList.innerHTML += `
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div class="font-bold text-rose-400 text-xs">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs text-slate-300">โควต้าคืนดี: <b class="text-amber-400">${quota}</b></span>
+                                <button onclick="adjustQuota('${c.id}', -1)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold">-</button>
+                                <button onclick="adjustQuota('${c.id}', 1)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold">+</button>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-400">สถานะความสัมพันธ์: <span class="font-bold text-white">${c.status}</span></div>
+                        ${photosHTML}
+                        ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
+                    </div>
+                `;
+            });
+        }
+
+        async function adjustQuota(coupleId, amount) {
+            const couple = (globalDb.couples || []).find(c => c.id === coupleId);
+            if (couple) {
+                let current = couple.reconcileQuota ?? 3;
+                couple.reconcileQuota = Math.max(0, current + amount);
+                await dbRef.set(globalDb);
+            }
+        }
+
+        async function deleteSinglePhoto(coupleId, photoId, isTrash) {
+            if (!confirm('ยืนยันลบรูปภาพนี้ถาวร?')) return;
+            const couple = (globalDb.couples || []).find(c => c.id === coupleId);
+            if (couple) {
+                if (isTrash) {
+                    couple.trashPhotos = (couple.trashPhotos || []).filter(tp => tp.id !== photoId);
+                } else {
+                    couple.photos = (couple.photos || []).filter(p => p.id !== photoId);
+                }
+                await dbRef.set(globalDb);
+            }
+        }
+
+        async function purgeAllPhotos() {
+            if (!confirm('⚠️ คำเตือน: คุณต้องการลบรูปภาพทั้งหมดในระบบคู่รักทิ้งอย่างถาวรใช่หรือไม่?')) return;
+            (globalDb.couples || []).forEach(c => {
+                c.photos = [];
+                c.trashPhotos = [];
+            });
+            await dbRef.set(globalDb);
+            alert('ล้างรูปภาพทั้งหมดในระบบเรียบร้อยแล้ว');
+        }
+
+        function renderAdminChatList(adminChats) {
+            const listEl = document.getElementById('admin-chat-user-list');
+            listEl.innerHTML = '';
+            const uIds = Object.keys(adminChats);
+
+            if (uIds.length === 0) {
+                listEl.innerHTML = '<p class="text-center text-slate-400 py-10">ยังไม่มีข้อความแชท</p>';
+                return;
+            }
+
+            uIds.forEach(uId => {
+                const msgs = adminChats[uId] || [];
+                const last = msgs[msgs.length - 1] || {};
+                const isSelected = activeChatUserId === uId;
+                const userObj = (globalDb.users || []).find(u => u.id === uId);
+                const name = userObj ? userObj.name : uId;
+
+                listEl.innerHTML += `
+                    <div onclick="selectAdminChat('${uId}')" class="p-3 rounded-xl border transition cursor-pointer ${isSelected ? 'bg-indigo-900/50 border-indigo-500' : 'bg-slate-900 hover:bg-slate-800 border-slate-700'}">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-white truncate">${name}</span>
+                            <span class="text-[9px] text-slate-400">${last.time || ''}</span>
+                        </div>
+                        <p class="text-slate-400 truncate">${last.text || 'ไม่มีข้อความ'}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function selectAdminChat(uId) {
+            activeChatUserId = uId;
+            document.getElementById('admin-reply-input').disabled = false;
+            document.getElementById('admin-send-btn').disabled = false;
+            const userObj = (globalDb.users || []).find(u => u.id === uId);
+            document.getElementById('active-chat-title').innerText = `กำลังสนทนากับ: ${userObj ? userObj.name : uId} (ID: ${uId})`;
+            renderAdminChatMessages(globalDb.adminChats?.[uId] || []);
+            renderAdminChatList(globalDb.adminChats || {});
+        }
+
+        function renderAdminChatMessages(msgs) {
+            const box = document.getElementById('admin-chat-box-messages');
+            box.innerHTML = '';
+            if (!msgs || msgs.length === 0) {
+                box.innerHTML = '<p class="text-center text-slate-400 py-10">ยังไม่มีประวัติแชท</p>';
+                return;
+            }
+
+            msgs.forEach(m => {
+                const isUser = m.sender === 'user';
+                box.innerHTML += `
+                    <div class="flex flex-col ${isUser ? 'items-start' : 'items-end'}">
+                        <div class="p-3 rounded-xl max-w-[80%] ${isUser ? 'bg-slate-800 text-white border border-slate-700' : 'bg-indigo-600 text-white'}">
+                            <p class="font-bold text-[9px] opacity-80 mb-0.5">${isUser ? 'ผู้ใช้' : 'แอดมิน (Creator)'}</p>
+                            <p>${m.text}</p>
+                            <span class="text-[9px] opacity-75 block text-right mt-1">${m.time}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function sendAdminReply() {
+            const input = document.getElementById('admin-reply-input');
+            const text = input.value.trim();
+            if (!text || !activeChatUserId) return;
+
+            if (!globalDb.adminChats) globalDb.adminChats = {};
+            if (!globalDb.adminChats[activeChatUserId]) globalDb.adminChats[activeChatUserId] = [];
+
+            globalDb.adminChats[activeChatUserId].push({
+                sender: 'admin',
+                text: text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+
+            await dbRef.set(globalDb);
+            input.value = '';
+        }
+
         async function creatorSendBroadcast() {
             const text = document.getElementById('creator-broadcast').value.trim();
+            const category = document.getElementById('broadcast-category').value;
             if (!text) return;
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            if (db.users) {
-                db.users.forEach(u => {
+
+            const users = globalDb.users || [];
+            const couples = globalDb.couples || [];
+
+            users.forEach(u => {
+                let targetMatch = false;
+                const hasCouple = couples.some(c => c.id === u.coupleId || c.user1Id === u.id || c.user2Id === u.id);
+
+                if (category === 'ALL') targetMatch = true;
+                else if (category === 'COUPLES' && hasCouple) targetMatch = true;
+                else if (category === 'SINGLES' && !hasCouple) targetMatch = true;
+                else if (category === 'ADMINS' && (u.id === 'mumu' || u.isAdmin)) targetMatch = true;
+
+                if (targetMatch) {
                     if (!u.notifications) u.notifications = [];
-                    u.notifications.push({ id: Date.now() + Math.random(), type: 'CREATOR_BROADCAST', message: `👑 ประกาศจากผู้สร้างระบบ: ${text}`, time: new Date().toLocaleString(), read: false });
-                });
-            }
-            await dbRef.set(db);
+                    u.notifications.push({
+                        id: Date.now() + Math.random(),
+                        type: 'CREATOR_BROADCAST',
+                        message: `👑 ประกาศ [${category}]: ${text}`,
+                        time: new Date().toLocaleString(),
+                        read: false
+                    });
+                }
+            });
+
+            await dbRef.set(globalDb);
             document.getElementById('creator-broadcast').value = '';
-            alert('ส่งประกาศจากผู้สร้างถึงทุกคนสำเร็จ!');
+            alert('ส่งประกาศตามหมวดหมู่สำเร็จ!');
         }
 
         async function permanentDeleteUser(userId) {
-            if (!confirm('ยืนยันลบผู้ใช้นี้แบบถาวร?')) return;
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            db.users = (db.users || []).filter(u => u.id !== userId);
-            await dbRef.set(db);
+            if (!confirm('ยืนยันลบบัญชีผู้ใช้นี้ถาวร?')) return;
+            globalDb.users = (globalDb.users || []).filter(u => u.id !== userId);
+            await dbRef.set(globalDb);
         }
 
         async function restorePhoto(coupleId, photoId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
+            const couple = (globalDb.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 const idx = couple.trashPhotos.findIndex(p => p.id === photoId);
                 if (idx !== -1) {
                     const photo = couple.trashPhotos.splice(idx, 1)[0];
                     if (!couple.photos) couple.photos = [];
                     couple.photos.push(photo);
-                    await dbRef.set(db);
+                    await dbRef.set(globalDb);
                 }
             }
         }
