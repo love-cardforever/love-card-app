@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Control - Forever Love</title>
+    <title>Admin Dashboard - Forever Love</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -12,35 +12,55 @@
     <style>body { font-family: 'Prompt', sans-serif; background: #f8fafc; }</style>
 </head>
 <body class="p-4 md:p-8 text-slate-800 max-w-5xl mx-auto space-y-6">
+
+    <!-- หน้าจอเข้าสู่ระบบแอดมิน (แสดงขึ้นมาอัตโนมัติถ้ายังไม่ล็อกอิน) -->
+    <div id="admin-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm space-y-5 text-slate-800">
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-rose-500 text-white rounded-2xl mx-auto flex items-center justify-center text-xl shadow"><i class="fa-solid fa-shield-halved"></i></div>
+                <h1 class="font-bold text-lg text-slate-900">Admin Authentication</h1>
+                <p class="text-xs text-slate-500">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบแอดมิน</p>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Admin ID</label>
+                    <input type="text" id="input-admin-id" placeholder="AdminLove" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="input-admin-pass" placeholder="Pipat084@#" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                </div>
+                <button onclick="handleAdminLogin()" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow transition">เข้าสู่ระบบ</button>
+                <a href="index.html" class="block text-center text-[11px] text-slate-400 hover:underline">กลับสู่หน้าแรก</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- แดชบอร์ดแอดมินหลัก -->
     <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-            <h1 class="text-xl font-bold text-slate-900">🛡️ ระบบจัดการหลังบ้าน (Admin Dashboard)</h1>
-            <p class="text-xs text-slate-500">จัดการโควต้าคู่รัก ตรวจสอบปัญหา และประกาศข้อความถึงผู้ใช้ทุกคนแบบเรียลไทม์</p>
+            <h1 class="text-xl font-bold text-slate-900">🛡️ Admin Dashboard (Realtime)</h1>
+            <p class="text-xs text-slate-500">จัดการโควต้าคู่รัก ตรวจสอบปัญหา และประกาศข้อความถึงผู้ใช้ทุกคน</p>
         </div>
-        <button onclick="localStorage.removeItem('admin_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-500 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
+        <button onclick="adminLogout()" class="px-4 py-2 bg-rose-500 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
     </div>
 
-    <!-- ระบบส่งประกาศจากเซิร์ฟเวอร์ถึงผู้ใช้งานทุกคน -->
     <div class="bg-gradient-to-r from-rose-500 to-pink-500 p-6 rounded-2xl text-white space-y-3 shadow-lg">
-        <h3 class="font-bold text-sm"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศ/แจ้งเตือนจากเซิร์ฟเวอร์ถึงผู้ใช้งานทุกคน</h3>
-        <p class="text-xs opacity-90">ข้อความนี้จะถูกส่งไปแสดงในหน้าแจ้งเตือนของบัญชีผู้ใช้ทุกคนทันทีแบบเรียลไทม์</p>
+        <h3 class="font-bold text-sm"><i class="fa-solid fa-bullhorn mr-2"></i> ประกาศจากเซิร์ฟเวอร์ถึงผู้ใช้งานทุกคน</h3>
         <textarea id="broadcast-msg" rows="3" placeholder="พิมพ์ข้อความประกาศหรือแจ้งเตือน..." class="w-full p-3 text-xs text-slate-800 rounded-xl outline-none"></textarea>
-        <button onclick="sendGlobalBroadcast()" class="px-4 py-2 bg-white text-rose-600 rounded-xl text-xs font-bold shadow hover:bg-rose-50 transition">ส่งประกาศถึงทุกคน</button>
+        <button onclick="sendGlobalBroadcast()" class="px-4 py-2 bg-white text-rose-600 rounded-xl text-xs font-bold shadow">ส่งประกาศถึงทุกคน</button>
     </div>
 
-    <!-- รายงานปัญหา -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
         <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-2"></i> รายงานปัญหาจากผู้ใช้งาน</h3>
         <div id="admin-issues-list" class="space-y-2"></div>
     </div>
 
-    <!-- จัดการโควต้าคู่รัก -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
         <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-heart-circle-bolt text-rose-500 mr-2"></i> จัดการโควต้าขอคืนดีคู่รัก</h3>
         <div id="admin-couples-list" class="space-y-3"></div>
     </div>
 
-    <!-- ช่องทางรายงานไปยังผู้สร้าง -->
     <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100 space-y-3">
         <h3 class="font-bold text-sm text-rose-800"><i class="fa-solid fa-paper-plane mr-2"></i> รายงานปัญหาเร่งด่วนถึงผู้สร้าง (Creator)</h3>
         <textarea id="report-to-creator" rows="3" placeholder="พิมพ์ข้อความรายงานปัญหาถึงผู้สร้างระบบ..." class="w-full p-3 text-xs rounded-xl border border-rose-200 outline-none"></textarea>
@@ -52,42 +72,67 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref();
 
-        if (localStorage.getItem('admin_logged') !== 'true') { window.location.href = 'index.html'; }
-
-        // Realtime Listener สำหรับอัปเดตหน้าแอดมินอัตโนมัติ
-        dbRef.on('value', (snapshot) => {
-            const db = snapshot.val() || {};
-            
-            const issueDiv = document.getElementById('admin-issues-list');
-            issueDiv.innerHTML = '';
-            const requests = db.adminRequests || [];
-            if (requests.length === 0) {
-                issueDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีรายงานปัญหา</div>';
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('admin_logged') !== 'true') {
+                document.getElementById('admin-login-screen').classList.remove('hidden');
             } else {
-                requests.forEach(i => {
-                    issueDiv.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100 flex justify-between items-center"><span><b>[${i.time}]</b> ${i.content}</span><span class="text-slate-400 font-mono">ID: ${i.userId}</span></div>`;
-                });
-            }
-
-            const coupleDiv = document.getElementById('admin-couples-list');
-            coupleDiv.innerHTML = '';
-            const couples = db.couples || [];
-            if (couples.length === 0) {
-                coupleDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีข้อมูลคู่รักในระบบ</div>';
-            } else {
-                couples.forEach(c => {
-                    coupleDiv.innerHTML += `
-                        <div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100 flex justify-between items-center">
-                            <span><b>${c.id}</b> : ${c.user1Name} ❤️ ${c.user2Name} (โควต้า: <strong class="text-rose-600">${c.reconcileQuota ?? 3}</strong>)</span>
-                            <div class="flex gap-2">
-                                <button onclick="updateQuota('${c.id}', 1)" class="px-3 py-1 bg-emerald-500 text-white rounded-lg font-bold">+ เพิ่ม</button>
-                                <button onclick="updateQuota('${c.id}', -1)" class="px-3 py-1 bg-rose-500 text-white rounded-lg font-bold">- ลด</button>
-                            </div>
-                        </div>
-                    `;
-                });
+                initAdminRealtime();
             }
         });
+
+        function handleAdminLogin() {
+            const id = document.getElementById('input-admin-id').value.trim();
+            const pass = document.getElementById('input-admin-pass').value.trim();
+
+            if (id === 'AdminLove' && pass === 'Pipat084@#') {
+                localStorage.setItem('admin_logged', 'true');
+                document.getElementById('admin-login-screen').classList.add('hidden');
+                initAdminRealtime();
+            } else {
+                alert('Admin ID หรือรหัสผ่านไม่ถูกต้อง');
+            }
+        }
+
+        function adminLogout() {
+            localStorage.removeItem('admin_logged');
+            window.location.reload();
+        }
+
+        function initAdminRealtime() {
+            dbRef.on('value', (snapshot) => {
+                const db = snapshot.val() || {};
+                
+                const issueDiv = document.getElementById('admin-issues-list');
+                issueDiv.innerHTML = '';
+                const requests = db.adminRequests || [];
+                if (requests.length === 0) {
+                    issueDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีรายงานปัญหา</div>';
+                } else {
+                    requests.forEach(i => {
+                        issueDiv.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl text-xs border flex justify-between items-center"><span><b>[${i.time}]</b> ${i.content}</span><span class="text-slate-400 font-mono">ID: ${i.userId}</span></div>`;
+                    });
+                }
+
+                const coupleDiv = document.getElementById('admin-couples-list');
+                coupleDiv.innerHTML = '';
+                const couples = db.couples || [];
+                if (couples.length === 0) {
+                    coupleDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีข้อมูลคู่รัก</div>';
+                } else {
+                    couples.forEach(c => {
+                        coupleDiv.innerHTML += `
+                            <div class="p-3 bg-slate-50 rounded-xl text-xs border flex justify-between items-center">
+                                <span><b>${c.id}</b> : ${c.user1Name} ❤️ ${c.user2Name} (โควต้า: <strong class="text-rose-600">${c.reconcileQuota ?? 3}</strong>)</span>
+                                <div class="flex gap-2">
+                                    <button onclick="updateQuota('${c.id}', 1)" class="px-3 py-1 bg-emerald-500 text-white rounded-lg font-bold">+ เพิ่ม</button>
+                                    <button onclick="updateQuota('${c.id}', -1)" class="px-3 py-1 bg-rose-500 text-white rounded-lg font-bold">- ลด</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+        }
 
         async function updateQuota(coupleId, change) {
             const snapshot = await dbRef.once('value');
@@ -104,22 +149,15 @@
             if (!text) return;
             const snapshot = await dbRef.once('value');
             const db = snapshot.val() || {};
-            
             if (db.users) {
                 db.users.forEach(u => {
                     if (!u.notifications) u.notifications = [];
-                    u.notifications.push({
-                        id: Date.now() + Math.random(),
-                        type: 'SERVER_BROADCAST',
-                        message: `📢 ประกาศจากระบบ: ${text}`,
-                        time: new Date().toLocaleString(),
-                        read: false
-                    });
+                    u.notifications.push({ id: Date.now() + Math.random(), type: 'SERVER_BROADCAST', message: `📢 ประกาศ: ${text}`, time: new Date().toLocaleString(), read: false });
                 });
             }
             await dbRef.set(db);
             document.getElementById('broadcast-msg').value = '';
-            alert('ส่งประกาศถึงผู้ใช้งานทุกคนสำเร็จแบบเรียลไทม์!');
+            alert('ส่งประกาศถึงผู้ใช้งานทุกคนสำเร็จ!');
         }
 
         async function sendReportToCreator() {
