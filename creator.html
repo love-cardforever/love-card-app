@@ -13,38 +13,25 @@
 </head>
 <body class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
 
-    <!-- หน้าจอเข้าสู่ระบบผู้สร้าง (แสดงขึ้นมาอัตโนมัติถ้ายังไม่ล็อกอิน) -->
+    <!-- หน้าจอเข้าสู่ระบบผู้สร้างแยกต่างหาก -->
     <div id="creator-login-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-md space-y-5 text-slate-100">
             <div class="text-center space-y-1">
                 <div class="w-12 h-12 bg-rose-600 text-white rounded-2xl mx-auto flex items-center justify-center text-xl shadow"><i class="fa-solid fa-crown"></i></div>
-                <h1 class="font-bold text-lg text-rose-400">Creator Master Security</h1>
-                <p class="text-xs text-slate-400">ยืนยันตัวตนระดับสูงสุด (ต้องกรอกให้ครบทุกช่อง)</p>
+                <h1 class="font-bold text-lg text-rose-400">Creator Master Portal</h1>
+                <p class="text-xs text-slate-400">ยืนยันตัวตนระดับสูงสุด (กรอกข้อมูลให้ครบถ้วน)</p>
             </div>
             <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">ID Creator</label>
-                    <input type="text" id="c-id" placeholder="mumuAdmin" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password 1</label>
-                    <input type="password" id="c-pass1" placeholder="15601" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password 2</label>
-                    <input type="password" id="c-pass2" placeholder="616451" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Secret Key</label>
-                    <input type="password" id="c-key" placeholder="tapipipat" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
-                </div>
+                <input type="text" id="c-id" placeholder="ID (mumu)" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                <input type="password" id="c-pass1" placeholder="รหัส 1 (15601)" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                <input type="password" id="c-pass2" placeholder="รหัส 2 (๖๑๖๔๕๑ หรือ 616451)" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                <input type="password" id="c-key" placeholder="Key (tapipipat)" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
                 <button onclick="handleCreatorLogin()" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition mt-1">ยืนยันตัวตนผู้สร้าง</button>
                 <a href="index.html" class="block text-center text-[11px] text-slate-400 hover:underline">กลับสู่หน้าแรก</a>
             </div>
         </div>
     </div>
 
-    <!-- แดชบอร์ดผู้สร้างหลัก -->
     <div class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
@@ -60,11 +47,6 @@
     </div>
 
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <h3 class="font-bold text-sm text-amber-400"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ข้อความรายงานจากแอดมิน</h3>
-        <div id="creator-reports-list" class="space-y-2"></div>
-    </div>
-
-    <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <details class="group" open>
             <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
                 <span>📁 โฟลเดอร์: ข้อมูลผู้ใช้งานทั้งหมดแบบละเอียด (Users)</span>
@@ -77,7 +59,7 @@
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <details class="group" open>
             <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
-                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะเก็บรักษา 30 วัน)</span>
+                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะเก็บรักษา)</span>
                 <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
             </summary>
             <div id="creator-couples-list" class="space-y-4 pt-4"></div>
@@ -103,34 +85,26 @@
             const p2 = document.getElementById('c-pass2').value.trim();
             const key = document.getElementById('c-key').value.trim();
 
-            if (id === 'mumuAdmin' && p1 === '15601' && p2 === '616451' && key === 'tapipipat') {
+            // รองรับทั้งเลขอรบิกและเลขไทย (๖๑๖๔๕๑ / 616451)
+            const isValidP2 = (p2 === '616451' || p2 === '๖๑๖๔๕១');
+
+            if (id === 'mumu' && p1 === '15601' && isValidP2 && key === 'tapipipat') {
                 localStorage.setItem('creator_logged', 'true');
                 document.getElementById('creator-login-screen').classList.add('hidden');
                 initCreatorRealtime();
             } else {
-                alert('ข้อมูลการยืนยันตัวตนผู้สร้างไม่ถูกต้อง ขาดหรือกรอกผิดพลาดแม้แต่ช่องเดียวจะเข้าไม่ได้');
+                alert('ข้อมูลการยืนยันตัวตนผู้สร้างไม่ถูกต้อง');
             }
         }
 
         function creatorLogout() {
             localStorage.removeItem('creator_logged');
-            window.location.reload();
+            window.location.href = 'index.html';
         }
 
         function initCreatorRealtime() {
             dbRef.on('value', (snapshot) => {
                 const db = snapshot.val() || {};
-
-                const reportDiv = document.getElementById('creator-reports-list');
-                reportDiv.innerHTML = '';
-                const reports = db.creatorReports || [];
-                if (reports.length === 0) {
-                    reportDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีรายงานจากแอดมิน</div>';
-                } else {
-                    reports.forEach(r => {
-                        reportDiv.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700"><b>[${r.time}]</b> ${r.content}</div>`;
-                    });
-                }
 
                 const uList = document.getElementById('creator-users-list');
                 uList.innerHTML = '';
@@ -161,7 +135,7 @@
                         });
                         photosHTML += '</div>';
 
-                        let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ (เก็บรักษา 30 วัน):</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
+                        let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ:</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
                         (c.trashPhotos || []).forEach(tp => {
                             trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
                         });
