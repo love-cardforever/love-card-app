@@ -99,7 +99,10 @@
             </section>
 
             <section class="glass-panel p-5 rounded-2xl space-y-4">
-                <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-comments text-rose-500 mr-2"></i> แชทสนทนากับผู้ใช้ (แยกรายบุคคล)</h2>
+                <div class="flex justify-between items-center">
+                    <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-comments text-rose-500 mr-2"></i> แชทสนทนากับผู้ใช้ (แยกรายบุคคล)</h2>
+                    <button id="btn-delete-current-chat" onclick="deleteUserChat()" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-600 text-[11px] font-bold rounded-xl transition hidden"><i class="fa-solid fa-trash-can mr-1"></i> ลบแชทผู้ใช้นี้</button>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[400px]">
                     <div id="chat-users-list" class="border-r pr-2 overflow-y-auto space-y-1"></div>
                     <div class="md:col-span-2 flex flex-col justify-between bg-slate-50 p-3 rounded-2xl border">
@@ -137,7 +140,6 @@
 
         let activeChatUserId = null;
 
-        // ซ่อนรหัสผ่านแอดมินไว้ในรูป Base64 เพื่อความปลอดภัย
         const _adminAuth = {
             u: "TXVtdUFkbWlu", // MumuAdmin
             p: "MDgwMjU0MDkwMG11bXVwdA==" // 0802540900mumupt
@@ -306,10 +308,27 @@
         function selectChatUser(userId, userName) {
             activeChatUserId = userId;
             document.getElementById('chat-header-info').innerText = `กำลังสนทนากับ: ${userName} (ID: ${userId})`;
+            document.getElementById('btn-delete-current-chat').classList.remove('hidden');
             dbRef.once('value').then(snap => {
                 const db = snap.val() || {};
                 renderAdminChatMessages(db.adminChats?.[userId] || []);
             });
+        }
+
+        async function deleteUserChat() {
+            if (!activeChatUserId) return;
+            if (!confirm('ยืนยันลบประวัติแชทของผู้ใช้นี้ทั้งหมด?')) return;
+            const snap = await dbRef.once('value');
+            const db = snap.val() || {};
+            if (db.adminChats && db.adminChats[activeChatUserId]) {
+                delete db.adminChats[activeChatUserId];
+                await dbRef.set(db);
+                document.getElementById('admin-chat-messages').innerHTML = '';
+                document.getElementById('chat-header-info').innerText = 'กรุณาเลือกผู้ใช้จากรายชื่อด้านซ้าย';
+                document.getElementById('btn-delete-current-chat').classList.add('hidden');
+                activeChatUserId = null;
+                alert('ลบประวัติแชทเรียบร้อยแล้ว');
+            }
         }
 
         function renderAdminChatMessages(messages) {
