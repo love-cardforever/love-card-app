@@ -43,6 +43,7 @@
 
     <main class="w-full max-w-xl mx-auto flex flex-col space-y-4">
         
+        <!-- ส่วนหัว (เพิ่มปุ่มติดต่อแอดมินไว้ด้านบนสุดเสมอ) -->
         <header class="w-full glass-card p-4 rounded-3xl shadow-sm flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-heart text-lg"></i></div>
@@ -51,9 +52,10 @@
                     <p class="text-[11px] text-rose-500 font-medium">ห้องความทรงจำ (Realtime Cloud)</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="openPromptPayModal()" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-1"><i class="fa-solid fa-wallet"></i> โดเนท</button>
-                <button onclick="logoutVault()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i> ออก</button>
+            <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                <button onclick="openAdminContactModal()" class="px-3 py-2 bg-indigo-500 hover:bg-indigo-600 text-white text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-1"><i class="fa-solid fa-headset"></i> แอดมิน</button>
+                <button onclick="openPromptPayModal()" class="px-3 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-1"><i class="fa-solid fa-wallet"></i> โดเนท</button>
+                <button onclick="logoutVault()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i></button>
             </div>
         </header>
 
@@ -192,17 +194,33 @@
         </div>
     </div>
 
-    <!-- Modal ติดต่อแอดมิน -->
+    <!-- Modal ติดต่อแอดมินแบบพิมพ์ตอบ (Chat Support) -->
     <div id="modal-admin-contact" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center mx-auto text-xl"><i class="fa-solid fa-headset"></i></div>
-            <h3 class="font-bold text-base text-slate-800">ช่องทางติดต่อแอดมินระบบ</h3>
-            <p class="text-xs text-slate-500">หากพบคดียุ่งยากหรือบัญชีถูกระงับ ติดต่อเจ้าหน้าที่ได้ที่นี่</p>
-            <div class="bg-indigo-50 p-4 rounded-2xl text-left space-y-2 text-xs text-slate-700">
-                <p><i class="fa-brands fa-line text-green-600 mr-1.5 text-sm"></i> <strong>Line ID:</strong> <span class="font-mono font-bold">@lovevault_admin</span></p>
-                <p><i class="fa-solid fa-envelope text-rose-500 mr-1.5 text-sm"></i> <strong>Email:</strong> support@lovevault.app</p>
+        <div class="bg-white rounded-3xl p-5 w-full max-w-md flex flex-col h-[480px] shadow-2xl">
+            <div class="flex justify-between items-center pb-3 border-b">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-full bg-indigo-500 text-white flex items-center justify-center text-sm"><i class="fa-solid fa-headset"></i></div>
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-800">แชทติดต่อแอดมินระบบ</h3>
+                        <p class="text-[10px] text-emerald-600 font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i> ช่องทางสำรอง IG : @mumu_apr200x</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminContactModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <button onclick="closeAdminContactModal()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow">ปิดหน้าต่าง</button>
+
+            <!-- กล่องข้อความแชท -->
+            <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50 rounded-2xl my-3 text-xs">
+                <div class="bg-indigo-50 text-indigo-900 p-3 rounded-2xl rounded-tl-sm max-w-[85%] border border-indigo-100">
+                    <p class="font-bold mb-0.5">ระบบช่วยเหลือแอดมิน</p>
+                    สวัสดีครับคุณ <b><span id="chat-username-label">--</span></b> พิมพ์ข้อความสอบถามหรือแจ้งปัญหาไว้ได้เลยครับ แอดมินจะคอยตรวจสอบข้อมูล หรือติดต่อทางสำรอง <b>IG : @mumu_apr200x</b> ได้ตลอดเวลาครับ
+                </div>
+            </div>
+
+            <!-- ช่องพิมพ์ข้อความ -->
+            <div class="flex gap-2">
+                <input type="text" id="admin-chat-input" placeholder="พิมพ์ข้อความหาแอดมิน..." class="flex-1 p-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                <button onclick="sendAdminMessage()" class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -333,6 +351,8 @@
 
         document.getElementById('header-username').innerText = currentUser.name;
         document.getElementById('header-userid').innerText = currentUser.id;
+        document.getElementById('chat-username-label').innerText = currentUser.name;
+
         if (currentUser.profileImg) {
             document.getElementById('profile-icon-box').innerHTML = `<img src="${currentUser.profileImg}" class="w-full h-full object-cover">`;
         } else {
@@ -368,6 +388,7 @@
             const unreadCount = notifs.filter(n => !n.read).length;
             document.getElementById('notif-count').innerText = unreadCount;
             renderNotificationsList(notifs);
+            renderAdminChat(db.adminChats?.[currentUser.id] || []);
 
             const couples = db.couples || [];
             let myCouple = couples.find(c => c.id === currentUser.coupleId || c.user1Id === currentUser.id || c.user2Id === currentUser.id);
@@ -579,7 +600,6 @@
                 document.getElementById('text-couple-status').innerText = "คู่รักลบบัญชี / ถูกแบน";
                 document.getElementById('text-couple-status').className = "font-bold text-red-600";
                 
-                // ปุ่มติดต่อแอดมิน (เรียกฟังก์ชันเปิด Modal แอดมิน)
                 actionContainer.innerHTML = `
                     <button onclick="openAdminContactModal()" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-headset mr-1"></i> ติดต่อแอดมิน</button>
                     <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ตัดขาดความสัมพันธ์</button>
@@ -763,12 +783,65 @@
             }
         }
 
-        // ฟังก์ชันเปิด-ปิด Modal ติดต่อแอดมิน
+        // ฟังก์ชันระบบแชทติดต่อแอดมิน
         function openAdminContactModal() {
             document.getElementById('modal-admin-contact').classList.remove('hidden');
         }
         function closeAdminContactModal() {
             document.getElementById('modal-admin-contact').classList.add('hidden');
+        }
+
+        async function sendAdminMessage() {
+            const inputEl = document.getElementById('admin-chat-input');
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            if (!db.adminChats) db.adminChats = {};
+            if (!db.adminChats[currentUser.id]) db.adminChats[currentUser.id] = [];
+
+            db.adminChats[currentUser.id].push({
+                sender: 'user',
+                text: text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+
+            await dbRef.set(db);
+            inputEl.value = '';
+        }
+
+        function renderAdminChat(messages) {
+            const container = document.getElementById('admin-chat-messages');
+            container.innerHTML = `
+                <div class="bg-indigo-50 text-indigo-900 p-3 rounded-2xl rounded-tl-sm max-w-[85%] border border-indigo-100">
+                    <p class="font-bold mb-0.5">ระบบช่วยเหลือแอดมิน</p>
+                    สวัสดีครับคุณ <b>${currentUser.name}</b> พิมพ์ข้อความสอบถามหรือแจ้งปัญหาไว้ได้เลยครับ ช่องทางสำรอง <b>IG : @mumu_apr200x</b>
+                </div>
+            `;
+            messages.forEach(m => {
+                if (m.sender === 'user') {
+                    container.innerHTML += `
+                        <div class="flex justify-end">
+                            <div class="bg-rose-500 text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] shadow-xs">
+                                <p>${m.text}</p>
+                                <span class="text-[9px] opacity-80 block text-right mt-1">${m.time}</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML += `
+                        <div class="flex justify-start">
+                            <div class="bg-white text-slate-800 p-3 rounded-2xl rounded-tl-sm max-w-[85%] border shadow-xs">
+                                <p class="font-bold text-[10px] text-indigo-600 mb-0.5">แอดมินระบบ</p>
+                                <p>${m.text}</p>
+                                <span class="text-[9px] text-slate-400 block text-right mt-1">${m.time}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            container.scrollTop = container.scrollHeight;
         }
 
         function openEditAnniversaryModal() {
