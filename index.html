@@ -8,7 +8,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script type="text/javascript">
@@ -92,7 +91,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ.)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2002)</label>
                         <input type="number" id="reg-birthyear" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                     </div>
                     <div>
@@ -109,11 +108,11 @@
         </section>
     </main>
 
-    <!-- Modals ต่างๆ -->
+    <!-- MODALS ต่างๆ ครบถ้วน -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP</h3>
-            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none">
+            <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
+            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
             <div class="flex gap-2">
                 <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="verifyOtpAndRegister()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน OTP</button>
@@ -202,7 +201,7 @@
             <h3 class="font-bold text-base text-slate-800">แจ้งปัญหาการใช้งาน</h3>
             <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
             </div>
         </div>
@@ -214,7 +213,7 @@
             <input type="text" id="forgot-id" placeholder="User ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
             <input type="email" id="forgot-email" placeholder="อีเมล" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">กู้คืน</button>
             </div>
         </div>
@@ -416,7 +415,6 @@
         function openRejectReasonModal() { document.getElementById('modal-proposal-popup').classList.add('hidden'); document.getElementById('modal-reject-form').classList.remove('hidden'); }
         
         async function submitRejectForm() {
-            const name = document.getElementById('reject-name-input').value.trim();
             const snapshot = await dbRef.once('value');
             const val = snapshot.val() || {};
             if (val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
