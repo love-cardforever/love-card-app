@@ -761,10 +761,10 @@
                 trashNoteGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะโน้ตว่างเปล่า</div>';
             } else {
                 trashNotes.forEach(tn => {
-                    const isOwner = tn.authorId === currentUser.id;
+                    const isOwner = tn.authorId === currentUser.id || tn.uploaderId === currentUser.id;
                     trashNoteGrid.innerHTML += `
                         <div class="p-3 bg-white/80 rounded-2xl border flex justify-between items-center text-xs opacity-85">
-                            <div><b>${tn.authorName}:</b> ${tn.text}</div>
+                            <div><b>${tn.authorName || tn.uploaderName || 'ผู้ใช้'}:</b> ${tn.text}</div>
                             <div class="flex gap-2">
                                 <button onclick="restoreNote(${tn.id}, '${couple.id}')" class="text-emerald-600 font-bold hover:underline">กู้คืน</button>
                                 ${isOwner ? `<button onclick="promptPermanentDelete('note', ${tn.id}, '${couple.id}')" class="text-red-600 font-bold hover:underline">ลบถาวร</button>` : '<span class="text-[9px] text-slate-400">ไม่ใช่เจ้าของ</span>'}
@@ -1000,7 +1000,7 @@
             const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 const idx = couple.notes.findIndex(n => n.id === noteId);
-                if (idx !== -1 && couple.notes[idx].authorId === currentUser.id) {
+                if (idx !== -1 && (couple.notes[idx].authorId === currentUser.id || couple.notes[idx].uploaderId === currentUser.id)) {
                     const note = couple.notes.splice(idx, 1)[0];
                     if (!couple.trashNotes) couple.trashNotes = [];
                     couple.trashNotes.push(note);
@@ -1043,9 +1043,9 @@
             const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 if (type === 'photo') {
-                    couple.trashPhotos = (couple.trashPhotos || []).filter(tp => tp.id !== targetId || tp.uploaderId === currentUser.id);
+                    couple.trashPhotos = (couple.trashPhotos || []).filter(tp => tp.id !== targetId || (tp.uploaderId === currentUser.id));
                 } else if (type === 'note') {
-                    couple.trashNotes = (couple.trashNotes || []).filter(tn => tn.id !== targetId || tn.authorId === currentUser.id);
+                    couple.trashNotes = (couple.trashNotes || []).filter(tn => tn.id !== targetId || (tn.authorId === currentUser.id || tn.uploaderId === currentUser.id));
                 }
                 await dbRef.set(db);
             }
@@ -1208,7 +1208,7 @@
                     container.innerHTML += `<div class="flex items-center gap-2"><img src="${p.url}" class="w-12 h-12 object-cover rounded-xl"><p class="text-[11px] text-slate-600">รูปภาพโดย ${p.uploaderName}</p></div>`;
                 });
                 (couple.notes || []).forEach(n => {
-                    container.innerHTML += `<div class="p-2 bg-white rounded-xl border text-[11px]"><b>${n.authorName}:</b> ${n.text}</div>`;
+                    container.innerHTML += `<div class="p-2 bg-white rounded-xl border text-[11px]"><b>${n.authorName || n.uploaderName || 'ผู้ใช้'}:</b> ${n.text}</div>`;
                 });
                 if ((couple.photos || []).length === 0 && (couple.notes || []).length === 0) {
                     container.innerHTML = '<p class="text-center text-slate-400 py-2">ยังไม่มีความทรงจำในอัลบั้ม</p>';
@@ -1417,7 +1417,6 @@
             window.location.href = 'index.html';
         }
 
-        // ยึดหน้า index เป็นหลักเมื่อออกจากระบบ
         function logoutVault() {
             localStorage.clear();
             window.location.href = 'index.html';
