@@ -15,8 +15,8 @@
         .grayscale-mode { filter: grayscale(100%); transition: filter 1s ease-in-out; }
         .card-broken-effect { border: 3px dashed #ef4444 !important; background: rgba(254, 226, 226, 0.6) !important; position: relative; }
         .card-broken-effect::before { content: "⚡ บัตรมีรอยร้าว (ออนไลน์: คู่รักลบบัญชี/ถูกแบน) ⚡"; position: absolute; top: 10px; right: 15px; font-size: 10px; font-weight: bold; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 999px; }
-        @keyframes textDissolve { 0% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(10px); transform: translateY(-10px) scale(0.9); } }
-        .dissolve-effect { animation: textDissolve 1.5s forwards ease-in-out; }
+        @keyframes pulseRed { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } }
+        .animate-pulse-red { animation: pulseRed 1s infinite ease-in-out; }
         @keyframes popUpFade { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: scale(1.5); pointer-events: none; } }
         .popup-fade-effect { animation: popUpFade 2.5s forwards ease-in-out; }
         @keyframes tearCard { 0% { transform: scale(1) rotate(0deg); opacity: 1; } 50% { transform: scale(1.1) rotate(-5deg); filter: hue-rotate(90deg); } 100% { transform: scale(0.2) translateY(100px) rotate(45deg); opacity: 0; } }
@@ -65,8 +65,8 @@
                         <div id="profile-icon-box" class="w-12 h-12 rounded-full bg-rose-100 text-rose-400 flex items-center justify-center font-bold text-base overflow-hidden border-2 border-rose-400 shadow-inner">--</div>
                         <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white text-[10px]"><i class="fa-solid fa-camera"></i></div>
                     </div>
-                    <!-- ใช้ระบบตัดขอบรูป (Crop) สำหรับรูปโปรไฟล์ -->
-                    <input type="file" id="upload-profile-input" accept="image/*" class="hidden" onchange="prepareImageCrop(event, 'profile')">
+                    <!-- ระบบครอบตัดรูปเฉพาะตอนเปลี่ยนรูปโปรไฟล์ -->
+                    <input type="file" id="upload-profile-input" accept="image/*" class="hidden" onchange="prepareProfileCrop(event)">
                     <div>
                         <h2 id="header-username" class="font-bold text-base text-slate-800">--</h2>
                         <p class="text-xs text-rose-500 font-medium">ID: <span id="header-userid">--</span> | สถานะ: <span id="text-couple-status" class="font-bold">ยังไม่มีคู่รัก</span></p>
@@ -134,27 +134,30 @@
                 <div id="action-buttons-container" class="w-full flex gap-2"></div>
             </div>
 
-            <!-- เพิ่มระบบแชทคู่รัก (ส่งข้อความ, รูป/วิดีโอ, เสียง, ยกเลิกข้อความ) -->
+            <!-- กล่องแชทคู่รัก (ย่อ/ขยายได้, มีจุดแดงกระพริบเมื่อยังไม่ได้อ่าน, สถานะข้อความ และปุ่มยืนยันการลบ) -->
             <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
-                <h3 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-comments text-rose-500 mr-1.5"></i> แชทคู่รักส่วนตัว</h3>
-                <div id="couple-chat-box" class="h-64 overflow-y-auto bg-slate-50 p-3 rounded-2xl border space-y-2 text-xs flex flex-col"></div>
+                <div class="flex justify-between items-center pb-2 border-b">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-comments text-rose-500 mr-1.5"></i> แชทคู่รักส่วนตัว</h3>
+                        <span id="chat-unread-indicator" class="w-3 h-3 rounded-full bg-red-500 animate-pulse-red hidden" title="มีข้อความยังไม่ได้อ่าน"></span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <button onclick="toggleChatSize()" id="btn-toggle-chat-size" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-bold transition"><i class="fa-solid fa-expand mr-1"></i> ขยาย</button>
+                    </div>
+                </div>
+
+                <div id="couple-chat-box" class="h-56 overflow-y-auto bg-slate-50 p-3 rounded-2xl border space-y-2 text-xs flex flex-col transition-all duration-300"></div>
                 
                 <div class="flex items-center gap-2 pt-1">
-                    <button onclick="document.getElementById('chat-media-input').click()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs" title="ส่งรูป/คลิป"><i class="fa-solid fa-paperclip"></i></button>
-                    <input type="file" id="chat-media-input" accept="image/*,video/*" class="hidden" onchange="prepareImageCrop(event, 'chat-media')">
-                    
-                    <button id="btn-audio-record" onclick="toggleVoiceRecording()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs" title="อัดเสียง"><i class="fa-solid fa-microphone"></i></button>
-
-                    <input type="text" id="couple-chat-input" placeholder="พิมพ์ข้อความหาคนพิเศษ..." class="flex-1 p-2 text-xs rounded-xl border outline-none bg-white">
-                    <button onclick="sendCoupleMessage()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-paper-plane"></i></button>
+                    <input type="text" id="couple-chat-input" placeholder="พิมพ์ข้อความหาคนพิเศษ..." class="flex-1 p-2.5 text-xs rounded-xl border outline-none bg-white">
+                    <button onclick="sendCoupleMessage()" class="px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
 
             <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-1.5"></i> อัลบั้มความทรงจำ</h3>
-                    <!-- ใช้ระบบตัดขอบรูป (Crop) สำหรับอัลบั้ม -->
-                    <input type="file" id="upload-photo-input" accept="image/*" class="hidden" onchange="prepareImageCrop(event, 'album')">
+                    <input type="file" id="upload-photo-input" accept="image/*" class="hidden" onchange="uploadPhoto(event)">
                     <button onclick="document.getElementById('upload-photo-input').click()" class="px-3 py-1.5 bg-rose-500 text-white text-[11px] font-bold rounded-xl shadow">+ อัปโหลดรูป</button>
                 </div>
                 <div id="vault-photos-grid" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
@@ -185,30 +188,42 @@
         <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
     </footer>
 
-    <!-- เพิ่ม Modal ระบบตัดขอบรูปภาพ (Image Crop & Preview) -->
+    <!-- Modal ระบบครอบตัดรูปโปรไฟล์ (Profile Image Crop) -->
     <div id="modal-image-crop" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-crop text-rose-500 mr-1"></i> จัดตำแหน่ง & ตัดขอบรูปภาพ</h3>
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-crop text-rose-500 mr-1"></i> จัดตำแหน่ง & ตัดขอบรูปโปรไฟล์</h3>
             <p class="text-xs text-slate-500">ปรับซูมหรือเลื่อนรูปให้ตรงขอบตามใจชอบ ก่อนกดบันทึก</p>
             
-            <div class="relative w-64 h-64 mx-auto overflow-hidden rounded-2xl border-4 border-rose-400 bg-slate-900 shadow-inner flex items-center justify-center">
+            <div class="relative w-64 h-64 mx-auto overflow-hidden rounded-full border-4 border-rose-400 bg-slate-900 shadow-inner flex items-center justify-center">
                 <img id="crop-preview-img" class="absolute max-none cursor-grab active:cursor-grabbing select-none" style="transform: scale(1) translate(0px, 0px);" />
             </div>
 
             <div class="flex items-center gap-3 px-4">
                 <i class="fa-solid fa-magnifying-glass-minus text-slate-400 text-xs"></i>
-                <input type="range" id="zoom-range" min="0.5" max="3" step="0.05" value="1" oninput="updateImageZoom(this.value)" class="w-full accent-rose-500">
+                <input type="range" id="zoom-range" min="0.5" max="3" step="0.05" value="1" oninput="updateProfileZoom(this.value)" class="w-full accent-rose-500">
                 <i class="fa-solid fa-magnifying-glass-plus text-slate-400 text-xs"></i>
             </div>
 
             <div class="flex gap-2 pt-2">
-                <button onclick="closeCropModal()" class="flex-1 py-2.5 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="saveCroppedImage()" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">เซฟและใช้งาน</button>
+                <button onclick="closeProfileCropModal()" class="flex-1 py-2.5 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="saveCroppedProfileImage()" class="flex-1 py-2.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">เซฟและใช้งาน</button>
             </div>
         </div>
     </div>
 
-    <!-- Modals เดิมครบถ้วน -->
+    <!-- Modal ยืนยันการลบ/ยกเลิกข้อความแชท -->
+    <div id="modal-confirm-delete-msg" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-red-600">ยืนยันการลบ/ยกเลิกข้อความ?</h3>
+            <p class="text-xs text-slate-500">ข้อความนี้จะถูกลบออกจากบทสนทนาทันที</p>
+            <div class="flex gap-2">
+                <button onclick="closeDeleteMsgModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="executeDeleteCoupleMessage()" class="flex-1 py-2 bg-red-600 text-white text-xs font-bold rounded-xl shadow">ยืนยันลบ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals อื่นๆ เดิม -->
     <div id="modal-proposal-code" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">สร้างโค้ดขอเป็นแฟนสำเร็จ!</h3>
@@ -398,18 +413,15 @@
         let pendingBreakupCoupleId = null;
         let currentCutoffStep = 1;
         let pendingCutoffCoupleId = null;
+        let pendingDeleteMsgId = null;
+        let isChatExpanded = false;
 
-        // ตัวแปรระบบแชทและตัดขอบรูป (Crop & Chat)
-        let mediaRecorder = null;
-        let audioChunks = [];
-        let isRecording = false;
-
-        let activeCropType = null; // 'profile', 'album', 'chat-media'
-        let cropSourceBase64 = null;
-        let cropScale = 1;
-        let cropPosX = 0;
-        let cropPosY = 0;
-        let isDragging = false;
+        // ตัวแปรระบบครอบตัดรูปโปรไฟล์ (Profile Image Crop)
+        let profileCropBase64 = null;
+        let profileScale = 1;
+        let profilePosX = 0;
+        let profilePosY = 0;
+        let isProfileDragging = false;
         let startX = 0, startY = 0;
 
         dbRef.on('value', async (snapshot) => {
@@ -452,52 +464,27 @@
                 if (!partnerObj && myCouple.status !== 'PARTNER_DELETED') {
                     myCouple.status = 'PARTNER_DELETED';
                     myCouple.deletedTimestamp = Date.now();
-
-                    const alreadyNotified = (currentUser.notifications || []).some(n => n.message.includes('คู่รักของคุณได้ลบบัญชี'));
-                    if (!alreadyNotified) {
-                        if (!currentUser.notifications) currentUser.notifications = [];
-                        currentUser.notifications.push({
-                            id: Date.now(),
-                            message: `🚨 คู่รักของคุณได้ลบบัญชีหรืออาจจะถูกแบนด้วยเหตุผลบางประการ! บัตรถูกจำกัดเวลา 10 นาที`,
-                            time: new Date().toLocaleString(),
-                            read: false
-                        });
-                    }
                     await dbRef.set(db);
                 }
 
-                if (myCouple.status === 'PARTNER_DELETED' && myCouple.deletedTimestamp) {
-                    const tenMinutesMs = 10 * 60 * 1000;
-                    const elapsed = Date.now() - myCouple.deletedTimestamp;
-                    if (elapsed > tenMinutesMs) {
-                        db.couples = couples.filter(c => c.id !== myCouple.id);
-                        currentUser.coupleId = null;
-                        await dbRef.set(db);
-                        return;
-                    }
-                }
-            }
-
-            if (!myCouple) {
+                renderCoupleState(myCouple, users);
+                checkAndUpdateChatReadStatus(myCouple);
+            } else {
                 renderNoCoupleState();
                 if (timerInterval) clearInterval(timerInterval);
-            } else {
-                renderCoupleState(myCouple, users);
-                renderCoupleChat(myCouple.chatMessages || []);
             }
         });
 
-        // --- ระบบตัดขอบรูปภาพ (Image Crop & Preview) ---
-        function prepareImageCrop(e, type) {
+        // --- ระบบครอบตัดรูปโปรไฟล์ (Profile Image Crop) ---
+        function prepareProfileCrop(e) {
             const file = e.target.files[0];
             if (!file) return;
-            activeCropType = type;
             const reader = new FileReader();
             reader.onload = function(uploadEvent) {
-                cropSourceBase64 = uploadEvent.target.result;
+                profileCropBase64 = uploadEvent.target.result;
                 const img = document.getElementById('crop-preview-img');
-                img.src = cropSourceBase64;
-                cropScale = 1; cropPosX = 0; cropPosY = 0;
+                img.src = profileCropBase64;
+                profileScale = 1; profilePosX = 0; profilePosY = 0;
                 document.getElementById('zoom-range').value = 1;
                 img.style.transform = `scale(1) translate(0px, 0px)`;
                 document.getElementById('modal-image-crop').classList.remove('hidden');
@@ -505,62 +492,65 @@
             reader.readAsDataURL(file);
         }
 
-        function updateImageZoom(val) {
-            cropScale = parseFloat(val);
+        function updateProfileZoom(val) {
+            profileScale = parseFloat(val);
             const img = document.getElementById('crop-preview-img');
-            img.style.transform = `scale(${cropScale}) translate(${cropPosX}px, ${cropPosY}px)`;
+            img.style.transform = `scale(${profileScale}) translate(${profilePosX}px, ${profilePosY}px)`;
         }
 
         const cropImg = document.getElementById('crop-preview-img');
-        cropImg.addEventListener('mousedown', (e) => { isDragging = true; startX = e.clientX - cropPosX; startY = e.clientY - cropPosY; });
-        window.addEventListener('mousemove', (e) => { if (!isDragging) return; cropPosX = e.clientX - startX; cropPosY = e.clientY - startY; cropImg.style.transform = `scale(${cropScale}) translate(${cropPosX}px, ${cropPosY}px)`; });
-        window.addEventListener('mouseup', () => { isDragging = false; });
+        cropImg.addEventListener('mousedown', (e) => { isProfileDragging = true; startX = e.clientX - profilePosX; startY = e.clientY - profilePosY; });
+        window.addEventListener('mousemove', (e) => { if (!isProfileDragging) return; profilePosX = e.clientX - startX; profilePosY = e.clientY - startY; cropImg.style.transform = `scale(${profileScale}) translate(${profilePosX}px, ${profilePosY}px)`; });
+        window.addEventListener('mouseup', () => { isProfileDragging = false; });
 
-        // Touch support for mobile dragging
-        cropImg.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].clientX - cropPosX; startY = e.touches[0].clientY - cropPosY; });
-        window.addEventListener('touchmove', (e) => { if (!isDragging) return; cropPosX = e.touches[0].clientX - startX; cropPosY = e.touches[0].clientY - startY; cropImg.style.transform = `scale(${cropScale}) translate(${cropPosX}px, ${cropPosY}px)`; });
-        window.addEventListener('touchend', () => { isDragging = false; });
+        cropImg.addEventListener('touchstart', (e) => { isProfileDragging = true; startX = e.touches[0].clientX - profilePosX; startY = e.touches[0].clientY - profilePosY; });
+        window.addEventListener('touchmove', (e) => { if (!isProfileDragging) return; profilePosX = e.touches[0].clientX - startX; profilePosY = e.touches[0].clientY - startY; cropImg.style.transform = `scale(${profileScale}) translate(${profilePosX}px, ${profilePosY}px)`; });
+        window.addEventListener('touchend', () => { isProfileDragging = false; });
 
-        function closeCropModal() { document.getElementById('modal-image-crop').classList.add('hidden'); activeCropType = null; }
+        function closeProfileCropModal() { document.getElementById('modal-image-crop').classList.add('hidden'); }
 
-        async function saveCroppedImage() {
+        async function saveCroppedProfileImage() {
             const canvas = document.createElement('canvas');
             canvas.width = 300; canvas.height = 300;
             const ctx = canvas.getContext('2d');
             const img = new Image();
-            img.src = cropSourceBase64;
+            img.src = profileCropBase64;
             img.onload = async function() {
                 ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 300, 300);
                 ctx.save();
-                ctx.translate(150 + cropPosX, 150 + cropPosY);
-                ctx.scale(cropScale, cropScale);
+                ctx.translate(150 + profilePosX, 150 + profilePosY);
+                ctx.scale(profileScale, profileScale);
                 ctx.drawImage(img, -img.width / 2, -img.height / 2);
                 ctx.restore();
 
                 const finalBase64 = canvas.toDataURL('image/jpeg', 0.9);
-                closeCropModal();
+                closeProfileCropModal();
 
                 const snapshot = await dbRef.once('value');
                 const db = snapshot.val() || {};
-
-                if (activeCropType === 'profile') {
-                    const users = db.users || [];
-                    const idx = users.findIndex(u => u.id === currentUser.id);
-                    if (idx !== -1) { users[idx].profileImg = finalBase64; await dbRef.set(db); }
-                } else if (activeCropType === 'album') {
-                    const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-                    if (couple && couple.status === 'ACTIVE') {
-                        if (!couple.photos) couple.photos = [];
-                        couple.photos.push({ id: Date.now(), url: finalBase64, uploaderId: currentUser.id, uploaderName: currentUser.name });
-                        await dbRef.set(db);
-                    }
-                } else if (activeCropType === 'chat-media') {
-                    sendCoupleMediaMessage(finalBase64, 'image');
+                const users = db.users || [];
+                const idx = users.findIndex(u => u.id === currentUser.id);
+                if (idx !== -1) {
+                    users[idx].profileImg = finalBase64;
+                    await dbRef.set(db);
                 }
             };
         }
 
-        // --- ระบบแชทคู่รัก (ส่งข้อความ, รูป, คลิป, เสียง, ยกเลิกข้อความ) ---
+        // --- ระบบแชทคู่รัก (ข้อความตัวอักษร, ย่อ/ขยาย, จุดแดงกระพริบ, สถานะอ่านแล้ว/ส่งแล้ว, ยืนยันก่อนลบ) ---
+        function toggleChatSize() {
+            isChatExpanded = !isChatExpanded;
+            const chatBox = document.getElementById('couple-chat-box');
+            const btn = document.getElementById('btn-toggle-chat-size');
+            if (isChatExpanded) {
+                chatBox.className = "h-96 overflow-y-auto bg-slate-50 p-3 rounded-2xl border space-y-2 text-xs flex flex-col transition-all duration-300";
+                btn.innerHTML = '<i class="fa-solid fa-compress mr-1"></i> ย่อ';
+            } else {
+                chatBox.className = "h-56 overflow-y-auto bg-slate-50 p-3 rounded-2xl border space-y-2 text-xs flex flex-col transition-all duration-300";
+                btn.innerHTML = '<i class="fa-solid fa-expand mr-1"></i> ขยาย';
+            }
+        }
+
         async function sendCoupleMessage() {
             const input = document.getElementById('couple-chat-input');
             const text = input.value.trim();
@@ -570,57 +560,82 @@
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
             if (couple) {
                 if (!couple.chatMessages) couple.chatMessages = [];
-                couple.chatMessages.push({ id: Date.now(), senderId: currentUser.id, senderName: currentUser.name, type: 'text', content: text, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const dateStr = now.toLocaleDateString();
+                couple.chatMessages.push({
+                    id: Date.now(),
+                    senderId: currentUser.id,
+                    senderName: currentUser.name,
+                    text: text,
+                    sentTime: `${dateStr} ${timeStr}`,
+                    read: false,
+                    readTime: null
+                });
                 await dbRef.set(db);
                 input.value = '';
             }
         }
 
-        async function sendCoupleMediaMessage(url, type) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-            if (couple) {
-                if (!couple.chatMessages) couple.chatMessages = [];
-                couple.chatMessages.push({ id: Date.now(), senderId: currentUser.id, senderName: currentUser.name, type: type, content: url, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+        async function checkAndUpdateChatReadStatus(couple) {
+            if (!couple.chatMessages) {
+                renderCoupleChat([]);
+                return;
+            }
+            let updated = false;
+            couple.chatMessages.forEach(m => {
+                if (m.senderId !== currentUser.id && !m.read) {
+                    m.read = true;
+                    m.readTime = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    updated = true;
+                }
+            });
+            if (updated) {
                 await dbRef.set(db);
             }
-        }
-
-        async function deleteCoupleMessage(msgId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-            if (couple && couple.chatMessages) {
-                couple.chatMessages = couple.chatMessages.filter(m => m.id !== msgId);
-                await dbRef.set(db);
-            }
+            renderCoupleChat(couple.chatMessages);
         }
 
         function renderCoupleChat(messages) {
             const box = document.getElementById('couple-chat-box');
             box.innerHTML = '';
+            
+            const hasUnread = messages.some(m => m.senderId !== currentUser.id && !m.read);
+            const indicator = document.getElementById('chat-unread-indicator');
+            if (hasUnread) {
+                indicator.classList.remove('hidden');
+            } else {
+                indicator.classList.add('hidden');
+            }
+
             if (!messages || messages.length === 0) {
                 box.innerHTML = '<div class="text-center text-slate-400 py-10">ยังไม่มีข้อความ เริ่มต้นทักทายคนพิเศษกันเลย! 💕</div>';
                 return;
             }
+
             messages.forEach(m => {
                 const isMe = m.senderId === currentUser.id;
-                let contentHtml = '';
-                if (m.type === 'text') contentHtml = `<p>${m.content}</p>`;
-                else if (m.type === 'image') contentHtml = `<img src="${m.content}" class="w-40 rounded-xl object-cover cursor-pointer" onclick="window.open('${m.content}')">`;
-                else if (m.type === 'video') contentHtml = `<video src="${m.content}" controls class="w-48 rounded-xl"></video>`;
-                else if (m.type === 'audio') contentHtml = `<audio src="${m.content}" controls class="w-44 h-8"></audio>`;
+                let statusText = '';
+                if (isMe) {
+                    if (m.read) {
+                        statusText = `<span class="text-[8px] text-emerald-600 block text-right">อ่านแล้ว (${m.readTime})</span>`;
+                    } else {
+                        statusText = `<span class="text-[8px] opacity-70 block text-right">ส่งแล้ว (${m.sentTime})</span>`;
+                    }
+                } else {
+                    statusText = `<span class="text-[8px] text-slate-400 block text-left">ได้รับเมื่อ (${m.sentTime})</span>`;
+                }
 
                 box.innerHTML += `
                     <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
                         <div class="flex items-center gap-1.5 max-w-[80%]">
                             <div class="p-3 rounded-2xl ${isMe ? 'bg-rose-500 text-white rounded-tr-sm' : 'bg-white text-slate-800 border rounded-tl-sm shadow-xs'}">
                                 <p class="text-[9px] opacity-80 mb-0.5">${m.senderName}</p>
-                                ${contentHtml}
-                                <span class="text-[8px] opacity-70 block text-right mt-1">${m.time}</span>
+                                <p>${m.text}</p>
+                                <span class="text-[8px] opacity-70 block text-right mt-1">${m.sentTime}</span>
+                                ${statusText}
                             </div>
-                            ${isMe ? `<button onclick="deleteCoupleMessage(${m.id})" class="text-slate-400 hover:text-red-500 text-[10px]" title="ยกเลิกข้อความ"><i class="fa-solid fa-trash"></i></button>` : ''}
+                            ${isMe ? `<button onclick="promptDeleteCoupleMessage(${m.id})" class="text-slate-400 hover:text-red-500 text-[10px]" title="ยกเลิกข้อความ"><i class="fa-solid fa-trash"></i></button>` : ''}
                         </div>
                     </div>
                 `;
@@ -628,41 +643,27 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        async function toggleVoiceRecording() {
-            if (!isRecording) {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    mediaRecorder.ondataavailable = e => { audioChunks.push(e.data); };
-                    mediaRecorder.onstop = async () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const reader = new FileReader();
-                        reader.onload = function(e) { sendCoupleMediaMessage(e.target.result, 'audio'); };
-                        reader.readAsDataURL(audioBlob);
-                        stream.getTracks().forEach(t => t.stop());
-                    };
-                    mediaRecorder.start();
-                    isRecording = true;
-                    document.getElementById('btn-audio-record').className = "px-3 py-2 bg-red-500 text-white rounded-xl text-xs animate-pulse";
-                } catch (err) { alert('ไม่สามารถเข้าถึงไมโครโฟนได้'); }
-            } else {
-                mediaRecorder.stop();
-                isRecording = false;
-                document.getElementById('btn-audio-record').className = "px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs";
-            }
+        function promptDeleteCoupleMessage(msgId) {
+            pendingDeleteMsgId = msgId;
+            document.getElementById('modal-confirm-delete-msg').classList.remove('hidden');
         }
 
-        const chatMediaInput = document.getElementById('chat-media-input');
-        chatMediaInput.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            if (file.type.startsWith('video/')) {
-                const reader = new FileReader();
-                reader.onload = function(uploadEvent) { sendCoupleMediaMessage(uploadEvent.target.result, 'video'); };
-                reader.readAsDataURL(file);
+        function closeDeleteMsgModal() {
+            document.getElementById('modal-confirm-delete-msg').classList.add('hidden');
+            pendingDeleteMsgId = null;
+        }
+
+        async function executeDeleteCoupleMessage() {
+            if (!pendingDeleteMsgId) return;
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
+            if (couple && couple.chatMessages) {
+                couple.chatMessages = couple.chatMessages.filter(m => m.id !== pendingDeleteMsgId);
+                await dbRef.set(db);
             }
-        });
+            closeDeleteMsgModal();
+        }
 
         async function generateProposalCodeFast() {
             const code = Math.random().toString(36).substring(2, 9).toUpperCase();
@@ -1143,6 +1144,26 @@
         function closeNotificationsModal() { document.getElementById('modal-notifications').classList.add('hidden'); }
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
+
+        async function uploadPhoto(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                const base64Url = uploadEvent.target.result;
+                const snapshot = await dbRef.once('value');
+                const db = snapshot.val() || {};
+                const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
+                if (couple && couple.status === 'ACTIVE') {
+                    if (!couple.photos) couple.photos = [];
+                    couple.photos.push({ id: Date.now(), url: base64Url, uploaderId: currentUser.id, uploaderName: currentUser.name });
+                    await dbRef.set(db);
+                } else {
+                    alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถอัปโหลดรูปได้');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
 
         async function movePhotoToTrash(photoId, coupleId) {
             const snapshot = await dbRef.once('value');
