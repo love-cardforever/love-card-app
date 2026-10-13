@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forever Love - Vault & Couple Card</title>
+    <title>Forever Love - Love Vault & Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -11,7 +11,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
         body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%); min-height: 100vh; }
-        .glass-card { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
         .grayscale-mode { filter: grayscale(100%); transition: filter 1s ease-in-out; }
         @keyframes textDissolve { 0% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(10px); transform: translateY(-10px) scale(0.9); } }
         .dissolve-effect { animation: textDissolve 1.5s forwards ease-in-out; }
@@ -19,100 +19,143 @@
         .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
     </style>
 </head>
-<body id="vault-body" class="p-4 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
+<body id="vault-body" class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen">
 
-    <!-- แถบโปรไฟล์ข้อมูลส่วนตัวด้านบน (ดีไซน์บัตรประจำตัวพรีเมียม) -->
-    <header class="w-full max-w-2xl mx-auto mb-6 glass-card p-4 rounded-2xl flex justify-between items-center shadow-md">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-500 text-white flex items-center justify-center text-xl shadow animate-heart"><i class="fa-solid fa-user-shield"></i></div>
-            <div>
-                <h1 id="header-username" class="font-bold text-base text-slate-800">กำลังโหลดชื่อ...</h1>
-                <p id="header-userid" class="text-xs text-rose-600 font-mono font-bold tracking-wide">ID: --</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <button onclick="openDeleteAccountModal()" class="px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1"><i class="fa-solid fa-user-slash"></i> ลบบัญชี</button>
-            <button onclick="logoutVault()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl transition">ออก</button>
-        </div>
-    </header>
-
-    <main class="w-full max-w-2xl mx-auto flex-1 flex flex-col items-center space-y-6">
+    <main class="w-full max-w-xl mx-auto flex flex-col space-y-4">
         
-        <!-- บัตรแสดงสถานะหลัก (หลักๆ ต้องเป็นหน้าบัตรและข้อมูล) -->
-        <section id="couple-card-box" class="w-full glass-card p-6 md:p-8 rounded-3xl text-center space-y-6 shadow-xl relative overflow-hidden">
-            <div class="absolute -top-10 -right-10 w-32 h-32 bg-rose-200/50 rounded-full blur-2xl pointer-events-none"></div>
-            
-            <div id="card-content-area" class="space-y-4">
-                <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner"><i class="fa-solid fa-id-card"></i></div>
-                <h2 id="card-title" class="text-xl font-bold text-slate-800">บัตรประจำตัวคู่รัก (ยังไม่มีคู่)</h2>
-                <p id="card-subtitle" class="text-xs text-slate-500">สร้างโค้ดขอเป็นแฟนเพื่อเริ่มต้นความทรงจำสีชมพู</p>
-                <div class="pt-2">
-                    <button onclick="generateProposalCode()" class="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs shadow-lg transition flex items-center gap-2 mx-auto"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
+        <!-- 1. ส่วนหัว: โลโก้, ชื่อหน้า, ปุ่มโดเนท, ปุ่มออก -->
+        <header class="w-full glass-card p-4 rounded-3xl shadow-sm flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md animate-heart"><i class="fa-solid fa-heart text-lg"></i></div>
+                <div>
+                    <h1 class="font-bold text-base text-slate-900 leading-tight">Love Vault & Profile</h1>
+                    <p class="text-[11px] text-rose-500 font-medium">ห้องความทรงจำ (Realtime Cloud)</p>
                 </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="openPromptPayModal()" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-1.5"><i class="fa-solid fa-wallet text-amber-900"></i> โดเนท</button>
+                <button onclick="logoutVault()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i> ออก</button>
+            </div>
+        </header>
+
+        <!-- 2. ส่วนข้อมูลโปรไฟล์ส่วนตัว & สถานะคู่รัก + ปุ่มแจ้งเตือน/ลบบัญชี -->
+        <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div id="profile-gender-icon" class="w-10 h-10 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center font-bold text-sm">--</div>
+                    <div>
+                        <h2 id="header-username" class="font-bold text-base text-slate-800">กำลังโหลด...</h2>
+                        <p id="header-userid" class="text-xs text-rose-500 font-mono font-medium">ID: -- | สถานะคู่รัก: <span id="text-couple-status" class="font-bold">ยังไม่มีคู่รัก</span></p>
+                    </div>
+                </div>
+                <button onclick="openDeleteAccountModal()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold rounded-xl shadow transition"><i class="fa-solid fa-user-slash mr-1"></i> ลบบัญชี</button>
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button onclick="openNotificationsModal()" class="flex-1 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
+                <button id="btn-proposal-action" onclick="handleProposalButtonAction()" class="flex-1 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
             </div>
         </section>
 
-        <!-- แผงควบคุมอัลบั้ม & โน้ต (แสดงเฉพาะเมื่อมีคู่) -->
-        <div id="couple-features-panel" class="w-full space-y-6 hidden">
-            
-            <!-- ตัวนับเวลาคบกันแบบเรียลไทม์ -->
-            <div class="glass-card p-5 rounded-3xl text-center space-y-2 shadow-md">
-                <p class="text-xs font-bold text-rose-500">เวลาที่เราคบกัน ❤️</p>
-                <div id="love-timer-display" class="font-mono text-xl md:text-2xl font-bold text-slate-800">0 วัน 0 ชั่วโมง 0 นาที 0 วินาที</div>
-                <div class="flex justify-center gap-3 pt-3 text-xs">
-                    <button onclick="requestReconcile()" class="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-xl shadow"><i class="fa-solid fa-dove mr-1"></i> ขอคืนดี (<span id="quota-left">3</span> โควต้า)</button>
-                    <button onclick="openBreakupModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl">ขอเลิกรา</button>
+        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (Certificate of Love) -->
+        <section class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-certificate"></i></div>
+                    <div>
+                        <p class="text-[10px] font-black tracking-widest text-rose-600 uppercase">Certificate of Love</p>
+                        <h3 class="font-bold text-sm text-slate-800">บัตรประจำตัวคู่รักออนไลน์</h3>
+                    </div>
+                </div>
+                <span class="px-3 py-1 bg-rose-100 text-rose-600 text-[10px] font-bold rounded-full">ไม่มีวันหมดอายุ</span>
+            </div>
+
+            <div class="space-y-1">
+                <p class="text-[10px] font-bold text-slate-400 tracking-wider">COUPLE CARD ID</p>
+                <div id="display-couple-id" class="font-mono text-xl md:text-2xl font-black text-rose-700 tracking-wider">0000#000000</div>
+            </div>
+
+            <!-- กล่องแสดงชื่อสองฝ่าย -->
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white/70 p-3 rounded-2xl border border-slate-100">
+                    <p class="text-[10px] font-semibold text-slate-400">ฝ่ายที่ 1</p>
+                    <p id="card-user1-name" class="font-bold text-sm text-slate-800 truncate">ชื่อของคุณ</p>
+                </div>
+                <div class="bg-white/70 p-3 rounded-2xl border border-slate-100">
+                    <p class="text-[10px] font-semibold text-slate-400">ฝ่ายที่ 2</p>
+                    <p id="card-user2-name" class="font-bold text-sm text-slate-800 truncate">ชื่อคู่รัก</p>
                 </div>
             </div>
 
-            <!-- อัลบั้มรูปภาพความทรงจำ -->
-            <div class="glass-card p-5 rounded-3xl space-y-4 shadow-md">
+            <div class="bg-rose-50/70 p-3 rounded-2xl text-center text-xs text-rose-700 space-y-1 font-medium">
+                <p><i class="fa-solid fa-calendar-days mr-1"></i> คบกันวันที่: <span id="card-start-date">00/00/0000</span> | เวลา: <span id="card-start-time">00:00</span> น.</p>
+                <p class="text-[11px] text-amber-700 font-bold">โควต้าขอคืนดี: <span id="quota-left">3</span> ครั้ง</p>
+            </div>
+
+            <div class="flex gap-2 pt-1" id="couple-action-buttons">
+                <button onclick="requestReconcile()" class="flex-1 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-xl text-xs shadow-xs transition">ขอคืนดี (-1 โควต้า)</button>
+                <button onclick="openBreakupModal()" class="flex-1 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">ขอเลิกรา</button>
+            </div>
+        </section>
+
+        <!-- 4. แผงควบคุมจัดการอัลบั้มรูป, โน้ต และถังขยะ (แสดงเมื่อมีคู่รัก) -->
+        <div id="couple-features-panel" class="w-full space-y-4 hidden">
+            <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-2"></i> อัลบั้มความทรงจำ</h3>
+                    <h3 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-1.5"></i> อัลบั้มความทรงจำ</h3>
                     <input type="file" id="upload-photo-input" accept="image/*" class="hidden" onchange="uploadPhoto(event)">
-                    <button onclick="document.getElementById('upload-photo-input').click()" class="px-3.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">+ อัปโหลดรูป</button>
+                    <button onclick="document.getElementById('upload-photo-input').click()" class="px-3 py-1.5 bg-rose-500 text-white text-[11px] font-bold rounded-xl shadow">+ อัปโหลดรูป</button>
                 </div>
-                <div id="vault-photos-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
+                <div id="vault-photos-grid" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
             </div>
 
-            <!-- โน้ตความรู้สึก -->
-            <div class="glass-card p-5 rounded-3xl space-y-4 shadow-md">
-                <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-note-sticky text-rose-500 mr-2"></i> โน้ตความรู้สึก</h3>
+            <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
+                <h3 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-note-sticky text-rose-500 mr-1.5"></i> โน้ตความรู้สึก</h3>
+                <textarea id="note-input-text" rows="2" placeholder="เขียนโน้ตถึงคนพิเศษ..." class="w-full p-2.5 text-xs rounded-xl border border-slate-200 outline-none resize-none bg-white/50"></textarea>
+                <button onclick="addNote()" class="w-full py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">บันทึกโน้ต</button>
+                <div id="vault-notes-grid" class="space-y-2 pt-1"></div>
+            </div>
+
+            <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3 border border-amber-200">
+                <h3 class="font-bold text-xs text-amber-700"><i class="fa-solid fa-trash-can mr-1.5"></i> ถังขยะ (เก็บรักษา 30 วัน - เฉพาะเจ้าของลบถาวรได้)</h3>
                 <div class="space-y-2">
-                    <textarea id="note-input-text" rows="2" placeholder="เขียนโน้ตถึงคนพิเศษ..." class="w-full p-3 text-xs rounded-xl border border-slate-200 outline-none resize-none bg-white/50"></textarea>
-                    <button onclick="addNote()" class="px-4 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">บันทึกโน้ต</button>
-                </div>
-                <div id="vault-notes-grid" class="space-y-2 pt-2"></div>
-            </div>
-
-            <!-- ถังขยะ (รูปภาพ & โน้ต - จำกัดสิทธิ์เจ้าของลบถาวร) -->
-            <div class="glass-card p-5 rounded-3xl space-y-4 border border-amber-200 shadow-md">
-                <h3 class="font-bold text-sm text-amber-700"><i class="fa-solid fa-trash-can mr-2"></i> ถังขยะ (เก็บรักษา 30 วัน - เฉพาะเจ้าของลบถาวรได้)</h3>
-                <div class="space-y-3">
-                    <div class="text-xs font-bold text-slate-600">รูปภาพในถังขยะ:</div>
-                    <div id="vault-trash-photos-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3"></div>
-                    <div class="text-xs font-bold text-slate-600 pt-2">โน้ตในถังขยะ:</div>
+                    <div class="text-[11px] font-bold text-slate-600">รูปภาพในถังขยะ:</div>
+                    <div id="vault-trash-photos-grid" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div>
+                    <div class="text-[11px] font-bold text-slate-600 pt-2">โน้ตในถังขยะ:</div>
                     <div id="vault-trash-notes-grid" class="space-y-2"></div>
                 </div>
             </div>
-
         </div>
 
     </main>
 
-    <!-- Modal แสดงโค้ดขอเป็นแฟน -->
-    <div id="modal-create-proposal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+    <!-- 5. แถบแสดงระยะเวลาที่เราคบกันด้านล่างสุด (ตามดีไซน์ต้นฉบับ) -->
+    <footer class="w-full max-w-xl mx-auto mt-6 bg-gradient-to-r from-rose-500 to-pink-500 p-4 rounded-3xl shadow-lg text-center text-white space-y-1 z-10">
+        <p class="text-xs font-medium opacity-90">ระยะเวลาที่เราคบกัน</p>
+        <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
+    </footer>
+
+    <!-- Modals ต่างๆ ครบถ้วน -->
+    <div id="modal-proposal-code" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">สร้างโค้ดขอเป็นแฟนสำเร็จ!</h3>
             <div class="bg-rose-50 p-4 rounded-2xl">
                 <p id="generated-code-display" class="font-mono font-black text-2xl text-rose-600 tracking-wider">-------</p>
             </div>
             <p class="text-xs text-slate-500">คัดลอกโค้ดนี้ส่งให้คนพิเศษนำไปกรอกที่หน้าแรก</p>
-            <button onclick="document.getElementById('modal-create-proposal').classList.add('hidden')" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ตกลง</button>
+            <button onclick="document.getElementById('modal-proposal-code').classList.add('hidden')" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ตกลง</button>
         </div>
     </div>
 
-    <!-- Modal ยืนยันลบถาวร -->
+    <div id="modal-notifications" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-bell text-rose-500 mr-2"></i> ศูนย์กลางแจ้งเตือน</h3>
+            <div id="notifications-list-container" class="space-y-2 max-h-60 overflow-y-auto text-xs text-slate-600">
+                <p class="text-center text-slate-400 py-4">ไม่มีการแจ้งเตือนใหม่</p>
+            </div>
+            <button onclick="closeNotificationsModal()" class="w-full py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ปิด</button>
+        </div>
+    </div>
+
     <div id="modal-confirm-delete" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-red-600">ยืนยันการลบถาวร?</h3>
@@ -124,11 +167,10 @@
         </div>
     </div>
 
-    <!-- Modal ขอเลิกรา -->
     <div id="modal-breakup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">ส่งคำขอเลิกรา</h3>
-            <p class="text-xs text-slate-500">ระบุเหตุผล (ไม่บังคับ) หรือกดยกเลิกหากมือลั่น</p>
+            <p class="text-xs text-slate-500">ระบุเหตุผล (ไม่บังคับ) หรือกดยกเลิกหากมือลั่นเปลี่ยนใจ</p>
             <textarea id="breakup-reason" rows="3" placeholder="เหตุผล..." class="w-full p-3 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             <div class="flex gap-2">
                 <button onclick="closeBreakupModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ยกเลิก (ไม่เลิกแล้ว)</button>
@@ -137,7 +179,6 @@
         </div>
     </div>
 
-    <!-- Modal ขอลบบัญชี -->
     <div id="modal-delete-account" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-red-600">ยืนยันการลบบัญชีผู้ใช้?</h3>
@@ -146,6 +187,18 @@
                 <button onclick="closeDeleteAccountModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="confirmDeleteAccount()" class="flex-1 py-2 bg-red-600 text-white text-xs font-bold rounded-xl shadow">ลบบัญชีทันที</button>
             </div>
+        </div>
+    </div>
+
+    <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800">สนับสนุนค่าระบบ</h3>
+            <div class="text-xs text-slate-700 bg-rose-50 p-4 rounded-2xl text-left space-y-1">
+                <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
+                <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600">208-5886021</span></p>
+                <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
+            </div>
+            <button onclick="closePromptPayModal()" class="w-full py-2 bg-slate-200 text-xs font-bold rounded-xl">ปิด</button>
         </div>
     </div>
 
@@ -159,10 +212,12 @@
 
         document.getElementById('header-username').innerText = currentUser.name;
         document.getElementById('header-userid').innerText = `ID: ${currentUser.id}`;
+        document.getElementById('profile-gender-icon').innerText = currentUser.gender === 'male' ? '👨' : (currentUser.gender === 'female' ? '👩' : '🧑');
 
         let targetDeleteTarget = null;
         let timerInterval = null;
 
+        // ระบบ Realtime WebSocket 100%
         dbRef.on('value', (snapshot) => {
             const db = snapshot.val() || {};
             const users = db.users || [];
@@ -176,7 +231,10 @@
             currentUser = freshUser;
             localStorage.setItem('current_user', JSON.stringify(currentUser));
 
-            checkNotifications(currentUser.notifications || []);
+            const notifs = currentUser.notifications || [];
+            const unreadCount = notifs.filter(n => !n.read).length;
+            document.getElementById('notif-count').innerText = unreadCount;
+            renderNotificationsList(notifs);
 
             const couples = db.couples || [];
             const myCouple = couples.find(c => c.id === currentUser.coupleId && c.status === 'ACTIVE');
@@ -189,31 +247,24 @@
             }
         });
 
-        function checkNotifications(notifs) {
-            const unread = notifs.filter(n => !n.read);
-            if (unread.length > 0) {
-                unread.forEach(n => alert(n.message));
-                currentUser.notifications.forEach(n => n.read = true);
-                dbRef.once('value').then(snap => {
-                    const db = snap.val() || {};
-                    const u = (db.users || []).find(x => x.id === currentUser.id);
-                    if (u) u.notifications = currentUser.notifications;
-                    dbRef.set(db);
-                });
-            }
-        }
-
         function renderNoCoupleState() {
             document.getElementById('vault-body').classList.remove('grayscale-mode');
             document.getElementById('couple-features-panel').classList.add('hidden');
-            document.getElementById('card-content-area').innerHTML = `
-                <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner"><i class="fa-solid fa-id-card"></i></div>
-                <h2 class="text-xl font-bold text-slate-800">บัตรประจำตัว (สถานะ: โสด / ยังไม่มีคู่รัก)</h2>
-                <p class="text-xs text-slate-500">สร้างโค้ดขอเป็นแฟนเพื่อให้คนพิเศษของคุณนำไปกรอกตอบรับ</p>
-                <div class="pt-2">
-                    <button onclick="generateProposalCode()" class="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs shadow-lg transition flex items-center gap-2 mx-auto"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
-                </div>
-            `;
+            document.getElementById('text-couple-status').innerText = "ยังไม่มีคู่รัก";
+            document.getElementById('text-couple-status').className = "font-bold text-slate-500";
+            
+            document.getElementById('display-couple-id').innerText = "0000#000000";
+            document.getElementById('card-user1-name').innerText = currentUser.name;
+            document.getElementById('card-user2-name').innerText = "ยังไม่มีคู่รัก";
+            document.getElementById('card-start-date').innerText = "00/00/0000";
+            document.getElementById('card-start-time').innerText = "00:00";
+            document.getElementById('quota-left').innerText = "3";
+            document.getElementById('couple-action-buttons').classList.add('hidden');
+            
+            document.getElementById('btn-proposal-action').innerHTML = '<i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน';
+            document.getElementById('btn-proposal-action').onclick = generateProposalCode;
+
+            document.getElementById('love-timer-display').innerText = "0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที";
         }
 
         async function generateProposalCode() {
@@ -232,11 +283,14 @@
             await dbRef.set(db);
 
             document.getElementById('generated-code-display').innerText = code;
-            document.getElementById('modal-create-proposal').classList.remove('hidden');
+            document.getElementById('modal-proposal-code').classList.remove('hidden');
         }
 
         function renderActiveCoupleState(couple) {
             document.getElementById('couple-features-panel').classList.remove('hidden');
+            document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว ❤️";
+            document.getElementById('text-couple-status').className = "font-bold text-rose-600";
+            document.getElementById('couple-action-buttons').classList.remove('hidden');
             
             const quota = couple.reconcileQuota ?? 3;
             document.getElementById('quota-left').innerText = quota;
@@ -255,21 +309,23 @@
                 const now = new Date();
                 const diff = now - startDateTime;
                 if (diff > 0) {
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+                    const months = Math.floor((diff / (1000 * 60 * 60 * 24 * 30)) % 12);
+                    const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 30);
                     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
                     const mins = Math.floor((diff / 1000 / 60) % 60);
                     const secs = Math.floor((diff / 1000) % 60);
-                    document.getElementById('love-timer-display').innerText = `${days} วัน ${hours} ชั่วโมง ${mins} นาที ${secs} วินาที`;
+                    document.getElementById('love-timer-display').innerText = `${years} ปี ${months} เดือน ${days} วัน ${hours} ชม. ${mins} นาที ${secs} วินาที`;
                 }
             }, 1000);
 
-            const partnerName = couple.user1Id === currentUser.id ? couple.user2Name : couple.user1Name;
-            document.getElementById('card-content-area').innerHTML = `
-                <div class="w-20 h-20 rounded-full bg-rose-500 text-white flex items-center justify-center mx-auto text-3xl shadow animate-pulse"><i class="fa-solid fa-heart"></i></div>
-                <h2 class="text-xl font-bold text-slate-800">บัตรคู่รัก (กำลังคบหากับ: <span id="partner-name-text" class="text-rose-600">${partnerName}</span>)</h2>
-                <p class="text-xs font-mono text-slate-500">Couple ID: ${couple.id} | วันที่เริ่ม: ${couple.startDate}</p>
-            `;
+            document.getElementById('display-couple-id').innerText = couple.id;
+            document.getElementById('card-user1-name').innerText = couple.user1Name;
+            document.getElementById('card-user2-name').innerText = couple.user2Name;
+            document.getElementById('card-start-date').innerText = couple.startDate.split('-').reverse().join('/');
+            document.getElementById('card-start-time').innerText = couple.startTime || '00:00';
 
+            // อัลบั้มรูป
             const photoGrid = document.getElementById('vault-photos-grid');
             photoGrid.innerHTML = '';
             (couple.photos || []).forEach(p => {
@@ -282,6 +338,7 @@
                 `;
             });
 
+            // โน้ต
             const noteGrid = document.getElementById('vault-notes-grid');
             noteGrid.innerHTML = '';
             (couple.notes || []).forEach(n => {
@@ -293,11 +350,12 @@
                 `;
             });
 
+            // ถังขยะรูป
             const trashPhotoGrid = document.getElementById('vault-trash-photos-grid');
             trashPhotoGrid.innerHTML = '';
             const trashPhotos = couple.trashPhotos || [];
             if (trashPhotos.length === 0) {
-                trashPhotoGrid.innerHTML = '<div class="text-xs text-slate-400 py-1">ถังขยะรูปภาพว่างเปล่า</div>';
+                trashPhotoGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะรูปภาพว่างเปล่า</div>';
             } else {
                 trashPhotos.forEach(tp => {
                     const isOwner = tp.uploaderId === currentUser.id;
@@ -314,11 +372,12 @@
                 });
             }
 
+            // ถังขยะโน้ต
             const trashNoteGrid = document.getElementById('vault-trash-notes-grid');
             trashNoteGrid.innerHTML = '';
             const trashNotes = couple.trashNotes || [];
             if (trashNotes.length === 0) {
-                trashNoteGrid.innerHTML = '<div class="text-xs text-slate-400 py-1">ถังขยะโน้ตว่างเปล่า</div>';
+                trashNoteGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะโน้ตว่างเปล่า</div>';
             } else {
                 trashNotes.forEach(tn => {
                     const isOwner = tn.authorId === currentUser.id;
@@ -334,6 +393,38 @@
                 });
             }
         }
+
+        function renderNotificationsList(notifs) {
+            const container = document.getElementById('notifications-list-container');
+            if (notifs.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-4">ไม่มีการแจ้งเตือน</p>';
+                return;
+            }
+            container.innerHTML = '';
+            notifs.slice().reverse().forEach(n => {
+                container.innerHTML += `
+                    <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1 ${n.read ? 'opacity-70' : 'bg-rose-50/50 border-rose-100 font-semibold'}">
+                        <p>${n.message}</p>
+                        <p class="text-[10px] text-slate-400">${n.time || ''}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function openNotificationsModal() {
+            document.getElementById('modal-notifications').classList.remove('hidden');
+            // ทำเครื่องหมายว่าอ่านแล้ว
+            currentUser.notifications.forEach(n => n.read = true);
+            dbRef.once('value').then(snap => {
+                const db = snap.val() || {};
+                const u = (db.users || []).find(x => x.id === currentUser.id);
+                if (u) u.notifications = currentUser.notifications;
+                dbRef.set(db);
+            });
+        }
+        function closeNotificationsModal() { document.getElementById('modal-notifications').classList.add('hidden'); }
+        function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
+        function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
 
         function uploadPhoto(e) {
             const file = e.target.files[0];
@@ -479,7 +570,7 @@
                 const partner = (db.users || []).find(u => u.id === partnerId);
                 if (partner) {
                     if (!partner.notifications) partner.notifications = [];
-                    partner.notifications.push({ id: Date.now(), message: `แฟนของคุณขอเลิกรา เหตุผล: ${reason || 'ไม่มีเหตุผล'}`, read: false });
+                    partner.notifications.push({ id: Date.now(), message: `แฟนของคุณขอเลิกรา เหตุผล: ${reason || 'ไม่มีเหตุผล'}`, time: new Date().toLocaleString(), read: false });
                 }
                 const u1 = (db.users || []).find(u => u.id === couple.user1Id);
                 const u2 = (db.users || []).find(u => u.id === couple.user2Id);
@@ -496,7 +587,7 @@
         function closeDeleteAccountModal() { document.getElementById('modal-delete-account').classList.add('hidden'); }
 
         async function confirmDeleteAccount() {
-            const nameEl = document.getElementById('partner-name-text');
+            const nameEl = document.getElementById('card-user2-name');
             if (nameEl) nameEl.classList.add('dissolve-effect');
 
             setTimeout(async () => {
@@ -511,7 +602,7 @@
                         const partner = (db.users || []).find(u => u.id === partnerId);
                         if (partner) {
                             if (!partner.notifications) partner.notifications = [];
-                            partner.notifications.push({ id: Date.now(), message: `แฟนของคุณได้ลบบัญชีออกจากระบบแล้ว บัตรคู่รักถูกยกเลิก`, read: false });
+                            partner.notifications.push({ id: Date.now(), message: `แฟนของคุณได้ลบบัญชีออกจากระบบแล้ว บัตรคู่รักถูกยกเลิก`, time: new Date().toLocaleString(), read: false });
                             partner.coupleId = null;
                         }
                     }
