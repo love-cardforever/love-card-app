@@ -65,7 +65,6 @@
                         <div id="profile-icon-box" class="w-12 h-12 rounded-full bg-rose-100 text-rose-400 flex items-center justify-center font-bold text-base overflow-hidden border-2 border-rose-400 shadow-inner">--</div>
                         <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white text-[10px]"><i class="fa-solid fa-camera"></i></div>
                     </div>
-                    <!-- ระบบครอบตัดรูปเฉพาะตอนเปลี่ยนรูปโปรไฟล์ -->
                     <input type="file" id="upload-profile-input" accept="image/*" class="hidden" onchange="prepareProfileCrop(event)">
                     <div>
                         <h2 id="header-username" class="font-bold text-base text-slate-800">--</h2>
@@ -134,7 +133,7 @@
                 <div id="action-buttons-container" class="w-full flex gap-2"></div>
             </div>
 
-            <!-- กล่องแชทคู่รัก (ย่อ/ขยายได้, มีจุดแดงกระพริบเมื่อยังไม่ได้อ่าน, สถานะข้อความ และปุ่มยืนยันการลบ) -->
+            <!-- กล่องแชทคู่รัก -->
             <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
                 <div class="flex justify-between items-center pb-2 border-b">
                     <div class="flex items-center gap-2">
@@ -188,7 +187,7 @@
         <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
     </footer>
 
-    <!-- Modal ระบบครอบตัดรูปโปรไฟล์ (Profile Image Crop) -->
+    <!-- Modal ระบบครอบตัดรูปโปรไฟล์ -->
     <div id="modal-image-crop" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-crop text-rose-500 mr-1"></i> จัดตำแหน่ง & ตัดขอบรูปโปรไฟล์</h3>
@@ -223,7 +222,7 @@
         </div>
     </div>
 
-    <!-- Modals อื่นๆ เดิม -->
+    <!-- Modals อื่นๆ -->
     <div id="modal-proposal-code" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">สร้างโค้ดขอเป็นแฟนสำเร็จ!</h3>
@@ -416,7 +415,6 @@
         let pendingDeleteMsgId = null;
         let isChatExpanded = false;
 
-        // ตัวแปรระบบครอบตัดรูปโปรไฟล์ (Profile Image Crop)
         let profileCropBase64 = null;
         let profileScale = 1;
         let profilePosX = 0;
@@ -475,7 +473,6 @@
             }
         });
 
-        // --- ระบบครอบตัดรูปโปรไฟล์ (Profile Image Crop) ---
         function prepareProfileCrop(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -537,7 +534,6 @@
             };
         }
 
-        // --- ระบบแชทคู่รัก (ข้อความตัวอักษร, ย่อ/ขยาย, จุดแดงกระพริบ, สถานะอ่านแล้ว/ส่งแล้ว, ยืนยันก่อนลบ) ---
         function toggleChatSize() {
             isChatExpanded = !isChatExpanded;
             const chatBox = document.getElementById('couple-chat-box');
@@ -724,6 +720,7 @@
                 existingCouple.reconcileQuota = 3;
                 delete existingCouple.breakupTimestamp;
                 delete existingCouple.deletedTimestamp;
+                if (!existingCouple.chatMessages) existingCouple.chatMessages = [];
             } else {
                 db.couples.push({
                     id: coupleId,
@@ -813,30 +810,6 @@
                     <button onclick="openAdminContactModal()" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-headset mr-1"></i> ติดต่อแอดมิน</button>
                     <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ตัดขาดความสัมพันธ์</button>
                 `;
-
-                const tenMinutesMs = 10 * 60 * 1000;
-                const timeLeft = tenMinutesMs - (Date.now() - (couple.deletedTimestamp || Date.now()));
-                const minsLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60)));
-                const secsLeft = Math.max(0, Math.floor((timeLeft / 1000) % 60));
-
-                document.getElementById('card-status-badge').innerText = `บัตรหมดอายุใน ${minsLeft} นาที`;
-                document.getElementById('timer-title').innerText = "นับถอยหลังล้างบัตรอัตโนมัติ";
-                document.getElementById('love-timer-display').innerText = `เหลือเวลาอีก ${minsLeft} นาที ${secsLeft} วินาที`;
-                if (timerInterval) clearInterval(timerInterval);
-
-                timerInterval = setInterval(() => {
-                    const elapsed = Date.now() - (couple.deletedTimestamp || Date.now());
-                    const rem = tenMinutesMs - elapsed;
-                    if (rem <= 0) {
-                        clearInterval(timerInterval);
-                        window.location.reload();
-                    } else {
-                        const m = Math.floor(rem / (1000 * 60));
-                        const s = Math.floor((rem / 1000) % 60);
-                        document.getElementById('love-timer-display').innerText = `เหลือเวลาอีก ${m} นาที ${s} วินาที`;
-                    }
-                }, 1000);
-
             } else if (isBroken) {
                 cardSec.classList.remove('card-broken-effect', 'opacity-70');
                 document.getElementById('text-couple-status').innerText = "เลิกรากันแล้ว (รอการคืนดีใน 30 วัน)";
@@ -860,15 +833,6 @@
                         </button>
                     `;
                 }
-
-                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-                const timeLeft = thirtyDaysMs - (Date.now() - (couple.breakupTimestamp || Date.now()));
-                const daysLeft = Math.max(0, Math.ceil(timeLeft / (1000 * 60 * 60 * 24)));
-                
-                document.getElementById('card-status-badge').innerText = `บัตรหมดอายุใน ${daysLeft} วัน`;
-                document.getElementById('timer-title').innerText = "ความสัมพันธ์ถูกระงับ (บัตรถูกทิ้งร้าง)";
-                document.getElementById('love-timer-display').innerText = `เหลือเวลาขอคืนดีอีก ${daysLeft} วัน`;
-                if (timerInterval) clearInterval(timerInterval);
             } else {
                 cardSec.classList.remove('card-broken-effect', 'opacity-70');
                 document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
@@ -880,26 +844,6 @@
                         <i class="fa-solid fa-heart-crack mr-1"></i> ${hasPendingBreakup ? 'รออีกฝ่ายตอบรับการเลิกรา...' : 'ขอเลิกรา'}
                     </button>
                 `;
-
-                document.getElementById('card-status-badge').innerText = "ไม่มีวันหมดอายุ";
-                document.getElementById('timer-title').innerText = "ระยะเวลาที่เราคบกัน";
-
-                if (timerInterval) clearInterval(timerInterval);
-                const startDateTime = new Date(`${couple.startDate}T${couple.startTime || '00:00'}:00`);
-                
-                timerInterval = setInterval(() => {
-                    const now = new Date();
-                    const diff = now - startDateTime;
-                    if (diff > 0) {
-                        const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
-                        const months = Math.floor((diff / (1000 * 60 * 60 * 24 * 30)) % 12);
-                        const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 30);
-                        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                        const mins = Math.floor((diff / 1000 / 60) % 60);
-                        const secs = Math.floor((diff / 1000) % 60);
-                        document.getElementById('love-timer-display').innerText = `${years} ปี ${months} เดือน ${days} วัน ${hours} ชม. ${mins} นาที ${secs} วินาที`;
-                    }
-                }, 1000);
             }
 
             document.getElementById('quota-left').innerText = quota;
@@ -952,52 +896,37 @@
 
             const trashPhotoGrid = document.getElementById('vault-trash-photos-grid');
             trashPhotoGrid.innerHTML = '';
-            const trashPhotos = couple.trashPhotos || [];
-            if (trashPhotos.length === 0) {
-                trashPhotoGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะรูปภาพว่างเปล่า</div>';
-            } else {
-                trashPhotos.forEach(tp => {
-                    const isOwner = tp.uploaderId === currentUser.id;
-                    trashPhotoGrid.innerHTML += `
-                        <div class="bg-white/80 p-2 rounded-2xl shadow-xs border space-y-1 opacity-85">
-                            <img src="${tp.url}" class="w-full h-20 object-cover rounded-xl">
-                            <p class="text-[10px] text-slate-500 truncate">เจ้าของ: ${tp.uploaderName}</p>
-                            <div class="flex gap-1 pt-1">
-                                <button onclick="restorePhoto(${tp.id}, '${couple.id}')" class="flex-1 bg-emerald-500 text-white rounded-xl py-1 text-[10px] font-bold">กู้คืน</button>
-                                ${isOwner ? `<button onclick="promptPermanentDelete('photo', ${tp.id}, '${couple.id}')" class="flex-1 bg-red-500 text-white rounded-xl py-1 text-[10px] font-bold">ลบถาวร</button>` : '<span class="text-[9px] text-slate-400 self-center">ไม่ใช่เจ้าของ</span>'}
-                            </div>
+            (couple.trashPhotos || []).forEach(tp => {
+                const isOwner = tp.uploaderId === currentUser.id;
+                trashPhotoGrid.innerHTML += `
+                    <div class="bg-white/80 p-2 rounded-2xl shadow-xs border space-y-1 opacity-85">
+                        <img src="${tp.url}" class="w-full h-20 object-cover rounded-xl">
+                        <div class="flex gap-1 pt-1">
+                            <button onclick="restorePhoto(${tp.id}, '${couple.id}')" class="flex-1 bg-emerald-500 text-white rounded-xl py-1 text-[10px]">กู้คืน</button>
+                            ${isOwner ? `<button onclick="promptPermanentDelete('photo', ${tp.id}, '${couple.id}')" class="flex-1 bg-red-500 text-white rounded-xl py-1 text-[10px]">ลบถาวร</button>` : ''}
                         </div>
-                    `;
-                });
-            }
+                    </div>
+                `;
+            });
 
             const trashNoteGrid = document.getElementById('vault-trash-notes-grid');
             trashNoteGrid.innerHTML = '';
-            const trashNotes = couple.trashNotes || [];
-            if (trashNotes.length === 0) {
-                trashNoteGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะโน้ตว่างเปล่า</div>';
-            } else {
-                trashNotes.forEach(tn => {
-                    const isOwner = tn.authorId === currentUser.id;
-                    trashNoteGrid.innerHTML += `
-                        <div class="p-3 bg-white/80 rounded-2xl border flex justify-between items-center text-xs opacity-85">
-                            <div><b>${tn.authorName}:</b> ${tn.text}</div>
-                            <div class="flex gap-2">
-                                <button onclick="restoreNote(${tn.id}, '${couple.id}')" class="text-emerald-600 font-bold hover:underline">กู้คืน</button>
-                                ${isOwner ? `<button onclick="promptPermanentDelete('note', ${tn.id}, '${couple.id}')" class="text-red-600 font-bold hover:underline">ลบถาวร</button>` : '<span class="text-[9px] text-slate-400">ไม่ใช่เจ้าของ</span>'}
-                            </div>
+            (couple.trashNotes || []).forEach(tn => {
+                const isOwner = tn.authorId === currentUser.id;
+                trashNoteGrid.innerHTML += `
+                    <div class="p-3 bg-white/80 rounded-2xl border flex justify-between items-center text-xs opacity-85">
+                        <div><b>${tn.authorName}:</b> ${tn.text}</div>
+                        <div class="flex gap-2">
+                            <button onclick="restoreNote(${tn.id}, '${couple.id}')" class="text-emerald-600 font-bold">กู้คืน</button>
+                            ${isOwner ? `<button onclick="promptPermanentDelete('note', ${tn.id}, '${couple.id}')" class="text-red-600 font-bold">ลบถาวร</button>` : ''}
                         </div>
-                    `;
-                });
-            }
+                    </div>
+                `;
+            });
         }
 
-        function openAdminContactModal() {
-            document.getElementById('modal-admin-contact').classList.remove('hidden');
-        }
-        function closeAdminContactModal() {
-            document.getElementById('modal-admin-contact').classList.add('hidden');
-        }
+        function openAdminContactModal() { document.getElementById('modal-admin-contact').classList.remove('hidden'); }
+        function closeAdminContactModal() { document.getElementById('modal-admin-contact').classList.add('hidden'); }
 
         async function sendAdminMessage() {
             const inputEl = document.getElementById('admin-chat-input');
@@ -1029,32 +958,15 @@
             `;
             messages.forEach(m => {
                 if (m.sender === 'user') {
-                    container.innerHTML += `
-                        <div class="flex justify-end">
-                            <div class="bg-rose-500 text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] shadow-xs">
-                                <p>${m.text}</p>
-                                <span class="text-[9px] opacity-80 block text-right mt-1">${m.time}</span>
-                            </div>
-                        </div>
-                    `;
+                    container.innerHTML += `<div class="flex justify-end"><div class="bg-rose-500 text-white p-3 rounded-2xl rounded-tr-sm max-w-[85%] shadow-xs"><p>${m.text}</p><span class="text-[9px] opacity-80 block text-right mt-1">${m.time}</span></div></div>`;
                 } else {
-                    container.innerHTML += `
-                        <div class="flex justify-start">
-                            <div class="bg-white text-slate-800 p-3 rounded-2xl rounded-tl-sm max-w-[85%] border shadow-xs">
-                                <p class="font-bold text-[10px] text-indigo-600 mb-0.5">แอดมินระบบ</p>
-                                <p>${m.text}</p>
-                                <span class="text-[9px] text-slate-400 block text-right mt-1">${m.time}</span>
-                            </div>
-                        </div>
-                    `;
+                    container.innerHTML += `<div class="flex justify-start"><div class="bg-white text-slate-800 p-3 rounded-2xl rounded-tl-sm max-w-[85%] border shadow-xs"><p class="font-bold text-[10px] text-indigo-600 mb-0.5">แอดมินระบบ</p><p>${m.text}</p><span class="text-[9px] text-slate-400 block text-right mt-1">${m.time}</span></div></div>`;
                 }
             });
             container.scrollTop = container.scrollHeight;
         }
 
-        function openEditAnniversaryModal() {
-            document.getElementById('modal-edit-anniversary').classList.remove('hidden');
-        }
+        function openEditAnniversaryModal() { document.getElementById('modal-edit-anniversary').classList.remove('hidden'); }
 
         async function saveAnniversaryEdit() {
             const newDate = document.getElementById('edit-start-date').value;
@@ -1069,18 +981,6 @@
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
             if (!couple) return;
 
-            const now = Date.now();
-            const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
-            if (!couple.editHistory) couple.editHistory = [];
-
-            const recentEdits = couple.editHistory.filter(t => now - t < oneWeekMs);
-            if (recentEdits.length >= 2) {
-                alert('คุณแก้ไขวันเวลาคบกันครบ 2 ครั้งในรอบ 1 สัปดาห์แล้ว กรุณารอรอบสัปดาห์ถัดไป');
-                return;
-            }
-
-            recentEdits.push(now);
-            couple.editHistory = recentEdits;
             couple.startDate = newDate;
             couple.startTime = newTime;
 
@@ -1097,53 +997,18 @@
             }
             container.innerHTML = '';
             notifs.slice().reverse().forEach((n) => {
-                let actionButtons = '';
-                if (n.type === 'BREAKUP_REQUEST' && !n.handled) {
-                    actionButtons = `
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="handleBreakupRequest('${n.coupleId}', ${n.timestamp}, false)" class="flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-[11px]">ปฏิเสธ</button>
-                            <button onclick="startBreakupWarnings('${n.coupleId}')" class="flex-1 py-1.5 bg-red-500 text-white font-bold rounded-xl text-[11px]">ยอมรับ</button>
-                        </div>
-                    `;
-                } else if (n.type === 'RECONCILE_REQUEST' && !n.handled) {
-                    actionButtons = `
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="handleReconcileRequest('${n.coupleId}', ${n.timestamp}, false)" class="flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-[11px]">ปฏิเสธ</button>
-                            <button onclick="handleReconcileRequest('${n.coupleId}', ${n.timestamp}, true)" class="flex-1 py-1.5 bg-amber-500 text-slate-900 font-bold rounded-xl text-[11px]">ยอมรับคืนดี</button>
-                        </div>
-                    `;
-                } else if (n.type === 'CUTOFF_REQUEST' && !n.handled) {
-                    actionButtons = `
-                        <div class="flex gap-2 pt-2">
-                            <button onclick="handleCutoffResponse('${n.coupleId}', ${n.timestamp}, false)" class="flex-1 py-1.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-[11px]">ปฏิเสธ</button>
-                            <button onclick="handleCutoffResponse('${n.coupleId}', ${n.timestamp}, true)" class="flex-1 py-1.5 bg-red-600 text-white font-bold rounded-xl text-[11px]">ยอมรับตัดขาด</button>
-                        </div>
-                    `;
-                }
-
-                container.innerHTML += `
-                    <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1">
-                        <p>${n.message}</p>
-                        <p class="text-[10px] text-slate-400">${n.time || ''}</p>
-                        ${actionButtons}
-                    </div>
-                `;
+                container.innerHTML += `<div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-1"><p>${n.message}</p><p class="text-[10px] text-slate-400">${n.time || ''}</p></div>`;
             });
         }
 
-        function openNotificationsModal() {
-            document.getElementById('modal-notifications').classList.remove('hidden');
-            currentUser.notifications.forEach(n => n.read = true);
-            dbRef.once('value').then(snap => {
-                const db = snap.val() || {};
-                const u = (db.users || []).find(x => x.id === currentUser.id);
-                if (u) u.notifications = currentUser.notifications;
-                dbRef.set(db);
-            });
-        }
+        function openNotificationsModal() { document.getElementById('modal-notifications').classList.remove('hidden'); }
         function closeNotificationsModal() { document.getElementById('modal-notifications').classList.add('hidden'); }
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
+        function openBreakupModal() { document.getElementById('modal-breakup').classList.remove('hidden'); }
+        function closeBreakupModal() { document.getElementById('modal-breakup').classList.add('hidden'); }
+        function openDeleteAccountModal() { document.getElementById('modal-delete-account').classList.remove('hidden'); }
+        function closeDeleteAccountModal() { document.getElementById('modal-delete-account').classList.add('hidden'); }
 
         async function uploadPhoto(e) {
             const file = e.target.files[0];
@@ -1158,41 +1023,9 @@
                     if (!couple.photos) couple.photos = [];
                     couple.photos.push({ id: Date.now(), url: base64Url, uploaderId: currentUser.id, uploaderName: currentUser.name });
                     await dbRef.set(db);
-                } else {
-                    alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถอัปโหลดรูปได้');
                 }
             };
             reader.readAsDataURL(file);
-        }
-
-        async function movePhotoToTrash(photoId, coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                const idx = couple.photos.findIndex(p => p.id === photoId);
-                if (idx !== -1 && couple.photos[idx].uploaderId === currentUser.id) {
-                    const photo = couple.photos.splice(idx, 1)[0];
-                    if (!couple.trashPhotos) couple.trashPhotos = [];
-                    couple.trashPhotos.push(photo);
-                    await dbRef.set(db);
-                }
-            }
-        }
-
-        async function restorePhoto(photoId, coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                const idx = couple.trashPhotos.findIndex(p => p.id === photoId);
-                if (idx !== -1) {
-                    const photo = couple.trashPhotos.splice(idx, 1)[0];
-                    if (!couple.photos) couple.photos = [];
-                    couple.photos.push(photo);
-                    await dbRef.set(db);
-                }
-            }
         }
 
         async function addNote() {
@@ -1206,431 +1039,15 @@
                 couple.notes.push({ id: Date.now(), text, authorId: currentUser.id, authorName: currentUser.name });
                 await dbRef.set(db);
                 document.getElementById('note-input-text').value = '';
-            } else {
-                alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถเขียนโน้ตได้');
             }
         }
-
-        async function moveNoteToTrash(noteId, coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                const idx = couple.notes.findIndex(n => n.id === noteId);
-                if (idx !== -1 && couple.notes[idx].authorId === currentUser.id) {
-                    const note = couple.notes.splice(idx, 1)[0];
-                    if (!couple.trashNotes) couple.trashNotes = [];
-                    couple.trashNotes.push(note);
-                    await dbRef.set(db);
-                }
-            }
-        }
-
-        async function restoreNote(noteId, coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                const idx = couple.trashNotes.findIndex(n => n.id === noteId);
-                if (idx !== -1) {
-                    const note = couple.trashNotes.splice(idx, 1)[0];
-                    if (!couple.notes) couple.notes = [];
-                    couple.notes.push(note);
-                    await dbRef.set(db);
-                }
-            }
-        }
-
-        let targetDeleteTarget = null;
-        function promptPermanentDelete(type, targetId, coupleId) {
-            targetDeleteTarget = { type, targetId, coupleId };
-            document.getElementById('modal-confirm-delete').classList.remove('hidden');
-        }
-
-        function closeConfirmDeleteModal() {
-            document.getElementById('modal-confirm-delete').classList.add('hidden');
-            targetDeleteTarget = null;
-        }
-
-        async function executePermanentDelete() {
-            if (!targetDeleteTarget) return;
-            const { type, targetId, coupleId } = targetDeleteTarget;
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                if (type === 'photo') {
-                    couple.trashPhotos = (couple.trashPhotos || []).filter(tp => tp.id !== targetId || tp.uploaderId === currentUser.id);
-                } else if (type === 'note') {
-                    couple.trashNotes = (couple.trashNotes || []).filter(tn => tn.id !== targetId || tn.authorId === currentUser.id);
-                }
-                await dbRef.set(db);
-            }
-            closeConfirmDeleteModal();
-        }
-
-        async function requestAdminQuota(coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                if (!db.adminNotifications) db.adminNotifications = [];
-                const alreadyRequested = db.adminNotifications.some(an => an.coupleId === coupleId && an.userId === currentUser.id);
-                if (alreadyRequested) {
-                    alert('คุณได้ส่งคำขอโควต้าไปแล้ว กรุณารอแอดมินตรวจสอบ');
-                    return;
-                }
-                db.adminNotifications.push({
-                    id: Date.now(),
-                    userId: currentUser.id,
-                    userName: currentUser.name,
-                    coupleId: coupleId,
-                    message: `ผู้ใช้ ${currentUser.name} (ID: ${currentUser.id}) ขอเพิ่มโควต้าขอคืนดี บัตรคู่รัก ID: ${coupleId}`,
-                    time: new Date().toLocaleString()
-                });
-                await dbRef.set(db);
-                alert('ส่งคำขอเพิ่มโควต้าไปยังแอดมินเรียบร้อยแล้ว');
-            }
-        }
-
-        function openBreakupModal() { document.getElementById('modal-breakup').classList.remove('hidden'); }
-        function closeBreakupModal() { document.getElementById('modal-breakup').classList.add('hidden'); }
-
-        async function submitBreakupRequest() {
-            const reason = document.getElementById('breakup-reason').value.trim();
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-            if (couple) {
-                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
-                const partner = (db.users || []).find(u => u.id === partnerId);
-                if (partner) {
-                    if (!partner.notifications) partner.notifications = [];
-                    const hasPending = partner.notifications.some(n => n.type === 'BREAKUP_REQUEST' && !n.handled);
-                    if (hasPending) {
-                        alert('มีคำขอเลิกราส่งไปแล้ว กำลังรออีกฝ่ายตอบรับ');
-                        closeBreakupModal();
-                        return;
-                    }
-                    partner.notifications.push({
-                        id: Date.now(),
-                        timestamp: Date.now(),
-                        type: 'BREAKUP_REQUEST',
-                        coupleId: couple.id,
-                        message: `${currentUser.name} ส่งคำขอเลิกรา เหตุผล: ${reason || 'ไม่มีเหตุผล'} คุณจะยอมรับหรือไม่?`,
-                        time: new Date().toLocaleString(),
-                        read: false,
-                        handled: false
-                    });
-                }
-                await dbRef.set(db);
-            }
-            closeBreakupModal();
-            alert('ส่งคำขอเลิกราไปยังแฟนของคุณแล้ว รออีกฝ่ายพิจารณา');
-        }
-
-        function startBreakupWarnings(coupleId) {
-            pendingBreakupCoupleId = coupleId;
-            currentBreakupWarningStep = 1;
-            updateBreakupWarningContent();
-            closeNotificationsModal();
-            document.getElementById('modal-breakup-warning').classList.remove('hidden');
-        }
-
-        function updateBreakupWarningContent() {
-            const titleEl = document.getElementById('breakup-warning-title');
-            const textEl = document.getElementById('breakup-warning-text');
-            if (currentBreakupWarningStep === 1) {
-                titleEl.innerText = "คำเตือนสติ (ครั้งที่ 1/3)";
-                textEl.innerText = "คุณแน่ใจแล้วเหรอที่จะกดเลิกรา? ลองทบทวนความทรงจำดีๆ ที่ผ่านมาด้วยกันอีกครั้งนะ...";
-            } else if (currentBreakupWarningStep === 2) {
-                titleEl.innerText = "คำเตือนสติ (ครั้งที่ 2/3)";
-                textEl.innerText = "การเลิกราจะทำให้ความสัมพันธ์ถูกระงับและบัตรคู่รักจะถูกทิ้งร้างไว้... คิดดีแล้วใช่ไหม?";
-            } else if (currentBreakupWarningStep === 3) {
-                titleEl.innerText = "คำเตือนสติ (ครั้งที่ 3/3 - ครั้งสุดท้าย)";
-                textEl.innerText = "นี่คือโอกาสสุดท้ายก่อนความสัมพันธ์จะสิ้นสุดลง ยืนยันที่จะกดตกลงยอมรับการเลิกราจริงๆ หรือไม่?";
-            }
-        }
-
-        function nextBreakupWarningStep() {
-            if (currentBreakupWarningStep < 3) {
-                currentBreakupWarningStep++;
-                updateBreakupWarningContent();
-            } else {
-                document.getElementById('modal-breakup-warning').classList.add('hidden');
-                executeAcceptedBreakup(pendingBreakupCoupleId);
-            }
-        }
-
-        function rejectBreakupConfirmation() {
-            document.getElementById('modal-breakup-warning').classList.add('hidden');
-            pendingBreakupCoupleId = null;
-        }
-
-        async function executeAcceptedBreakup(coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            if (couple) {
-                couple.status = 'BROKEN';
-                couple.breakupTimestamp = Date.now();
-
-                (db.users || []).forEach(u => {
-                    if (u.notifications) {
-                        u.notifications.forEach(n => {
-                            if (n.coupleId === coupleId && n.type === 'BREAKUP_REQUEST') {
-                                n.handled = true;
-                                n.message += ' (ยอมรับการเลิกราแล้ว)';
-                            }
-                        });
-                    }
-                });
-
-                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
-                const partner = (db.users || []).find(u => u.id === partnerId);
-                if (partner) {
-                    if (!partner.notifications) partner.notifications = [];
-                    partner.notifications.push({ id: Date.now(), message: `อีกฝ่ายยอมรับคำขอเลิกราแล้ว สถานะความสัมพันธ์ถูกระงับ`, time: new Date().toLocaleString(), read: false });
-                }
-
-                await dbRef.set(db);
-                alert('ยอมรับการเลิกราเรียบร้อยแล้ว');
-            }
-        }
-
-        async function handleBreakupRequest(coupleId, timestamp, accepted) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            currentUser.notifications.forEach(n => {
-                if (n.timestamp === timestamp) n.handled = true;
-            });
-            await dbRef.set(db);
-            if (!accepted) {
-                alert('คุณปฏิเสธคำขอเลิกรา');
-            }
-            closeNotificationsModal();
-        }
-
-        async function triggerCutOffProcess(coupleId) {
-            pendingCutoffCoupleId = coupleId;
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            
-            const container = document.getElementById('cut-off-memories-container');
-            container.innerHTML = '';
-            
-            if (couple) {
-                (couple.photos || []).forEach(p => {
-                    container.innerHTML += `<div class="flex items-center gap-2"><img src="${p.url}" class="w-12 h-12 object-cover rounded-xl"><p class="text-[11px] text-slate-600">รูปภาพโดย ${p.uploaderName}</p></div>`;
-                });
-                (couple.notes || []).forEach(n => {
-                    container.innerHTML += `<div class="p-2 bg-white rounded-xl border text-[11px]"><b>${n.authorName}:</b> ${n.text}</div>`;
-                });
-                if ((couple.photos || []).length === 0 && (couple.notes || []).length === 0) {
-                    container.innerHTML = '<p class="text-center text-slate-400 py-2">ยังไม่มีความทรงจำในอัลบั้ม</p>';
-                }
-            }
-
-            document.getElementById('modal-cut-off-memories').classList.remove('hidden');
-        }
-
-        function proceedToCutOffWarnings() {
-            document.getElementById('modal-cut-off-memories').classList.add('hidden');
-            currentCutoffStep = 1;
-            updateCutoffWarning7Content();
-            document.getElementById('modal-cutoff-warning-7').classList.remove('hidden');
-        }
-
-        function updateCutoffWarning7Content() {
-            document.getElementById('cutoff-warning-title-7').innerText = `เตือนครั้งที่ ${currentCutoffStep}/7: ตัดขาดถาวร`;
-            document.getElementById('cutoff-warning-text-7').innerText = `การตัดขาดความสัมพันธ์รอบนี้เป็นรอบที่ ${currentCutoffStep} ข้อมูลและบัตรจะถูกทำลายทิ้งทั้งหมด คิดทบทวนให้ดีอีกครั้ง!`;
-        }
-
-        function nextCutoffWarning7Step() {
-            if (currentCutoffStep < 7) {
-                currentCutoffStep++;
-                updateCutoffWarning7Content();
-            } else {
-                document.getElementById('modal-cutoff-warning-7').classList.add('hidden');
-                executeDirectCutoff(pendingCutoffCoupleId);
-            }
-        }
-
-        function cancelCutoffProcess() {
-            document.getElementById('modal-cutoff-warning-7').classList.add('hidden');
-            pendingCutoffCoupleId = null;
-        }
-
-        async function executeDirectCutoff(coupleId) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-
-            const overlay = document.getElementById('tear-card-overlay');
-            const cardEl = document.getElementById('card-to-tear');
-            overlay.classList.remove('hidden');
-            cardEl.classList.add('tear-animation');
-
-            setTimeout(async () => {
-                if (couple) {
-                    const u1 = (db.users || []).find(u => u.id === couple.user1Id);
-                    const u2 = (db.users || []).find(u => u.id === couple.user2Id);
-                    if (u1) u1.coupleId = null;
-                    if (u2) u2.coupleId = null;
-                }
-                db.couples = (db.couples || []).filter(c => c.id !== coupleId);
-                if (db.adminNotifications) {
-                    db.adminNotifications = db.adminNotifications.filter(an => an.coupleId !== coupleId);
-                }
-
-                await dbRef.set(db);
-                overlay.classList.add('hidden');
-                cardEl.classList.remove('tear-animation');
-
-                alert('บัตรคู่รักถูกฉีกทำลายและล้างข้อมูลเรียบร้อยแล้ว');
-                window.location.reload();
-            }, 2200);
-        }
-
-        async function handleCutoffResponse(coupleId, timestamp, accepted) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            
-            currentUser.notifications.forEach(n => {
-                if (n.timestamp === timestamp) n.handled = true;
-            });
-
-            if (!accepted) {
-                await dbRef.set(db);
-                alert('คุณปฏิเสธการตัดขาดความสัมพันธ์');
-                closeNotificationsModal();
-                return;
-            }
-
-            closeNotificationsModal();
-            const overlay = document.getElementById('tear-card-overlay');
-            const cardEl = document.getElementById('card-to-tear');
-            overlay.classList.remove('hidden');
-            cardEl.classList.add('tear-animation');
-
-            setTimeout(async () => {
-                const couple = (db.couples || []).find(c => c.id === coupleId);
-                if (couple) {
-                    const u1 = (db.users || []).find(u => u.id === couple.user1Id);
-                    const u2 = (db.users || []).find(u => u.id === couple.user2Id);
-                    if (u1) u1.coupleId = null;
-                    if (u2) u2.coupleId = null;
-                }
-                db.couples = (db.couples || []).filter(c => c.id !== coupleId);
-                if (db.adminNotifications) {
-                    db.adminNotifications = db.adminNotifications.filter(an => an.coupleId !== coupleId);
-                }
-
-                await dbRef.set(db);
-                overlay.classList.add('hidden');
-                cardEl.classList.remove('tear-animation');
-
-                alert('บัตรคู่รักถูกฉีกทำลายและล้างข้อมูลเรียบร้อยแล้ว');
-                window.location.reload();
-            }, 2200);
-        }
-
-        async function requestReconcile() {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-            if (couple) {
-                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
-                const partner = (db.users || []).find(u => u.id === partnerId);
-                if (partner) {
-                    if (!partner.notifications) partner.notifications = [];
-                    const hasPending = partner.notifications.some(n => n.type === 'RECONCILE_REQUEST' && !n.handled);
-                    if (hasPending) {
-                        alert('มีคำขอคืนดีส่งไปแล้ว กำลังรออีกฝ่ายตอบรับ');
-                        return;
-                    }
-                    partner.notifications.push({
-                        id: Date.now(),
-                        timestamp: Date.now(),
-                        type: 'RECONCILE_REQUEST',
-                        coupleId: couple.id,
-                        message: `${currentUser.name} ส่งคำขอคืนดี คุณจะรับคำขอคืนดีหรือไม่?`,
-                        time: new Date().toLocaleString(),
-                        read: false,
-                        handled: false
-                    });
-                    await dbRef.set(db);
-                    alert('ส่งคำขอคืนดีไปยังแฟนของคุณแล้ว');
-                }
-            }
-        }
-
-        async function handleReconcileRequest(coupleId, timestamp, accepted) {
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            const couple = (db.couples || []).find(c => c.id === coupleId);
-            
-            currentUser.notifications.forEach(n => {
-                if (n.timestamp === timestamp) n.handled = true;
-            });
-
-            if (accepted && couple) {
-                const quota = couple.reconcileQuota ?? 3;
-                if (quota <= 0) {
-                    alert('โควต้าขอคืนดีหมดลงแล้ว!');
-                    await dbRef.set(db);
-                    return;
-                }
-                const newQuota = quota - 1;
-                couple.reconcileQuota = newQuota;
-                couple.status = 'ACTIVE';
-                delete couple.breakupTimestamp;
-
-                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
-                const partner = (db.users || []).find(u => u.id === partnerId);
-                if (partner) {
-                    if (!partner.notifications) partner.notifications = [];
-                    partner.notifications.push({ id: Date.now(), message: `แฟนของคุณตอบรับคำขอคืนดีแล้ว ความสัมพันธ์กลับมาปกติ!`, time: new Date().toLocaleString(), read: false });
-                }
-
-                await dbRef.set(db);
-                closeNotificationsModal();
-
-                const giantEl = document.getElementById('quota-giant-effect');
-                document.getElementById('giant-quota-number').innerText = newQuota;
-                giantEl.classList.remove('hidden');
-                setTimeout(() => {
-                    giantEl.classList.add('hidden');
-                }, 2500);
-
-            } else {
-                await dbRef.set(db);
-                alert('คุณปฏิเสธคำขอคืนดี');
-                closeNotificationsModal();
-            }
-        }
-
-        function openDeleteAccountModal() { document.getElementById('modal-delete-account').classList.remove('hidden'); }
-        function closeDeleteAccountModal() { document.getElementById('modal-delete-account').classList.add('hidden'); }
 
         async function confirmDeleteAccount() {
             const snapshot = await dbRef.once('value');
             const db = snapshot.val() || {};
-
-            if (currentUser.coupleId) {
-                const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-                if (couple) {
-                    couple.status = 'BROKEN';
-                    couple.breakupTimestamp = Date.now();
-                }
-            }
-
             db.users = (db.users || []).filter(u => u.id !== currentUser.id);
             await dbRef.set(db);
-
             localStorage.clear();
-            alert('บัญชีของคุณถูกลบถาวรเรียบร้อย');
             window.location.href = 'index.html';
         }
 
