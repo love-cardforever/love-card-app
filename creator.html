@@ -32,72 +32,100 @@
         </div>
     </div>
 
+    <!-- โมเดลสำหรับแชทตรงหาผู้ใช้รายบุคคล -->
+    <div id="modal-direct-chat" class="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-900 p-6 rounded-3xl border border-slate-700 w-full max-w-md flex flex-col h-[450px] shadow-2xl text-slate-100 space-y-3">
+            <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                <h3 id="direct-chat-title" class="font-bold text-sm text-rose-400">แชทตรงหาผู้ใช้</h3>
+                <button onclick="closeDirectChatModal()" class="w-7 h-7 bg-slate-800 hover:bg-slate-700 rounded-full flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="direct-chat-messages" class="flex-1 overflow-y-auto p-3 space-y-2 bg-slate-950 rounded-2xl border border-slate-800 text-xs">
+                <p class="text-center text-slate-500 py-10">ยังไม่มีข้อความสนทนา</p>
+            </div>
+            <div class="flex gap-2">
+                <input type="text" id="direct-chat-input" placeholder="พิมพ์ข้อความในนาม DEV..." class="flex-1 p-2.5 text-xs bg-slate-950 border border-slate-800 rounded-xl text-white outline-none">
+                <button onclick="sendDirectChatMessage()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
     <header class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
-            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชท รูปภาพ โควต้า และลบข้อมูลไอดีคู่รัก</p>
+            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชทแจ้งปัญหา ประกาศหมวดหมู่ และสถิติกราฟ</p>
         </div>
         <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ออกจากระบบ</button>
     </header>
 
-    <!-- กราฟและแถบแสดงสถานะฐานข้อมูลพร้อมขีดจำกัด -->
-    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-3">
-        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-chart-pie mr-2"></i> สถิติและการใช้ข้อมูลฐานข้อมูล (Database Usage Analytics)</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+    <!-- ส่วนสถิติ กราฟการใช้งาน และขีดจำกัดฐานข้อมูล (Database Usage & Analytics) -->
+    <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700 space-y-4">
+        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-chart-line mr-2"></i> กราฟและสถิติการใช้งานระบบ (Database Usage & Activity Analytics)</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs">
             <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
-                <p class="text-slate-400">จำนวนผู้ใช้ทั้งหมดในระบบ</p>
+                <p class="text-slate-400">ผู้ใช้ทั้งหมดในระบบ</p>
                 <p id="stats-total-users" class="text-lg font-bold text-white">0 บัญชี</p>
             </div>
             <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
-                <p class="text-slate-400">จำนวนคู่รักในระบบ</p>
+                <p class="text-slate-400">คู่รักทั้งหมด</p>
                 <p id="stats-total-couples" class="text-lg font-bold text-rose-400">0 คู่</p>
             </div>
             <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
-                <p class="text-slate-400">จำนวนรูปภาพทั้งหมด</p>
+                <p class="text-slate-400">รูปภาพทั้งหมด</p>
                 <p id="stats-total-photos" class="text-lg font-bold text-emerald-400">0 รูป</p>
             </div>
+            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 space-y-1">
+                <p class="text-slate-400">การใช้งานสูงสูดวันนี้ (Activity Today)</p>
+                <p id="stats-activity-today" class="text-lg font-bold text-amber-400">0 บันทึก</p>
+            </div>
         </div>
-        <div class="space-y-1 pt-2">
+
+        <div class="space-y-2 pt-2 border-t border-slate-700/60">
             <div class="flex justify-between text-xs text-slate-300">
-                <span>โควต้าขีดจำกัดพื้นที่ฐานข้อมูล (Firebase Free Tier Limit: 1 GB)</span>
+                <span>อัตราการใช้พื้นที่ฐานข้อมูล (Database Storage Limit: 1 GB / Free Tier)</span>
                 <span id="db-usage-text">0%</span>
             </div>
             <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-700">
-                <div id="db-usage-bar" class="bg-gradient-to-r from-rose-500 to-indigo-500 h-full w-[0%] transition-all duration-500"></div>
+                <div id="db-usage-bar" class="bg-gradient-to-r from-rose-500 via-amber-500 to-indigo-500 h-full w-[0%] transition-all duration-500"></div>
             </div>
         </div>
     </div>
 
-    <!-- ส่วนส่งประกาศตามหมวดหมู่ -->
+    <!-- ส่วนป่าวประกาศด่วนแบบจัดหมวดหมู่ -->
     <div class="bg-slate-800/80 p-6 rounded-2xl border border-rose-500/50 space-y-3">
         <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศด่วนจากผู้สร้าง (เลือกหมวดหมู่)</h3>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <select id="broadcast-category" class="p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none">
+            <select id="broadcast-category" onchange="toggleTargetUserInput()" class="p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none">
                 <option value="ALL">📢 ประกาศให้ทุกคนเห็น</option>
                 <option value="COUPLES">❤️ ประกาศเฉพาะคู่รัก</option>
-                <option value="SINGLES">👤 ประกาศเฉพาะผู้ใช้เดี่ยว (ยังไม่มีคู่)</option>
+                <option value="SINGLES">👤 ประกาศเฉพาะผู้ใช้เดี่ยว</option>
+                <option value="SPECIFIC_USER">🎯 ประกาศเฉพาะผู้ใช้เดี่ยว (กรอก ID User)</option>
                 <option value="ADMINS">🛡️ ประกาศเฉพาะแอดมิน</option>
             </select>
+            
+            <input type="text" id="target-user-id-input" placeholder="กรอก User ID ที่ต้องการส่งถึง..." class="p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none hidden">
         </div>
-        <textarea id="creator-broadcast" rows="2" placeholder="พิมพ์ข้อความประกาศ..." class="w-full p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none"></textarea>
+
+        <textarea id="creator-broadcast" rows="2" placeholder="พิมพ์ข้อความประกาศสำคัญ..." class="w-full p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none"></textarea>
         <button onclick="creatorSendBroadcast()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow">ส่งประกาศตามหมวดหมู่</button>
     </div>
 
-    <!-- ส่วนกล่องแชทจากแอดมิน (Creator Live Chat) -->
+    <!-- ส่วนกล่องแชทรับแจ้งปัญหาจากผู้ใช้ (Admin Support & Report Chat) -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 flex flex-col h-[500px]">
-            <h3 class="font-bold text-sm text-rose-300 mb-3"><i class="fa-solid fa-comments mr-2"></i> กล่องแชทรวมผู้ใช้</h3>
+            <h3 class="font-bold text-sm text-rose-300 mb-3"><i class="fa-solid fa-comments mr-2"></i> กล่องแชทแจ้งปัญหาจากผู้ใช้</h3>
             <div id="admin-chat-user-list" class="flex-1 overflow-y-auto space-y-2 pr-1 text-xs">
-                <p class="text-center text-slate-400 py-10">ยังไม่มีข้อความแชท</p>
+                <p class="text-center text-slate-400 py-10">ยังไม่มีข้อความแจ้งปัญหา</p>
             </div>
         </div>
         <div class="bg-slate-800/80 p-5 rounded-2xl border border-slate-700 md:col-span-2 flex flex-col h-[500px]">
-            <div id="active-chat-title" class="pb-3 border-b border-slate-700 text-xs font-bold text-slate-300">เลือกผู้ใช้ทางซ้ายเพื่อเริ่มสนทนาแชท</div>
+            <div id="active-chat-title" class="pb-3 border-b border-slate-700 text-xs font-bold text-slate-300">เลือกแชทผู้ใช้ทางซ้ายเพื่อตรวจสอบปัญหาและตอบกลับ</div>
             <div id="admin-chat-box-messages" class="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-900 rounded-xl my-3 text-xs border border-slate-800">
                 <div class="text-center text-slate-400 py-20">โปรดเลือกแชทผู้ใช้</div>
             </div>
             <div class="flex gap-2">
-                <input type="text" id="admin-reply-input" placeholder="พิมพ์ข้อความตอบกลับ..." class="flex-1 p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none" disabled>
+                <input type="text" id="admin-reply-input" placeholder="พิมพ์ตอบกลับในนาม DEV..." class="flex-1 p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none" disabled>
                 <button onclick="sendAdminReply()" id="admin-send-btn" class="px-5 py-3 bg-indigo-600 text-white font-bold rounded-xl text-xs shadow" disabled><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
@@ -112,10 +140,10 @@
         <div id="creator-users-list" class="space-y-2 pt-2 max-h-96 overflow-y-auto pr-1"></div>
     </div>
 
-    <!-- ส่วนจัดการคู่รักและรูปภาพ (ล้างทั้งหมด / ลบไอดีคู่รัก / ลบทีละภาพ) -->
+    <!-- ส่วนจัดการคู่รักและรูปภาพ -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <div class="flex flex-wrap justify-between items-center gap-3">
-            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid id-card mr-2"></i> จัดการไอดีคู่รัก คลังรูปภาพ & ถังขยะ</h3>
+            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-id-card mr-2"></i> จัดการไอดีคู่รัก คลังรูปภาพ & ถังขยะ</h3>
             <div class="flex gap-2">
                 <button onclick="purgeAllCouples()" class="px-3.5 py-2 bg-red-800 hover:bg-red-900 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-user-slash mr-1"></i> ล้างข้อมูลคู่รักทั้งหมด</button>
                 <button onclick="purgeAllPhotos()" class="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-trash-can mr-1"></i> ล้างรูปภาพทั้งหมด</button>
@@ -131,6 +159,7 @@
 
         let globalDb = {};
         let activeChatUserId = null;
+        let directChatTargetUserId = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('creator_logged') !== 'true') {
@@ -162,6 +191,16 @@
             window.location.href = 'index.html';
         }
 
+        function toggleTargetUserInput() {
+            const cat = document.getElementById('broadcast-category').value;
+            const inputEl = document.getElementById('target-user-id-input');
+            if (cat === 'SPECIFIC_USER') {
+                inputEl.classList.remove('hidden');
+            } else {
+                inputEl.classList.add('hidden');
+            }
+        }
+
         function initCreatorRealtime() {
             dbRef.on('value', (snapshot) => {
                 const db = snapshot.val() || {};
@@ -178,6 +217,13 @@
                 document.getElementById('stats-total-couples').innerText = `${couples.length} คู่`;
                 document.getElementById('stats-total-photos').innerText = `${totalPhotos} รูป`;
 
+                // คำนวณกิจกรรมวันนี้ (สมมตินับจำนวนข้อความแชทหรือการอัปเดตรวมวันนี้)
+                let activityCount = 0;
+                Object.values(db.adminChats || {}).forEach(chats => {
+                    activityCount += chats.length;
+                });
+                document.getElementById('stats-activity-today').innerText = `${activityCount} กิจกรรม`;
+
                 const jsonStringSize = JSON.stringify(db).length;
                 const usedKB = (jsonStringSize / 1024).toFixed(2);
                 const percent = Math.min(100, (usedKB / 102400) * 100).toFixed(2);
@@ -189,6 +235,9 @@
                 renderAdminChatList(db.adminChats || {});
                 if (activeChatUserId) {
                     renderAdminChatMessages(db.adminChats?.[activeChatUserId] || []);
+                }
+                if (directChatTargetUserId) {
+                    renderDirectChatMessages();
                 }
             });
         }
@@ -221,7 +270,7 @@
                 const avatarHTML = u.profileImg ? `<img src="${u.profileImg}" class="w-10 h-10 rounded-full object-cover border border-slate-700">` : `<div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center font-bold text-xs">${u.name.charAt(0)}</div>`;
 
                 uList.innerHTML += `
-                    <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
+                    <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center flex-wrap gap-2">
                         <div class="flex items-center gap-3">
                             ${avatarHTML}
                             <div>
@@ -229,7 +278,10 @@
                                 <p class="text-[11px] text-slate-400">คู่รัก: <b class="text-rose-400">${partnerName}</b> | สถานะบัตร: <span class="text-amber-400">${statusText}</span></p>
                             </div>
                         </div>
-                        <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[10px] font-bold shadow">ลบบัญชีถาวร</button>
+                        <div class="flex gap-1.5">
+                            <button onclick="openDirectChatModal('${u.id}', '${u.name}')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold shadow"><i class="fa-solid fa-comment mr-1"></i> แชท DEV</button>
+                            <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[10px] font-bold shadow"><i class="fa-solid fa-trash mr-1"></i> ลบถาวร</button>
+                        </div>
                     </div>
                 `;
             });
@@ -240,6 +292,61 @@
             const users = globalDb.users || [];
             const couples = globalDb.couples || [];
             renderUsersList(users, couples, query);
+        }
+
+        function openDirectChatModal(userId, userName) {
+            directChatTargetUserId = userId;
+            document.getElementById('direct-chat-title').innerText = `แชทตรงหา: ${userName} (ID: ${userId})`;
+            document.getElementById('modal-direct-chat').classList.remove('hidden');
+            renderDirectChatMessages();
+        }
+
+        function closeDirectChatModal() {
+            document.getElementById('modal-direct-chat').classList.add('hidden');
+            directChatTargetUserId = null;
+        }
+
+        function renderDirectChatMessages() {
+            const container = document.getElementById('direct-chat-messages');
+            container.innerHTML = '';
+            const chats = globalDb.adminChats?.[directChatTargetUserId] || [];
+
+            if (chats.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-500 py-10">ยังไม่มีข้อความสนทนา เริ่มพิมพ์คุยได้เลย</p>';
+                return;
+            }
+
+            chats.forEach(m => {
+                const isAdmin = m.sender === 'admin';
+                container.innerHTML += `
+                    <div class="flex flex-col ${isAdmin ? 'items-end' : 'items-start'}">
+                        <div class="p-2.5 rounded-xl max-w-[85%] ${isAdmin ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-white border border-slate-700'}">
+                            <p class="font-bold text-[9px] opacity-75 mb-0.5">${isAdmin ? 'DEV (ผู้สร้าง)' : 'ผู้ใช้'}</p>
+                            <p>${m.text}</p>
+                            <span class="text-[9px] opacity-70 block text-right mt-0.5">${m.time}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function sendDirectChatMessage() {
+            const input = document.getElementById('direct-chat-input');
+            const text = input.value.trim();
+            if (!text || !directChatTargetUserId) return;
+
+            if (!globalDb.adminChats) globalDb.adminChats = {};
+            if (!globalDb.adminChats[directChatTargetUserId]) globalDb.adminChats[directChatTargetUserId] = [];
+
+            globalDb.adminChats[directChatTargetUserId].push({
+                sender: 'admin',
+                text: text,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+
+            await dbRef.set(globalDb);
+            input.value = '';
         }
 
         function renderCouplesList(couples) {
@@ -314,7 +421,6 @@
             if (!confirm(`ยืนยันลบข้อมูลไอดีคู่รัก [${coupleId}] และปลดสถานะความสัมพันธ์ของผู้ใช้ทั้งสองคน?`)) return;
             const couple = (globalDb.couples || []).find(c => c.id === coupleId);
             if (couple) {
-                // ปลดล็อก coupleId ในผู้ใช้ทั้งสองฝ่าย
                 (globalDb.users || []).forEach(u => {
                     if (u.id === couple.user1Id || u.id === couple.user2Id || u.coupleId === coupleId) {
                         u.coupleId = null;
@@ -363,7 +469,7 @@
             const uIds = Object.keys(adminChats);
 
             if (uIds.length === 0) {
-                listEl.innerHTML = '<p class="text-center text-slate-400 py-10">ยังไม่มีข้อความแชท</p>';
+                listEl.innerHTML = '<p class="text-center text-slate-400 py-10">ยังไม่มีข้อความแจ้งปัญหา</p>';
                 return;
             }
 
@@ -391,7 +497,7 @@
             document.getElementById('admin-reply-input').disabled = false;
             document.getElementById('admin-send-btn').disabled = false;
             const userObj = (globalDb.users || []).find(u => u.id === uId);
-            document.getElementById('active-chat-title').innerText = `กำลังสนทนากับ: ${userObj ? userObj.name : uId} (ID: ${uId})`;
+            document.getElementById('active-chat-title').innerText = `กำลังตรวจสอบปัญหากับ: ${userObj ? userObj.name : uId} (ID: ${uId})`;
             renderAdminChatMessages(globalDb.adminChats?.[uId] || []);
             renderAdminChatList(globalDb.adminChats || {});
         }
@@ -405,11 +511,11 @@
             }
 
             msgs.forEach(m => {
-                const isUser = m.sender === 'user';
+                const isAdmin = m.sender === 'admin';
                 box.innerHTML += `
-                    <div class="flex flex-col ${isUser ? 'items-start' : 'items-end'}">
-                        <div class="p-3 rounded-xl max-w-[80%] ${isUser ? 'bg-slate-800 text-white border border-slate-700' : 'bg-indigo-600 text-white'}">
-                            <p class="font-bold text-[9px] opacity-80 mb-0.5">${isUser ? 'ผู้ใช้' : 'แอดมิน (Creator)'}</p>
+                    <div class="flex flex-col ${isAdmin ? 'items-end' : 'items-start'}">
+                        <div class="p-3 rounded-xl max-w-[80%] ${isAdmin ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-white border border-slate-700'}">
+                            <p class="font-bold text-[9px] opacity-80 mb-0.5">${isAdmin ? 'DEV (ผู้สร้าง)' : 'ผู้ใช้'}</p>
                             <p>${m.text}</p>
                             <span class="text-[9px] opacity-75 block text-right mt-1">${m.time}</span>
                         </div>
@@ -440,6 +546,7 @@
         async function creatorSendBroadcast() {
             const text = document.getElementById('creator-broadcast').value.trim();
             const category = document.getElementById('broadcast-category').value;
+            const targetUserId = document.getElementById('target-user-id-input').value.trim();
             if (!text) return;
 
             const users = globalDb.users || [];
@@ -452,6 +559,7 @@
                 if (category === 'ALL') targetMatch = true;
                 else if (category === 'COUPLES' && hasCouple) targetMatch = true;
                 else if (category === 'SINGLES' && !hasCouple) targetMatch = true;
+                else if (category === 'SPECIFIC_USER' && u.id === targetUserId) targetMatch = true;
                 else if (category === 'ADMINS' && (u.id === 'mumu' || u.isAdmin)) targetMatch = true;
 
                 if (targetMatch) {
@@ -459,7 +567,7 @@
                     u.notifications.push({
                         id: Date.now() + Math.random(),
                         type: 'CREATOR_BROADCAST',
-                        message: `👑 ประกาศ [${category}]: ${text}`,
+                        message: `👑 ประกาศ [DEV]: ${text}`,
                         time: new Date().toLocaleString(),
                         read: false
                     });
@@ -468,7 +576,8 @@
 
             await dbRef.set(globalDb);
             document.getElementById('creator-broadcast').value = '';
-            alert('ส่งประกาศตามหมวดหมู่สำเร็จ!');
+            document.getElementById('target-user-id-input').value = '';
+            alert('ส่งประกาศสำเร็จเรียบร้อยแล้ว!');
         }
 
         async function permanentDeleteUser(userId) {
