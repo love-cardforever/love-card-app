@@ -81,7 +81,12 @@
             </section>
 
             <section class="glass-panel p-5 rounded-2xl space-y-3">
-                <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-users text-rose-500 mr-2"></i> รายชื่อผู้ใช้ทั้งหมดในระบบ</h2>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+                    <h2 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-users text-rose-500 mr-2"></i> รายชื่อผู้ใช้ทั้งหมดในระบบ</h2>
+                    <div class="w-full md:w-72">
+                        <input type="text" id="user-search-input" oninput="filterUsersTable()" placeholder="🔍 ค้นหาด้วยชื่อ หรือ User ID..." class="w-full p-2 text-xs rounded-xl border border-slate-200 outline-none bg-white">
+                    </div>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
                         <thead>
@@ -89,7 +94,7 @@
                                 <th class="pb-2">ผู้ใช้</th>
                                 <th class="pb-2">User ID</th>
                                 <th class="pb-2">อีเมล</th>
-                                <th class="pb-2">สถานะคู่รัก</th>
+                                <th class="pb-2">สถานะคู่รัก & โควต้า</th>
                                 <th class="pb-2 text-right">จัดการ</th>
                             </tr>
                         </thead>
@@ -139,6 +144,8 @@
         const dbRef = firebase.database().ref();
 
         let activeChatUserId = null;
+        let globalUsersCache = [];
+        let globalCouplesCache = [];
 
         const _adminAuth = {
             u: "TXVtdUFkbWlu", // MumuAdmin
@@ -177,10 +184,12 @@
         function initAdminRealtime() {
             dbRef.on('value', (snapshot) => {
                 const db = snapshot.val() || {};
-                renderUsers(db.users || [], db.couples || []);
+                globalUsersCache = db.users || [];
+                globalCouplesCache = db.couples || [];
+                renderUsers(globalUsersCache, globalCouplesCache);
                 renderAnnouncements(db.announcements || []);
                 renderLogs(db.adminNotifications || []);
-                renderChatUsersList(db.adminChats || {}, db.users || []);
+                renderChatUsersList(db.adminChats || {}, globalUsersCache);
                 if (activeChatUserId) {
                     renderAdminChatMessages(db.adminChats?.[activeChatUserId] || []);
                 }
@@ -188,22 +197,47 @@
             });
         }
 
+        function filterUsersTable() {
+            renderUsers(globalUsersCache, globalCouplesCache);
+        }
+
         function renderUsers(users, couples) {
             const tbody = document.getElementById('users-table-body');
+            const searchVal = document.getElementById('user-search-input')?.value.toLowerCase().trim() || '';
             tbody.innerHTML = '';
-            if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-400">ไม่มีผู้ใช้ในระบบ</td></tr>`;
+
+            const filtered = users.filter(u => u.name.toLowerCase().includes(searchVal) || u.id.toLowerCase().includes(searchVal));
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-400">ไม่พบข้อมูลผู้ใช้</td></tr>`;
                 return;
             }
-            users.forEach(u => {
+
+            filtered.forEach(u => {
                 const couple = couples.find(c => c.id === u.coupleId);
                 const avatar = u.profileImg ? `<img src="${u.profileImg}" class="w-8 h-8 rounded-full object-cover">` : `<div class="w-8 h-8 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center font-bold">${u.name.charAt(0)}</div>`;
+                
+                let coupleStatusHtml = '<span class="text-slate-400">โสด</span>';
+                if (couple) {
+                    const quota = couple.reconcileQuota ?? 3;
+                    coupleStatusHtml = `
+                        <div class="space-y-1">
+                            <span class="text-rose-600 font-bold">มีคู่รักแล้ว</span>
+                            <div class="flex items-center gap-1.5 text-[11px]">
+                                <span>โควต้า: <b class="text-amber-600">${quota}</b></span>
+                                <button onclick="adjustQuota('${couple.id}', 1)" class="w-5 h-5 bg-emerald-100 text-emerald-700 rounded font-bold hover:bg-emerald-200">+</button>
+                                <button onclick="adjustQuota('${couple.id}', -1)" class="w-5 h-5 bg-rose-100 text-rose-700 rounded font-bold hover:bg-rose-200">-</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50">
                         <td class="py-2.5 flex items-center gap-2">${avatar}<b>${u.name}</b></td>
                         <td class="py-2.5 font-mono text-slate-600">${u.id}</td>
                         <td class="py-2.5 text-slate-500">${u.email}</td>
-                        <td class="py-2.5">${couple ? '<span class="text-rose-600 font-bold">มีคู่รักแล้ว</span>' : '<span class="text-slate-400">โสด</span>'}</td>
+                        <td class="py-2.5">${coupleStatusHtml}</td>
                         <td class="py-2.5 text-right space-x-1">
                             <button onclick="moveUserToTrash('${u.id}')" class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-lg font-bold">ย้ายถังขยะ</button>
                             <button onclick="deleteUser('${u.id}')" class="px-2.5 py-1 bg-red-100 text-red-600 rounded-lg font-bold">ลบ</button>
@@ -211,6 +245,18 @@
                     </tr>
                 `;
             });
+        }
+
+        async function adjustQuota(coupleId, amount) {
+            const snap = await dbRef.once('value');
+            const db = snap.val() || {};
+            const couple = (db.couples || []).find(c => c.id === coupleId);
+            if (couple) {
+                let currentQuota = couple.reconcileQuota ?? 3;
+                let newQuota = Math.max(0, currentQuota + amount);
+                couple.reconcileQuota = newQuota;
+                await dbRef.set(db);
+            }
         }
 
         async function deleteUser(userId) {
