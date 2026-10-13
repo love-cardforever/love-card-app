@@ -36,7 +36,7 @@
             </div>
         </header>
 
-        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟนที่กู้คืนมาแล้ว -->
+        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟน -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -54,7 +54,7 @@
             </div>
         </section>
 
-        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ -->
+        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (Certificate of Love) -->
         <section class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -64,7 +64,7 @@
                         <h3 class="font-bold text-sm text-slate-800">บัตรประจำตัวคู่รักออนไลน์</h3>
                     </div>
                 </div>
-                <span class="px-3 py-1 bg-rose-100 text-rose-600 text-[10px] font-bold rounded-full">ไม่มีวันหมดอายุ</span>
+                <span id="card-status-badge" class="px-3 py-1 bg-rose-100 text-rose-600 text-[10px] font-bold rounded-full">ไม่มีวันหมดอายุ</span>
             </div>
 
             <div class="space-y-1">
@@ -89,12 +89,12 @@
             </div>
         </section>
 
-        <!-- 4. แผงควบคุมคู่รัก (ปุ่มขอคืนดี & ขอเลิกรา แยกอยู่นอกบัตร และถูกล็อกไว้หากยังไม่มีคู่) -->
+        <!-- 4. แผงควบคุมคู่รัก (ปุ่มขอคืนดี & ขอเลิกรา) -->
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
             
             <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
-                <button id="btn-reconcile" onclick="requestReconcile()" disabled class="flex-1 py-2.5 bg-amber-200 text-slate-500 font-bold rounded-2xl text-xs shadow-xs transition cursor-not-allowed opacity-60"><i class="fa-solid fa-dove mr-1"></i> ขอคืนดี (-1 โควต้า)</button>
-                <button id="btn-breakup" onclick="openBreakupModal()" disabled class="flex-1 py-2.5 bg-slate-200 text-slate-400 font-bold rounded-2xl text-xs transition cursor-not-allowed opacity-60"><i class="fa-solid fa-heart-crack mr-1"></i> ขอเลิกรา</button>
+                <button id="btn-reconcile" onclick="requestReconcile()" class="flex-1 py-2.5 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-dove mr-1"></i> ขอคืนดี (-1 โควต้า)</button>
+                <button id="btn-breakup" onclick="openBreakupModal()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-heart-crack mr-1"></i> ขอเลิกรา</button>
             </div>
 
             <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
@@ -128,7 +128,7 @@
 
     <!-- 5. แถบแสดงระยะเวลาที่เราคบกันด้านล่างสุด -->
     <footer class="w-full max-w-xl mx-auto mt-6 bg-gradient-to-r from-rose-500 to-pink-500 p-4 rounded-3xl shadow-lg text-center text-white space-y-1 z-10">
-        <p class="text-xs font-medium opacity-90">ระยะเวลาที่เราคบกัน</p>
+        <p class="text-xs font-medium opacity-90" id="timer-title">ระยะเวลาที่เราคบกัน</p>
         <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
     </footer>
 
@@ -233,17 +233,17 @@
             renderNotificationsList(notifs);
 
             const couples = db.couples || [];
-            const myCouple = couples.find(c => c.id === currentUser.coupleId && c.status === 'ACTIVE');
+            // ค้นหาคู่รักทั้งสถานะ ACTIVE และ BROKEN (ทิ้งร้างไว้รอขอคืนดี)
+            const myCouple = couples.find(c => c.id === currentUser.coupleId);
 
             if (!myCouple) {
                 renderNoCoupleState();
                 if (timerInterval) clearInterval(timerInterval);
             } else {
-                renderActiveCoupleState(myCouple);
+                renderCoupleState(myCouple);
             }
         });
 
-        // ฟังก์ชันสร้างโค้ดขอเป็นแฟนแบบรวดเร็ว (ยิงตรงผ่าน Firebase Path ทันที ไม่มีหน่วง)
         async function generateProposalCodeFast() {
             const code = Math.random().toString(36).substring(2, 9).toUpperCase();
             await dbRef.child('proposalCodes/' + code).set({
@@ -271,51 +271,58 @@
             document.getElementById('card-start-date').innerText = "00/00/0000";
             document.getElementById('card-start-time').innerText = "00:00";
             document.getElementById('quota-left').innerText = "3";
+            document.getElementById('card-status-badge').innerText = "ไม่มีวันหมดอายุ";
 
             document.getElementById('love-timer-display').innerText = "0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที";
+            document.getElementById('timer-title').innerText = "ระยะเวลาที่เราคบกัน";
         }
 
-        function renderActiveCoupleState(couple) {
+        function renderCoupleState(couple) {
             document.getElementById('couple-features-panel').classList.remove('hidden');
-            document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
-            document.getElementById('text-couple-status').className = "font-bold text-rose-600";
             
-            // เปิดใช้งานปุ่มขอคืนดี & ขอเลิกราเฉพาะเมื่อมีคู่แล้ว
-            const btnReconcile = document.getElementById('btn-reconcile');
-            const btnBreakup = document.getElementById('btn-breakup');
+            const isBroken = couple.status === 'BROKEN';
             
-            btnReconcile.disabled = false;
-            btnReconcile.className = "flex-1 py-2.5 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer opacity-100";
-            
-            btnBreakup.disabled = false;
-            btnBreakup.className = "flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-xs transition cursor-pointer opacity-100";
+            if (isBroken) {
+                document.getElementById('text-couple-status').innerText = "เลิกรากันแล้ว (ทิ้งร้างรอคืนดี)";
+                document.getElementById('text-couple-status').className = "font-bold text-amber-600";
+                document.getElementById('card-status-badge').innerText = "สถานะ: เลิกรา";
+                document.getElementById('timer-title').innerText = "ความสัมพันธ์ถูกระงับ (รอการคืนดี)";
+                document.getElementById('love-timer-display').innerText = "หยุดนับเวลาชั่วคราว";
+                if (timerInterval) clearInterval(timerInterval);
+            } else {
+                document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
+                document.getElementById('text-couple-status').className = "font-bold text-rose-600";
+                document.getElementById('card-status-badge').innerText = "ไม่มีวันหมดอายุ";
+                document.getElementById('timer-title').innerText = "ระยะเวลาที่เราคบกัน";
+
+                if (timerInterval) clearInterval(timerInterval);
+                const startDateTime = new Date(`${couple.startDate}T${couple.startTime || '00:00'}:00`);
+                
+                timerInterval = setInterval(() => {
+                    const quota = couple.reconcileQuota ?? 3;
+                    if (quota <= 0) return; 
+                    const now = new Date();
+                    const diff = now - startDateTime;
+                    if (diff > 0) {
+                        const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+                        const months = Math.floor((diff / (1000 * 60 * 60 * 24 * 30)) % 12);
+                        const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 30);
+                        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                        const mins = Math.floor((diff / 1000 / 60) % 60);
+                        const secs = Math.floor((diff / 1000) % 60);
+                        document.getElementById('love-timer-display').innerText = `${years} ปี ${months} เดือน ${days} วัน ${hours} ชม. ${mins} นาที ${secs} วินาที`;
+                    }
+                }, 1000);
+            }
 
             const quota = couple.reconcileQuota ?? 3;
             document.getElementById('quota-left').innerText = quota;
             
-            if (quota <= 0) {
+            if (quota <= 0 || isBroken) {
                 document.getElementById('vault-body').classList.add('grayscale-mode');
             } else {
                 document.getElementById('vault-body').classList.remove('grayscale-mode');
             }
-
-            if (timerInterval) clearInterval(timerInterval);
-            const startDateTime = new Date(`${couple.startDate}T${couple.startTime || '00:00'}:00`);
-            
-            timerInterval = setInterval(() => {
-                if (quota <= 0) return; 
-                const now = new Date();
-                const diff = now - startDateTime;
-                if (diff > 0) {
-                    const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
-                    const months = Math.floor((diff / (1000 * 60 * 60 * 24 * 30)) % 12);
-                    const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 30);
-                    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                    const mins = Math.floor((diff / 1000 / 60) % 60);
-                    const secs = Math.floor((diff / 1000) % 60);
-                    document.getElementById('love-timer-display').innerText = `${years} ปี ${months} เดือน ${days} วัน ${hours} ชม. ${mins} นาที ${secs} วินาที`;
-                }
-            }, 1000);
 
             document.getElementById('profile-icon-box').innerHTML = '<i class="fa-solid fa-heart text-rose-500 text-lg"></i>';
             document.getElementById('display-couple-id').innerText = couple.id;
@@ -429,10 +436,12 @@
                 const snapshot = await dbRef.once('value');
                 const db = snapshot.val() || {};
                 const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-                if (couple) {
+                if (couple && couple.status === 'ACTIVE') {
                     if (!couple.photos) couple.photos = [];
                     couple.photos.push({ id: Date.now(), url: base64Url, uploaderId: currentUser.id, uploaderName: currentUser.name });
                     await dbRef.set(db);
+                } else {
+                    alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถอัปโหลดรูปได้ กรุณาขอคืนดีก่อน');
                 }
             };
             reader.readAsDataURL(file);
@@ -474,11 +483,13 @@
             const snapshot = await dbRef.once('value');
             const db = snapshot.val() || {};
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
-            if (couple) {
+            if (couple && couple.status === 'ACTIVE') {
                 if (!couple.notes) couple.notes = [];
                 couple.notes.push({ id: Date.now(), text, authorId: currentUser.id, authorName: currentUser.name });
                 await dbRef.set(db);
                 document.getElementById('note-input-text').value = '';
+            } else {
+                alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถเขียนโน้ตได้ กรุณาขอคืนดีก่อน');
             }
         }
 
@@ -544,9 +555,24 @@
             const db = snapshot.val() || {};
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
             if (couple) {
-                couple.reconcileQuota = Math.max(0, (couple.reconcileQuota ?? 3) - 1);
+                const quota = couple.reconcileQuota ?? 3;
+                if (quota <= 0) {
+                    alert('โควต้าขอคืนดีหมดลงแล้ว!');
+                    return;
+                }
+                couple.reconcileQuota = quota - 1;
+                couple.status = 'ACTIVE'; // คืนสถานะกลับมาคบกัน
+                
+                // แจ้งเตือนแฟน
+                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
+                const partner = (db.users || []).find(u => u.id === partnerId);
+                if (partner) {
+                    if (!partner.notifications) partner.notifications = [];
+                    partner.notifications.push({ id: Date.now(), message: `แฟนของคุณใช้โควต้าขอคืนดี ความสัมพันธ์กลับมาปกติแล้ว!`, time: new Date().toLocaleString(), read: false });
+                }
+
                 await dbRef.set(db);
-                alert('ส่งคำขอคืนดีเรียบร้อย โควต้าถูกหักลง 1 ครั้ง');
+                alert('ขอคืนดีสำเร็จ ความสัมพันธ์กลับมาใช้งานได้ปกติ!');
             }
         }
 
@@ -559,22 +585,18 @@
             const db = snapshot.val() || {};
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
             if (couple) {
-                couple.status = 'BROKEN';
+                couple.status = 'BROKEN'; // เปลี่ยนสถานะเป็นเลิกรา แต่เก็บบัตรทิ้งร้างไว้
                 const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
                 const partner = (db.users || []).find(u => u.id === partnerId);
                 if (partner) {
                     if (!partner.notifications) partner.notifications = [];
                     partner.notifications.push({ id: Date.now(), message: `แฟนของคุณขอเลิกรา เหตุผล: ${reason || 'ไม่มีเหตุผล'}`, time: new Date().toLocaleString(), read: false });
                 }
-                const u1 = (db.users || []).find(u => u.id === couple.user1Id);
-                const u2 = (db.users || []).find(u => u.id === couple.user2Id);
-                if (u1) u1.coupleId = null;
-                if (u2) u2.coupleId = null;
-
+                // หมายเหตุ: ไม่เคลียร์ coupleId ของ User เพื่อให้บัตรยังคงค้างอยู่และใช้ขอคืนดีต่อได้
                 await dbRef.set(db);
             }
             closeBreakupModal();
-            alert('ทำรายการเลิกราสำเร็จ บัตรคู่รักถูกทำลาย');
+            alert('ทำรายการเลิกราสำเร็จ บัตรถูกพักสถานะไว้ รอการขอคืนดี');
         }
 
         function openDeleteAccountModal() { document.getElementById('modal-delete-account').classList.remove('hidden'); }
