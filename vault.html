@@ -43,7 +43,6 @@
 
     <main class="w-full max-w-xl mx-auto flex flex-col space-y-4">
         
-        <!-- ส่วนหัว (เพิ่มปุ่มติดต่อแอดมินไว้ด้านบนสุดเสมอ) -->
         <header class="w-full glass-card p-4 rounded-3xl shadow-sm flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-heart text-lg"></i></div>
@@ -85,7 +84,6 @@
             </div>
         </section>
 
-        <!-- บัตรประจำตัวคู่รักออนไลน์ -->
         <section id="couple-card-section" class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden transition-all duration-500">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -129,7 +127,6 @@
             </div>
         </section>
 
-        <!-- แผงควบคุมคู่รัก -->
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
             
             <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
@@ -170,7 +167,6 @@
         <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
     </footer>
 
-    <!-- Modals -->
     <div id="modal-proposal-code" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">สร้างโค้ดขอเป็นแฟนสำเร็จ!</h3>
@@ -194,7 +190,6 @@
         </div>
     </div>
 
-    <!-- Modal ติดต่อแอดมินแบบพิมพ์ตอบ (Chat Support) -->
     <div id="modal-admin-contact" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-5 w-full max-w-md flex flex-col h-[480px] shadow-2xl">
             <div class="flex justify-between items-center pb-3 border-b">
@@ -208,7 +203,6 @@
                 <button onclick="closeAdminContactModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <!-- กล่องข้อความแชท -->
             <div id="admin-chat-messages" class="flex-1 overflow-y-auto p-3 space-y-3 bg-slate-50 rounded-2xl my-3 text-xs">
                 <div class="bg-indigo-50 text-indigo-900 p-3 rounded-2xl rounded-tl-sm max-w-[85%] border border-indigo-100">
                     <p class="font-bold mb-0.5">ระบบช่วยเหลือแอดมิน</p>
@@ -216,7 +210,6 @@
                 </div>
             </div>
 
-            <!-- ช่องพิมพ์ข้อความ -->
             <div class="flex gap-2">
                 <input type="text" id="admin-chat-input" placeholder="พิมพ์ข้อความหาแอดมิน..." class="flex-1 p-2.5 text-xs rounded-xl border border-slate-200 outline-none">
                 <button onclick="sendAdminMessage()" class="px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-paper-plane"></i></button>
@@ -224,7 +217,6 @@
         </div>
     </div>
 
-    <!-- Modal แก้ไขวันเวลาคบกัน -->
     <div id="modal-edit-anniversary" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">แก้ไขวันเวลาคบกัน</h3>
@@ -783,7 +775,6 @@
             }
         }
 
-        // ฟังก์ชันระบบแชทติดต่อแอดมิน
         function openAdminContactModal() {
             document.getElementById('modal-admin-contact').classList.remove('hidden');
         }
@@ -1033,6 +1024,7 @@
             }
         }
 
+        let targetDeleteTarget = null;
         function promptPermanentDelete(type, targetId, coupleId) {
             targetDeleteTarget = { type, targetId, coupleId };
             document.getElementById('modal-confirm-delete').classList.remove('hidden');
@@ -1425,6 +1417,7 @@
             window.location.href = 'index.html';
         }
 
+        // ยึดหน้า index เป็นหลักเมื่อออกจากระบบ
         function logoutVault() {
             localStorage.clear();
             window.location.href = 'index.html';
