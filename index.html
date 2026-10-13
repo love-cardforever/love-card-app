@@ -32,8 +32,8 @@
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart"><i class="fa-solid fa-heart"></i></div>
             <div>
-                <h1 class="font-bold text-base text-slate-800">Forever Love card</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบขอเป็นแฟน & ความทรงจำคู่รัก</p>
+                <h1 class="font-bold text-base text-slate-800">Forever Love System</h1>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบขอเป็นแฟน & ความทรงจำคู่รักเรียลไทม์</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -87,14 +87,14 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ (ติ๊กเลือก)</label>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> เพศชาย </label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> เพศหญิง </label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ </label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> ชาย (11)</label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2000)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2002)</label>
                         <input type="number" id="reg-birthyear" autocomplete="off" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                     </div>
                     <div>
@@ -114,7 +114,7 @@
     <!-- Modal ต่างๆ -->
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ด </h3>
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
             <input type="text" id="input-proposal-code" autocomplete="off" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
                 <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
@@ -182,9 +182,9 @@
             <div class="space-y-3 pt-2">
                 <input type="text" id="acc-name" autocomplete="off" placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 <div class="grid grid-cols-3 gap-2">
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> เพศชาย </label>
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> เพศหญิง </label>
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ </label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> ชาย (11)</label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <input type="number" id="acc-birthyear" autocomplete="off" placeholder="ปีเกิด ค.ศ. เช่น 2002" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
@@ -207,17 +207,27 @@
         </div>
     </div>
 
-    <div id="modal-success-reg" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนสำเร็จ! 🎉</h3>
-            <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
-            <button onclick="closeSuccessRegModal()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ไปหน้าเข้าสู่ระบบ</button>
+    <!-- Modal แสดง User ID หลังสมัครสำเร็จ (บังคับกดคัดลอกหรือดาวน์โหลดก่อนถึงจะกดปุ่มถัดไปได้) -->
+    <div id="modal-success-reg" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-5 shadow-2xl">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-check"></i></div>
+            <h3 class="font-bold text-xl text-slate-800">สมัครสมาชิกสำเร็จ! 🎉</h3>
+            <p class="text-xs text-rose-600 font-medium">⚠️ กรุณาคัดลอกหรือบันทึก User ID นี้ไว้ใช้งาน มิฉะนั้นจะไม่สามารถเข้าสู่ระบบได้</p>
+            
+            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-200 flex items-center justify-between">
+                <span id="success-user-id" class="font-mono font-black text-xl text-rose-700 tracking-wider">--</span>
+                <button onclick="copyUserId()" class="px-3 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-bold shadow transition"><i class="fa-solid fa-copy mr-1"></i> คัดลอก ID</button>
+            </div>
+
+            <div id="copy-status-text" class="text-xs text-slate-400 font-medium">ยังไม่ได้คัดลอก User ID</div>
+
+            <button id="btn-goto-login" onclick="closeSuccessRegModal()" disabled class="w-full py-3 bg-slate-300 text-slate-500 font-bold rounded-xl text-xs shadow cursor-not-allowed transition">กรุณาคัดลอก ID ก่อน ถึงจะไปหน้าเข้าสู่ระบบได้</button>
         </div>
     </div>
 
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">สนับสนุนค่าข้าว</h3>
+            <h3 class="font-bold text-base text-slate-800">สนับสนุนค่าระบบ</h3>
             <div class="text-xs text-slate-700 bg-rose-50 p-4 rounded-2xl text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
                 <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600">208-5886021</span></p>
@@ -267,6 +277,7 @@
         let realOtpCode = "";
         let activeProposalCodeKey = "";
         let proposalSenderInfo = null;
+        let isUserIdCopied = false; // ตัวแปรเช็คสถานะการคัดลอก
         
         let rejectClickCount = 0;
         const rejectMessages = [
@@ -280,12 +291,11 @@
         let holdInterval = null;
         let holdProgress = 0;
 
-        // ซ่อนโค้ดรหัสผ่านแอดมินและผู้สร้างไว้ในรูปแบบเข้ารหัสอย่างง่ายเพื่อความปลอดภัย
         const _sysAuth = {
-            aUsr: "QWRtaW4xMjEw", 
-            aPwd: "QWRtaW4xMjEwKw==", 
-            cUsr: "Y3JlYXRsdXY=", 
-            cPwd: "Y3JlYXRsdXYr" 
+            aUsr: "QWRtaW4xMjEw", // Admin1210
+            aPwd: "QWRtaW4xMjEwKw==", // Admin1210+
+            cUsr: "Y3JlYXRsdXY=", // creatluv
+            cPwd: "Y3JlYXRsdXYr" // creatluv+
         };
         const _decode = (s) => atob(s);
 
@@ -312,7 +322,31 @@
         function openForgotModal() { document.getElementById('modal-forgot').classList.remove('hidden'); }
         function closeForgotModal() { document.getElementById('modal-forgot').classList.add('hidden'); }
         function closeOtpModal() { document.getElementById('modal-otp').classList.add('hidden'); }
-        function closeSuccessRegModal() { document.getElementById('modal-success-reg').classList.add('hidden'); switchTab('login'); }
+        
+        function closeSuccessRegModal() {
+            if (!isUserIdCopied) {
+                showCustomAlert('แจ้งเตือน', 'กรุณาคัดลอก User ID ของคุณก่อน!');
+                return;
+            }
+            document.getElementById('modal-success-reg').classList.add('hidden');
+            switchTab('login');
+        }
+
+        // ฟังก์ชันคัดลอก User ID และปลดล็อคปุ่มถัดไป
+        function copyUserId() {
+            const userIdText = document.getElementById('success-user-id').innerText;
+            navigator.clipboard.writeText(userIdText).then(() => {
+                isUserIdCopied = true;
+                document.getElementById('copy-status-text').innerHTML = '<span class="text-emerald-600 font-bold">คัดลอก User ID เรียบร้อยแล้ว! ✅</span>';
+                
+                const btnGoto = document.getElementById('btn-goto-login');
+                btnGoto.disabled = false;
+                btnGoto.className = "w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow transition cursor-pointer";
+                btnGoto.innerText = "ไปหน้าเข้าสู่ระบบ";
+            }).catch(err => {
+                showCustomAlert('ผิดพลาด', 'ไม่สามารถคัดลอกอัตโนมัติได้ กรุณาจดบันทึก ID นี้ไว้ด้วยตนเอง');
+            });
+        }
 
         function showCustomAlert(title, message) {
             document.getElementById('alert-title').innerText = title;
@@ -326,12 +360,10 @@
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            // ตรวจสอบข้อมูลแอดมิน (ซ่อนรหัสผ่าน)
             if (idInput === _decode(_sysAuth.aUsr) && passInput === _decode(_sysAuth.aPwd)) { 
                 window.location.href = 'admin.html'; 
                 return; 
             }
-            // ตรวจสอบข้อมูลผู้สร้าง (ซ่อนรหัสผ่าน)
             if (idInput === _decode(_sysAuth.cUsr) && passInput === _decode(_sysAuth.cPwd)) { 
                 window.location.href = 'creator.html'; 
                 return; 
@@ -542,7 +574,14 @@
 
             setTimeout(() => {
                 bodyElem.classList.remove('gold-flash');
-                window.location.href = 'vault.html';
+                document.getElementById('success-user-id').innerText = pendingUserRegData.id;
+                isUserIdCopied = false;
+                document.getElementById('copy-status-text').innerText = "ยังไม่ได้คัดลอก User ID";
+                const btnGoto = document.getElementById('btn-goto-login');
+                btnGoto.disabled = true;
+                btnGoto.className = "w-full py-3 bg-slate-300 text-slate-500 font-bold rounded-xl text-xs shadow cursor-not-allowed transition";
+                btnGoto.innerText = "กรุณาคัดลอก ID ก่อน ถึงจะไปหน้าเข้าสู่ระบบได้";
+                document.getElementById('modal-success-reg').classList.remove('hidden');
             }, 1500);
         }
 
@@ -586,6 +625,14 @@
 
             closeOtpModal();
             document.getElementById('success-user-id').innerText = pendingUserRegData.id;
+            isUserIdCopied = false;
+            document.getElementById('copy-status-text').innerText = "ยังไม่ได้คัดลอก User ID";
+            
+            const btnGoto = document.getElementById('btn-goto-login');
+            btnGoto.disabled = true;
+            btnGoto.className = "w-full py-3 bg-slate-300 text-slate-500 font-bold rounded-xl text-xs shadow cursor-not-allowed transition";
+            btnGoto.innerText = "กรุณาคัดลอก ID ก่อน ถึงจะไปหน้าเข้าสู่ระบบได้";
+
             document.getElementById('modal-success-reg').classList.remove('hidden');
         }
 
