@@ -3,43 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creator Master Dashboard</title>
+    <title>Creator Master - Forever Love</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = { theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } } }
-    </script>
-    <style>
-        body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #1e1b4b 0%, #31103f 100%); min-height: 100vh; color: #fff; }
-        .glass-card { background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); }
-    </style>
+    <style>body { font-family: 'Prompt', sans-serif; background: #0f172a; color: #f8fafc; }</style>
 </head>
-<body class="p-4 md:p-8 flex flex-col justify-between min-h-screen">
-    <header class="max-w-6xl mx-auto w-full flex justify-between items-center border-b border-white/10 pb-4">
+<body class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+    <div class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
-            <h1 class="font-bold text-xl text-rose-400"><i class="fa-solid fa-crown mr-2"></i> Creator Master Dashboard</h1>
-            <p class="text-xs text-slate-400">ผู้สร้างสูงสุด (Contact IG: @mumu_apr200x)</p>
+            <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (ระบบลับผู้สร้าง)</h1>
+            <p class="text-xs text-slate-400">ควบคุมข้อมูลเชิงลึกทั้งหมดและป่าวประกาศระบบ</p>
         </div>
-        <button onclick="localStorage.removeItem('creator_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-600 text-xs font-bold rounded-xl">ออกจากระบบ</button>
-    </header>
+        <button onclick="localStorage.removeItem('creator_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
+    </div>
 
-    <main class="max-w-6xl mx-auto w-full flex-1 space-y-6 pt-6">
-        <div class="glass-card p-6 rounded-3xl space-y-4">
-            <h3 class="font-bold text-base">ตรวจสอบข้อมูลคู่รักและผู้ใช้ทั้งหมดแบบเจาะลึก</h3>
-            <div id="creator-data-view" class="space-y-3 text-xs">กำลังโหลดข้อมูลคลาวด์...</div>
-        </div>
-    </main>
+    <!-- ฟังก์ชันประกาศเซิร์ฟเวอร์ของผู้สร้าง -->
+    <div class="bg-slate-800/80 p-6 rounded-2xl border border-rose-500/50 space-y-3">
+        <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศด่วนจากผู้สร้างถึงทุกคน</h3>
+        <textarea id="creator-broadcast" rows="3" placeholder="พิมพ์ประกาศสำคัญจากผู้สร้าง..." class="w-full p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none"></textarea>
+        <button onclick="creatorSendBroadcast()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ส่งประกาศจากผู้สร้าง</button>
+    </div>
+
+    <!-- รายงานจากแอดมิน -->
+    <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
+        <h3 class="font-bold text-sm text-amber-400"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ข้อความรายงานจากแอดมิน</h3>
+        <div id="creator-reports-list" class="space-y-2"></div>
+    </div>
+
+    <!-- โฟลเดอร์: ผู้ใช้งานทั้งหมด -->
+    <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
+        <details class="group">
+            <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
+                <span>📁 โฟลเดอร์: ข้อมูลผู้ใช้งานทั้งหมดแบบละเอียด (Users)</span>
+                <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+            </summary>
+            <div id="creator-users-list" class="space-y-2 pt-4"></div>
+        </details>
+    </div>
+
+    <!-- โฟลเดอร์: คู่รัก & รูปภาพอัลบั้ม/ถังขยะ -->
+    <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
+        <details class="group">
+            <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
+                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะนับถอยหลัง 30 วัน)</span>
+                <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
+            </summary>
+            <div id="creator-couples-list" class="space-y-4 pt-4"></div>
+        </details>
+    </div>
 
     <script>
         const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
-        window.addEventListener('DOMContentLoaded', async () => {
-            if (localStorage.getItem('creator_logged') !== 'true') { window.location.href = 'index.html'; return; }
+        if (localStorage.getItem('creator_logged') !== 'true') { window.location.href = 'index.html'; }
+
+        async function loadCreatorData() {
             const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json() || { couples: [], users: [] };
-            const container = document.getElementById('creator-data-view');
-            container.innerHTML = `<p>จำนวนผู้ใช้ทั้งหมด: ${db.users.length} คน | จำนวนคู่รักทั้งหมด: ${db.couples.length} คู่</p>`;
-        });
+            const db = await res.json() || {};
+
+            const reportDiv = document.getElementById('creator-reports-list');
+            reportDiv.innerHTML = '';
+            (db.creatorReports || []).forEach(r => {
+                reportDiv.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700"><b>[${r.time}]</b> ${r.content}</div>`;
+            });
+
+            const uList = document.getElementById('creator-users-list');
+            uList.innerHTML = '';
+            (db.users || []).forEach(u => {
+                uList.innerHTML += `
+                    <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
+                        <div><b>ID: ${u.id}</b> | ชื่อ: ${u.name} | อีเมล: ${u.email} | คู่รักID: ${u.coupleId || 'ไม่มี'}</div>
+                        <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1 bg-red-600 text-white rounded-lg text-[10px] font-bold">ลบถาวร</button>
+                    </div>
+                `;
+            });
+
+            const cList = document.getElementById('creator-couples-list');
+            cList.innerHTML = '';
+            (db.couples || []).forEach(c => {
+                let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
+                (c.photos || []).forEach(p => {
+                    photosHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1"><img src="${p.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${p.uploaderName}</p><a href="${p.url}" download class="block text-center bg-blue-600 text-white rounded py-1 text-[10px]">ดาวน์โหลด</a></div>`;
+                });
+                photosHTML += '</div>';
+
+                let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ (เก็บรักษา 30 วัน):</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
+                (c.trashPhotos || []).forEach(tp => {
+                    trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
+                });
+                trashHTML += '</div>';
+
+                cList.innerHTML += `
+                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
+                        <div class="font-bold text-rose-400">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
+                        <div class="text-xs text-slate-400">สถานะ: ${c.status} | โควต้าคืนดี: ${c.reconcileQuota}</div>
+                        ${photosHTML}
+                        ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
+                    </div>
+                `;
+            });
+        }
+
+        async function creatorSendBroadcast() {
+            const text = document.getElementById('creator-broadcast').value.trim();
+            if (!text) return;
+            const res = await fetch(`${FIREBASE_URL}/.json`);
+            const db = await res.json() || {};
+            
+            if (db.users) {
+                db.users.forEach(u => {
+                    if (!u.notifications) u.notifications = [];
+                    u.notifications.push({
+                        id: Date.now() + Math.random(),
+                        type: 'CREATOR_BROADCAST',
+                        message: `👑 ประกาศจากผู้สร้างระบบ: ${text}`,
+                        time: new Date().toLocaleString(),
+                        read: false
+                    });
+                });
+            }
+            await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
+            document.getElementById('creator-broadcast').value = '';
+            alert('ส่งประกาศจากผู้สร้างถึงทุกคนสำเร็จ!');
+        }
+
+        async function permanentDeleteUser(userId) {
+            if (!confirm('ยืนยันลบผู้ใช้นี้แบบถาวร?')) return;
+            const res = await fetch(`${FIREBASE_URL}/.json`);
+            const db = await res.json();
+            db.users = db.users.filter(u => u.id !== userId);
+            await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
+            loadCreatorData();
+        }
+
+        async function restorePhoto(coupleId, photoId) {
+            const res = await fetch(`${FIREBASE_URL}/.json`);
+            const db = await res.json();
+            const couple = db.couples.find(c => c.id === coupleId);
+            if (couple) {
+                const idx = couple.trashPhotos.findIndex(p => p.id === photoId);
+                if (idx !== -1) {
+                    const photo = couple.trashPhotos.splice(idx, 1)[0];
+                    if (!couple.photos) couple.photos = [];
+                    couple.photos.push(photo);
+                    await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
+                    loadCreatorData();
+                }
+            }
+        }
+
+        loadCreatorData();
     </script>
 </body>
 </html>
