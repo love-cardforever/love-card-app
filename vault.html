@@ -21,7 +21,7 @@
 
     <main class="w-full max-w-xl mx-auto flex flex-col space-y-4">
         
-        <!-- 1. ส่วนหัว: Love Vault & Profile, โดเนท, ออกจากระบบ -->
+        <!-- 1. ส่วนหัว -->
         <header class="w-full glass-card p-4 rounded-3xl shadow-sm flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-heart text-lg"></i></div>
@@ -31,29 +31,30 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="openPromptPayModal()" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-1"><i class="fa-solid fa-wallet"></i> โดเนทสนับสนุน</button>
-                <button onclick="logoutVault()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+                <button onclick="openPromptPayModal()" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-2xl shadow-xs transition flex items-center gap-1"><i class="fa-solid fa-wallet"></i> โดเนท</button>
+                <button onclick="logoutVault()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition flex items-center gap-1"><i class="fa-solid fa-right-from-bracket"></i> ออก</button>
             </div>
         </header>
 
-        <!-- 2. กล่องโปรไฟล์ดั้งเดิม: ไอคอนวงกลม --, ชื่อ, ID, สถานะ และปุ่มแจ้งเตือน -->
+        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟน (เร็วขึ้น 100%) -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div id="profile-icon-box" class="w-12 h-12 rounded-full bg-rose-100 text-rose-400 flex items-center justify-center font-bold text-base">--</div>
                     <div>
                         <h2 id="header-username" class="font-bold text-base text-slate-800">--</h2>
-                        <p class="text-xs text-rose-500 font-medium">ID: <span id="header-userid">--</span> | สถานะคู่รัก: <span id="text-couple-status" class="font-bold">ยังไม่มีคู่รัก</span></p>
+                        <p class="text-xs text-rose-500 font-medium">ID: <span id="header-userid">--</span> | สถานะ: <span id="text-couple-status" class="font-bold">ยังไม่มีคู่รัก</span></p>
                     </div>
                 </div>
                 <button onclick="openDeleteAccountModal()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold rounded-xl shadow transition"><i class="fa-solid fa-user-slash mr-1"></i> ลบบัญชี</button>
             </div>
-            <div class="pt-1">
-                <button onclick="openNotificationsModal()" class="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100 shadow-xs"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="openNotificationsModal()" class="py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100 shadow-xs"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
+                <button onclick="generateProposalCodeFast()" class="py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
             </div>
         </section>
 
-        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (Certificate of Love) แบบดั้งเดิมเป๊ะๆ -->
+        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ (สะอาด ไม่มีปุ่มรก) -->
         <section class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -86,15 +87,17 @@
                 <p><i class="fa-solid fa-calendar-days mr-1"></i> คบกันวันที่: <span id="card-start-date">00/00/0000</span> | เวลา: <span id="card-start-time">00:00</span> น.</p>
                 <p class="text-[11px] text-amber-700 font-bold">โควต้าขอคืนดี: <span id="quota-left">3</span> ครั้ง</p>
             </div>
-
-            <div class="flex gap-2 pt-1" id="couple-action-buttons">
-                <button onclick="requestReconcile()" class="flex-1 py-2 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-xl text-xs shadow-xs transition">ขอคืนดี (-1 โควต้า)</button>
-                <button onclick="openBreakupModal()" class="flex-1 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">ขอเลิกรา</button>
-            </div>
         </section>
 
-        <!-- 4. ส่วนจัดการอัลบั้มรูป, โน้ต และถังขยะ (แสดงเมื่อมีคู่รัก) -->
+        <!-- 4. แผงควบคุมคู่รัก (ปุ่มขอคืนดี & ขอเลิกรา จะอยู่ที่นี่ และถูกล็อกไว้หากยังไม่มีคู่) -->
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
+            
+            <!-- แผงปุ่มสถานะคู่รัก (ปิดใช้งานอัตโนมัติหากเงื่อนไขไม่ตรง) -->
+            <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
+                <button id="btn-reconcile" onclick="requestReconcile()" disabled class="flex-1 py-2.5 bg-amber-200 text-slate-500 font-bold rounded-2xl text-xs shadow-xs transition cursor-not-allowed opacity-60"><i class="fa-solid fa-dove mr-1"></i> ขอคืนดี (-1 โควต้า)</button>
+                <button id="btn-breakup" onclick="openBreakupModal()" disabled class="flex-1 py-2.5 bg-slate-200 text-slate-400 font-bold rounded-2xl text-xs transition cursor-not-allowed opacity-60"><i class="fa-solid fa-heart-crack mr-1"></i> ขอเลิกรา</button>
+            </div>
+
             <div class="glass-card p-5 rounded-3xl shadow-sm space-y-3">
                 <div class="flex justify-between items-center">
                     <h3 class="font-bold text-xs text-slate-800"><i class="fa-solid fa-images text-rose-500 mr-1.5"></i> อัลบั้มความทรงจำ</h3>
@@ -124,13 +127,24 @@
 
     </main>
 
-    <!-- 5. แถบแสดงระยะเวลาที่เราคบกันด้านล่างสุด (ตามดีไซน์ดั้งเดิมเป๊ะ) -->
+    <!-- 5. แถบแสดงระยะเวลาที่เราคบกันด้านล่างสุด -->
     <footer class="w-full max-w-xl mx-auto mt-6 bg-gradient-to-r from-rose-500 to-pink-500 p-4 rounded-3xl shadow-lg text-center text-white space-y-1 z-10">
         <p class="text-xs font-medium opacity-90">ระยะเวลาที่เราคบกัน</p>
         <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
     </footer>
 
-    <!-- Modals ต่างๆ -->
+    <!-- Modals -->
+    <div id="modal-proposal-code" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800">สร้างโค้ดขอเป็นแฟนสำเร็จ!</h3>
+            <div class="bg-rose-50 p-4 rounded-2xl">
+                <p id="generated-code-display" class="font-mono font-black text-2xl text-rose-600 tracking-wider">-------</p>
+            </div>
+            <p class="text-xs text-slate-500">คัดลอกโค้ดนี้ส่งให้คนพิเศษนำไปกรอกที่หน้าแรก</p>
+            <button onclick="document.getElementById('modal-proposal-code').classList.add('hidden')" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ตกลง</button>
+        </div>
+    </div>
+
     <div id="modal-notifications" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-bell text-rose-500 mr-2"></i> ศูนย์กลางแจ้งเตือน</h3>
@@ -230,6 +244,21 @@
             }
         });
 
+        // สร้างโค้ดขอเป็นแฟนแบบเร็ว (ยิงตรงผ่าน Firebase Path ทันที ไม่โหลดหนัก)
+        async function generateProposalCodeFast() {
+            const code = Math.random().toString(36).substring(2, 9).toUpperCase();
+            await dbRef.child('proposalCodes/' + code).set({
+                code: code,
+                senderId: currentUser.id,
+                senderName: currentUser.name,
+                status: 'PENDING',
+                time: new Date().toLocaleString()
+            });
+
+            document.getElementById('generated-code-display').innerText = code;
+            document.getElementById('modal-proposal-code').classList.remove('hidden');
+        }
+
         function renderNoCoupleState() {
             document.getElementById('vault-body').classList.remove('grayscale-mode');
             document.getElementById('couple-features-panel').classList.add('hidden');
@@ -243,7 +272,6 @@
             document.getElementById('card-start-date').innerText = "00/00/0000";
             document.getElementById('card-start-time').innerText = "00:00";
             document.getElementById('quota-left').innerText = "3";
-            document.getElementById('couple-action-buttons').classList.add('hidden');
 
             document.getElementById('love-timer-display').innerText = "0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที";
         }
@@ -252,8 +280,17 @@
             document.getElementById('couple-features-panel').classList.remove('hidden');
             document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
             document.getElementById('text-couple-status').className = "font-bold text-rose-600";
-            document.getElementById('couple-action-buttons').classList.remove('hidden');
             
+            // เงื่อนไขเปิดใช้งานปุ่มขอคืนดี & ขอเลิกรา: ต้องมีคู่รักแล้วเท่านั้น
+            const btnReconcile = document.getElementById('btn-reconcile');
+            const btnBreakup = document.getElementById('btn-breakup');
+            
+            btnReconcile.disabled = false;
+            btnReconcile.className = "flex-1 py-2.5 bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer opacity-100";
+            
+            btnBreakup.disabled = false;
+            btnBreakup.className = "flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl text-xs transition cursor-pointer opacity-100";
+
             const quota = couple.reconcileQuota ?? 3;
             document.getElementById('quota-left').innerText = quota;
             
@@ -281,7 +318,6 @@
                 }
             }, 1000);
 
-            const partnerName = couple.user1Id === currentUser.id ? couple.user2Name : couple.user1Name;
             document.getElementById('profile-icon-box').innerHTML = '<i class="fa-solid fa-heart text-rose-500 text-lg"></i>';
             document.getElementById('display-couple-id').innerText = couple.id;
             document.getElementById('card-user1-name').innerText = couple.user1Name;
