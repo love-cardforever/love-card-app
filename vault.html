@@ -36,7 +36,7 @@
             </div>
         </header>
 
-        <!-- 2. ส่วนโปรไฟล์ & ปุ่มสร้างโค้ดขอเป็นแฟน (จะซ่อนอัตโนมัติเมื่อมีแฟนแล้ว) -->
+        <!-- 2. ส่วนโปรไฟล์ & ปุ่มจัดการสถานะโสด (สร้างโค้ด / ใส่โค้ด - จะซ่อนอัตโนมัติเมื่อมีแฟนแล้ว) -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -48,9 +48,15 @@
                 </div>
                 <button onclick="openDeleteAccountModal()" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-[11px] font-bold rounded-xl shadow transition"><i class="fa-solid fa-user-slash mr-1"></i> ลบบัญชี</button>
             </div>
-            <div id="profile-action-buttons" class="grid grid-cols-2 gap-2 pt-1">
-                <button onclick="openNotificationsModal()" class="py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100 shadow-xs"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
-                <button id="btn-create-proposal" onclick="generateProposalCodeFast()" class="py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
+            
+            <div class="pt-1">
+                <button onclick="openNotificationsModal()" class="w-full py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold rounded-2xl transition flex items-center justify-center gap-1.5 border border-rose-100 shadow-xs mb-2"><i class="fa-solid fa-bell"></i> แจ้งเตือน (<span id="notif-count">0</span>)</button>
+            </div>
+
+            <!-- กลุ่มปุ่มจัดการสถานะโสด (จะหายไปทันทีเมื่อมีแฟนแล้ว) -->
+            <div id="single-action-panel" class="grid grid-cols-2 gap-2 pt-1">
+                <button onclick="generateProposalCodeFast()" class="py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-key"></i> สร้างโค้ดขอเป็นแฟน</button>
+                <button onclick="openAcceptProposalModal()" class="py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-2xl shadow transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-heart-circle-check"></i> ใส่โค้ดขอเป็นแฟน</button>
             </div>
         </section>
 
@@ -139,8 +145,21 @@
             <div class="bg-rose-50 p-4 rounded-2xl">
                 <p id="generated-code-display" class="font-mono font-black text-2xl text-rose-600 tracking-wider">-------</p>
             </div>
-            <p class="text-xs text-slate-500">คัดลอกโค้ดนี้ส่งให้คนพิเศษนำไปกรอกที่หน้าแรก</p>
+            <p class="text-xs text-slate-500">คัดลอกโค้ดนี้ส่งให้คนพิเศษนำไปกรอก</p>
             <button onclick="document.getElementById('modal-proposal-code').classList.add('hidden')" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ตกลง</button>
+        </div>
+    </div>
+
+    <!-- Modal ใส่โค้ดขอเป็นแฟนแบบลัดใน Vault -->
+    <div id="modal-accept-proposal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800">กรอกโค้ดขอเป็นแฟน</h3>
+            <p class="text-xs text-slate-500">ใส่โค้ดที่ได้รับมาจากคนพิเศษเพื่อตอบรับความสัมพันธ์</p>
+            <input type="text" id="input-proposal-code-vault" placeholder="กรอกโค้ดที่นี่..." class="w-full p-3 text-center uppercase font-mono font-bold text-sm rounded-xl border border-slate-200 outline-none">
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('modal-accept-proposal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="submitAcceptProposalVault()" class="flex-1 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">ตอบรับเป็นแฟน</button>
+            </div>
         </div>
     </div>
 
@@ -235,12 +254,10 @@
             const couples = db.couples || [];
             let myCouple = couples.find(c => c.id === currentUser.coupleId);
 
-            // ตรวจสอบเงื่อนไขวันหมดอายุ 30 วันหลังจากเลิกกัน
             if (myCouple && myCouple.status === 'BROKEN' && myCouple.breakupTimestamp) {
                 const now = Date.now();
                 const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
                 if (now - myCouple.breakupTimestamp > thirtyDaysMs) {
-                    // หากเกิน 30 วัน ให้ลบบัตรและล้าง coupleId ของผู้ใช้ทั้งสอง
                     db.couples = couples.filter(c => c.id !== myCouple.id);
                     const u1 = users.find(u => u.id === myCouple.user1Id);
                     const u2 = users.find(u => u.id === myCouple.user2Id);
@@ -273,14 +290,90 @@
             document.getElementById('modal-proposal-code').classList.remove('hidden');
         }
 
+        function openAcceptProposalModal() {
+            document.getElementById('modal-accept-proposal').classList.remove('hidden');
+        }
+
+        async function submitAcceptProposalVault() {
+            const code = document.getElementById('input-proposal-code-vault').value.trim().toUpperCase();
+            if (!code) {
+                alert('กรุณากรอกโค้ดขอเป็นแฟน');
+                return;
+            }
+
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const proposalObj = db.proposalCodes?.[code];
+
+            if (!proposalObj || proposalObj.status !== 'PENDING') {
+                alert('โค้ดนี้ไม่ถูกต้องหรือถูกใช้งานไปแล้ว');
+                return;
+            }
+
+            if (proposalObj.senderId === currentUser.id) {
+                alert('คุณไม่สามารถใช้โค้ดของตัวเองได้');
+                return;
+            }
+
+            const sender = (db.users || []).find(u => u.id === proposalObj.senderId);
+            if (!sender) {
+                alert('ไม่พบผู้สร้างโค้ดนี้ในระบบ');
+                return;
+            }
+
+            const coupleId = `${proposalObj.senderId}#${currentUser.id}`;
+            const today = new Date();
+            const startDateStr = today.toISOString().split('T')[0];
+            const startTimeStr = today.toTimeString().substring(0, 5);
+
+            if (!db.couples) db.couples = [];
+            
+            // ตรวจสอบว่าเคยมีคู่นี้อยู่แล้วหรือไม่ (กรณีเคยเลิกแล้วกลับมาใช้โค้ดเดิมหรือสร้างใหม่)
+            let existingCouple = db.couples.find(c => c.id === coupleId);
+            if (existingCouple) {
+                existingCouple.status = 'ACTIVE';
+                existingCouple.reconcileQuota = 3;
+                delete existingCouple.breakupTimestamp;
+            } else {
+                db.couples.push({
+                    id: coupleId,
+                    user1Id: proposalObj.senderId,
+                    user1Name: proposalObj.senderName,
+                    user2Id: currentUser.id,
+                    user2Name: currentUser.name,
+                    startDate: startDateStr,
+                    startTime: startTimeStr,
+                    status: 'ACTIVE',
+                    reconcileQuota: 3,
+                    photos: [],
+                    notes: [],
+                    trashPhotos: [],
+                    trashNotes: []
+                });
+            }
+
+            sender.coupleId = coupleId;
+            currentUser.coupleId = coupleId;
+
+            if (!sender.notifications) sender.notifications = [];
+            sender.notifications.push({ id: Date.now(), message: `${currentUser.name} ตอบรับคำขอเป็นแฟนของคุณแล้ว!`, time: new Date().toLocaleString(), read: false });
+
+            // ลบโค้ดทิ้งหลังใช้งาน
+            delete db.proposalCodes[code];
+
+            await dbRef.set(db);
+            document.getElementById('modal-accept-proposal').classList.add('hidden');
+            alert('ยินดีด้วย! คุณตกลงเป็นแฟนกันเรียบร้อยแล้ว');
+        }
+
         function renderNoCoupleState() {
             document.getElementById('vault-body').classList.remove('grayscale-mode');
             document.getElementById('couple-features-panel').classList.add('hidden');
             document.getElementById('text-couple-status').innerText = "ยังไม่มีคู่รัก";
             document.getElementById('text-couple-status').className = "font-bold text-slate-500";
             
-            // แสดงปุ่มสร้างโค้ดขอเป็นแฟนเมื่อยังไม่มีคู่
-            document.getElementById('btn-create-proposal').style.display = 'flex';
+            // แสดงปุ่มสร้างโค้ดและใส่โค้ดเมื่อยังไม่มีคู่
+            document.getElementById('single-action-panel').style.display = 'grid';
             
             document.getElementById('profile-icon-box').innerHTML = '<span class="text-rose-400 font-bold">--</span>';
             document.getElementById('display-couple-id').innerText = "0000#000000";
@@ -300,14 +393,13 @@
             
             const isBroken = couple.status === 'BROKEN';
             
-            // ซ่อนปุ่มสร้างโค้ดขอเป็นแฟนทันทีเมื่อมีคู่แล้ว (ไม่ว่าจะ ACTIVE หรือ BROKEN)
-            document.getElementById('btn-create-proposal').style.display = 'none';
+            // ซ่อนปุ่มสร้างโค้ดและใส่โค้ดทันทีเมื่อมีแฟนแล้ว (ไม่ว่าจะ ACTIVE หรือ BROKEN)
+            document.getElementById('single-action-panel').style.display = 'none';
 
             if (isBroken) {
                 document.getElementById('text-couple-status').innerText = "เลิกรากันแล้ว (รอการคืนดีใน 30 วัน)";
                 document.getElementById('text-couple-status').className = "font-bold text-amber-600";
                 
-                // คำนวณวันหมดอายุเหลืออีกกี่วัน
                 const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
                 const timeLeft = thirtyDaysMs - (Date.now() - (couple.breakupTimestamp || Date.now()));
                 const daysLeft = Math.max(0, Math.ceil(timeLeft / (1000 * 60 * 60 * 24)));
@@ -589,7 +681,7 @@
                 }
                 couple.reconcileQuota = quota - 1;
                 couple.status = 'ACTIVE'; 
-                delete couple.breakupTimestamp; // ล้างเวลาหมดอายุ 30 วันออกเมื่อคืนดีสำเร็จ
+                delete couple.breakupTimestamp; 
                 
                 const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
                 const partner = (db.users || []).find(u => u.id === partnerId);
@@ -613,7 +705,7 @@
             const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
             if (couple) {
                 couple.status = 'BROKEN'; 
-                couple.breakupTimestamp = Date.now(); // บันทึกเวลาเริ่มต้นนับถอยหลัง 30 วัน
+                couple.breakupTimestamp = Date.now(); 
                 
                 const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
                 const partner = (db.users || []).find(u => u.id === partnerId);
