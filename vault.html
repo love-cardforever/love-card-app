@@ -13,6 +13,8 @@
         body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%); min-height: 100vh; }
         .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
         .grayscale-mode { filter: grayscale(100%); transition: filter 1s ease-in-out; }
+        .card-broken-effect { border: 3px dashed #ef4444 !important; background: rgba(254, 226, 226, 0.6) !important; position: relative; }
+        .card-broken-effect::before { content: "⚡ บัตรมีรอยร้าว (คู่รักลบบัญชี/ถูกแบน) ⚡"; position: absolute; top: 10px; right: 15px; font-size: 10px; font-weight: bold; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 999px; }
         @keyframes textDissolve { 0% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(10px); transform: translateY(-10px) scale(0.9); } }
         .dissolve-effect { animation: textDissolve 1.5s forwards ease-in-out; }
         @keyframes popUpFade { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: scale(1.5); pointer-events: none; } }
@@ -23,7 +25,6 @@
 </head>
 <body id="vault-body" class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen relative">
 
-    <!-- เอฟเฟคโควต้าตัวใหญ่ๆ -->
     <div id="quota-giant-effect" class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none hidden">
         <div class="bg-rose-600/90 text-white px-10 py-8 rounded-3xl shadow-2xl text-center popup-fade-effect border-4 border-white">
             <p class="text-lg font-bold mb-1">โควต้าขอคืนดีเหลือ</p>
@@ -32,7 +33,6 @@
         </div>
     </div>
 
-    <!-- ป๊อปอัพแอนิเมชั่นฉีกบัตรทิ้ง -->
     <div id="tear-card-overlay" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex flex-col items-center justify-center hidden">
         <div id="card-to-tear" class="w-80 p-6 bg-white rounded-3xl shadow-2xl text-center space-y-4 border-4 border-red-500">
             <div class="text-red-500 text-5xl"><i class="fa-solid fa-heart-crack"></i></div>
@@ -43,7 +43,6 @@
 
     <main class="w-full max-w-xl mx-auto flex flex-col space-y-4">
         
-        <!-- 1. ส่วนหัว -->
         <header class="w-full glass-card p-4 rounded-3xl shadow-sm flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md"><i class="fa-solid fa-heart text-lg"></i></div>
@@ -58,7 +57,6 @@
             </div>
         </header>
 
-        <!-- 2. ส่วนโปรไฟล์ & เปลี่ยนรูปโปรไฟล์ -->
         <section class="w-full glass-card p-5 rounded-3xl shadow-sm space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-3">
@@ -85,8 +83,8 @@
             </div>
         </section>
 
-        <!-- 3. บัตรประจำตัวคู่รักออนไลน์ -->
-        <section class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden">
+        <!-- บัตรประจำตัวคู่รักออนไลน์ -->
+        <section id="couple-card-section" class="w-full glass-card p-6 rounded-3xl shadow-md space-y-5 border border-rose-200/60 relative overflow-hidden transition-all duration-500">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full bg-rose-500 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-certificate"></i></div>
@@ -126,7 +124,7 @@
             </div>
         </section>
 
-        <!-- 4. แผงควบคุมคู่รัก -->
+        <!-- แผงควบคุมคู่รัก -->
         <div id="couple-features-panel" class="w-full space-y-4 hidden">
             
             <div class="glass-card p-4 rounded-3xl shadow-sm flex gap-3">
@@ -162,7 +160,6 @@
 
     </main>
 
-    <!-- 5. แถบแสดงระยะเวลาที่เราคบกันด้านล่างสุด -->
     <footer class="w-full max-w-xl mx-auto mt-6 bg-gradient-to-r from-rose-500 to-pink-500 p-4 rounded-3xl shadow-lg text-center text-white space-y-1 z-10">
         <p class="text-xs font-medium opacity-90" id="timer-title">ระยะเวลาที่เราคบกัน</p>
         <div id="love-timer-display" class="font-mono text-base md:text-lg font-bold tracking-wide">0 ปี 0 เดือน 0 วัน 0 ชม. 0 นาที 0 วินาที</div>
@@ -341,17 +338,37 @@
                 localStorage.setItem('current_user', JSON.stringify(currentUser));
             }
 
-            if (myCouple && myCouple.status === 'BROKEN' && myCouple.breakupTimestamp) {
-                const now = Date.now();
-                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-                if (now - myCouple.breakupTimestamp > thirtyDaysMs) {
-                    db.couples = couples.filter(c => c.id !== myCouple.id);
-                    const u1 = users.find(u => u.id === myCouple.user1Id);
-                    const u2 = users.find(u => u.id === myCouple.user2Id);
-                    if (u1) u1.coupleId = null;
-                    if (u2) u2.coupleId = null;
+            if (myCouple) {
+                // ตรวจสอบว่าคู่รักถูกลบบัญชีไปแล้วหรือไม่ (ไม่พบ user ใน database)
+                const partnerId = myCouple.user1Id === currentUser.id ? myCouple.user2Id : myCouple.user1Id;
+                const partnerObj = users.find(u => u.id === partnerId);
+
+                if (!partnerObj && myCouple.status !== 'PARTNER_DELETED') {
+                    // แฟนถูกลบบัญชี/ถูกแบน อัปเดตสถานะทันที
+                    myCouple.status = 'PARTNER_DELETED';
+                    myCouple.deletedTimestamp = Date.now();
+
+                    // แจ้งเตือนไปยังผู้ใช้ที่เหลืออยู่
+                    if (!currentUser.notifications) currentUser.notifications = [];
+                    currentUser.notifications.push({
+                        id: Date.now(),
+                        message: `🚨 คู่รักของคุณได้ลบบัญชีหรืออาจจะถูกแบนด้วยเหตุผลบางประการ! บัตรถูกจำกัดเวลา 10 นาที`,
+                        time: new Date().toLocaleString(),
+                        read: false
+                    });
                     await dbRef.set(db);
-                    return;
+                }
+
+                if (myCouple.status === 'PARTNER_DELETED' && myCouple.deletedTimestamp) {
+                    const tenMinutesMs = 10 * 60 * 1000;
+                    const elapsed = Date.now() - myCouple.deletedTimestamp;
+                    if (elapsed > tenMinutesMs) {
+                        // ครบ 10 นาที ล้างบัตรทิ้งอัตโนมัติ
+                        db.couples = couples.filter(c => c.id !== myCouple.id);
+                        currentUser.coupleId = null;
+                        await dbRef.set(db);
+                        return;
+                    }
                 }
             }
 
@@ -439,6 +456,7 @@
                 existingCouple.status = 'ACTIVE';
                 existingCouple.reconcileQuota = 3;
                 delete existingCouple.breakupTimestamp;
+                delete existingCouple.deletedTimestamp;
             } else {
                 db.couples.push({
                     id: coupleId,
@@ -473,6 +491,8 @@
         }
 
         function renderNoCoupleState() {
+            const cardSec = document.getElementById('couple-card-section');
+            cardSec.classList.remove('card-broken-effect', 'opacity-60');
             document.getElementById('vault-body').classList.remove('grayscale-mode');
             document.getElementById('couple-features-panel').classList.add('hidden');
             document.getElementById('text-couple-status').innerText = "ยังไม่มีคู่รัก";
@@ -498,6 +518,7 @@
             document.getElementById('couple-features-panel').classList.remove('hidden');
             
             const isBroken = couple.status === 'BROKEN';
+            const isPartnerDeleted = couple.status === 'PARTNER_DELETED';
             document.getElementById('single-action-panel').style.display = 'none';
 
             const actionContainer = document.getElementById('action-buttons-container');
@@ -507,13 +528,50 @@
             const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
             const partnerObj = users.find(u => u.id === partnerId);
             
-            // ตรวจสอบว่ามีคำขอที่ค้างรอการตอบรับอยู่หรือไม่ เพื่อป้องกันการกดซ้ำซ้อน
             const partnerNotifs = partnerObj?.notifications || [];
             const hasPendingBreakup = partnerNotifs.some(n => n.type === 'BREAKUP_REQUEST' && !n.handled);
             const hasPendingReconcile = partnerNotifs.some(n => n.type === 'RECONCILE_REQUEST' && !n.handled);
             const hasPendingCutoff = partnerNotifs.some(n => n.type === 'CUTOFF_REQUEST' && !n.handled);
 
-            if (isBroken) {
+            const cardSec = document.getElementById('couple-card-section');
+
+            if (isPartnerDeleted) {
+                // บัตรมีรอยร้าว สีจางลง
+                cardSec.classList.add('card-broken-effect', 'opacity-70');
+                document.getElementById('text-couple-status').innerText = "คู่รักลบบัญชี / ถูกแบน";
+                document.getElementById('text-couple-status').className = "font-bold text-red-600";
+                
+                // ปุ่มใต้บัตรกรณีอีกฝ่ายลบบัญชี: ติดต่อแอดมิน หรือ ตัดขาดความสัมพันธ์
+                actionContainer.innerHTML = `
+                    <button onclick="openPromptPayModal()" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-headset mr-1"></i> ติดต่อแอดมิน</button>
+                    <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ตัดขาดความสัมพันธ์</button>
+                `;
+
+                const tenMinutesMs = 10 * 60 * 1000;
+                const timeLeft = tenMinutesMs - (Date.now() - (couple.deletedTimestamp || Date.now()));
+                const minsLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60)));
+                const secsLeft = Math.max(0, Math.floor((timeLeft / 1000) % 60));
+
+                document.getElementById('card-status-badge').innerText = `บัตรหมดอายุใน ${minsLeft} นาที`;
+                document.getElementById('timer-title').innerText = "นับถอยหลังล้างบัตรอัตโนมัติ";
+                document.getElementById('love-timer-display').innerText = `เหลือเวลาอีก ${minsLeft} นาที ${secsLeft} วินาที`;
+                if (timerInterval) clearInterval(timerInterval);
+
+                timerInterval = setInterval(() => {
+                    const elapsed = Date.now() - (couple.deletedTimestamp || Date.now());
+                    const rem = tenMinutesMs - elapsed;
+                    if (rem <= 0) {
+                        clearInterval(timerInterval);
+                        window.location.reload();
+                    } else {
+                        const m = Math.floor(rem / (1000 * 60));
+                        const s = Math.floor((rem / 1000) % 60);
+                        document.getElementById('love-timer-display').innerText = `เหลือเวลาอีก ${m} นาที ${s} วินาที`;
+                    }
+                }, 1000);
+
+            } else if (isBroken) {
+                cardSec.classList.remove('card-broken-effect', 'opacity-70');
                 document.getElementById('text-couple-status').innerText = "เลิกรากันแล้ว (รอการคืนดีใน 30 วัน)";
                 document.getElementById('text-couple-status').className = "font-bold text-amber-600";
                 document.getElementById('vault-body').classList.add('grayscale-mode');
@@ -545,6 +603,7 @@
                 document.getElementById('love-timer-display').innerText = `เหลือเวลาขอคืนดีอีก ${daysLeft} วัน`;
                 if (timerInterval) clearInterval(timerInterval);
             } else {
+                cardSec.classList.remove('card-broken-effect', 'opacity-70');
                 document.getElementById('text-couple-status').innerText = "มีคู่รักแล้ว";
                 document.getElementById('text-couple-status').className = "font-bold text-rose-600";
                 document.getElementById('vault-body').classList.remove('grayscale-mode');
@@ -666,7 +725,7 @@
             }
         }
 
-        function renderNotificationsList(notifs, db) {
+        function renderNotificationsList(notifs) {
             const container = document.getElementById('notifications-list-container');
             if (notifs.length === 0) {
                 container.innerHTML = '<p class="text-center text-slate-400 py-4">ไม่มีการแจ้งเตือน</p>';
@@ -722,7 +781,7 @@
         function openPromptPayModal() { document.getElementById('modal-promptpay').classList.remove('hidden'); }
         function closePromptPayModal() { document.getElementById('modal-promptpay').classList.add('hidden'); }
 
-        function uploadPhoto(e) {
+        async function uploadPhoto(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -736,7 +795,7 @@
                     couple.photos.push({ id: Date.now(), url: base64Url, uploaderId: currentUser.id, uploaderName: currentUser.name });
                     await dbRef.set(db);
                 } else {
-                    alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถอัปโหลดรูปได้ กรุณาขอคืนดีก่อน');
+                    alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถอัปโหลดรูปได้');
                 }
             };
             reader.readAsDataURL(file);
@@ -784,7 +843,7 @@
                 await dbRef.set(db);
                 document.getElementById('note-input-text').value = '';
             } else {
-                alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถเขียนโน้ตได้ กรุณาขอคืนดีก่อน');
+                alert('สถานะความสัมพันธ์ถูกระงับ ไม่สามารถเขียนโน้ตได้');
             }
         }
 
@@ -851,7 +910,6 @@
             const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 if (!db.adminNotifications) db.adminNotifications = [];
-                // ตรวจสอบไม่ให้ส่งซ้ำซ้อน
                 const alreadyRequested = db.adminNotifications.some(an => an.coupleId === coupleId && an.userId === currentUser.id);
                 if (alreadyRequested) {
                     alert('คุณได้ส่งคำขอโควต้าไปแล้ว กรุณารอแอดมินตรวจสอบ');
@@ -883,7 +941,6 @@
                 const partner = (db.users || []).find(u => u.id === partnerId);
                 if (partner) {
                     if (!partner.notifications) partner.notifications = [];
-                    // เช็คว่ามีคำขอเลิกราค้างอยู่แล้วหรือไม่
                     const hasPending = partner.notifications.some(n => n.type === 'BREAKUP_REQUEST' && !n.handled);
                     if (hasPending) {
                         alert('มีคำขอเลิกราส่งไปแล้ว กำลังรออีกฝ่ายตอบรับ');
@@ -1030,4 +1087,192 @@
                 currentCutoffStep++;
                 updateCutoffWarning7Content();
             } else {
-                document.getElementById('modal-cutoff-warning-
+                document.getElementById('modal-cutoff-warning-7').classList.add('hidden');
+                executeDirectCutoff(pendingCutoffCoupleId);
+            }
+        }
+
+        function cancelCutoffProcess() {
+            document.getElementById('modal-cutoff-warning-7').classList.add('hidden');
+            pendingCutoffCoupleId = null;
+        }
+
+        async function executeDirectCutoff(coupleId) {
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === coupleId);
+
+            const overlay = document.getElementById('tear-card-overlay');
+            const cardEl = document.getElementById('card-to-tear');
+            overlay.classList.remove('hidden');
+            cardEl.classList.add('tear-animation');
+
+            setTimeout(async () => {
+                if (couple) {
+                    const u1 = (db.users || []).find(u => u.id === couple.user1Id);
+                    const u2 = (db.users || []).find(u => u.id === couple.user2Id);
+                    if (u1) u1.coupleId = null;
+                    if (u2) u2.coupleId = null;
+                }
+                db.couples = (db.couples || []).filter(c => c.id !== coupleId);
+                if (db.adminNotifications) {
+                    db.adminNotifications = db.adminNotifications.filter(an => an.coupleId !== coupleId);
+                }
+
+                await dbRef.set(db);
+                overlay.classList.add('hidden');
+                cardEl.classList.remove('tear-animation');
+
+                alert('บัตรคู่รักถูกฉีกทำลายและล้างข้อมูลเรียบร้อยแล้ว');
+                window.location.reload();
+            }, 2200);
+        }
+
+        async function handleCutoffResponse(coupleId, timestamp, accepted) {
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            
+            currentUser.notifications.forEach(n => {
+                if (n.timestamp === timestamp) n.handled = true;
+            });
+
+            if (!accepted) {
+                await dbRef.set(db);
+                alert('คุณปฏิเสธการตัดขาดความสัมพันธ์');
+                closeNotificationsModal();
+                return;
+            }
+
+            closeNotificationsModal();
+            const overlay = document.getElementById('tear-card-overlay');
+            const cardEl = document.getElementById('card-to-tear');
+            overlay.classList.remove('hidden');
+            cardEl.classList.add('tear-animation');
+
+            setTimeout(async () => {
+                const couple = (db.couples || []).find(c => c.id === coupleId);
+                if (couple) {
+                    const u1 = (db.users || []).find(u => u.id === couple.user1Id);
+                    const u2 = (db.users || []).find(u => u.id === couple.user2Id);
+                    if (u1) u1.coupleId = null;
+                    if (u2) u2.coupleId = null;
+                }
+                db.couples = (db.couples || []).filter(c => c.id !== coupleId);
+                if (db.adminNotifications) {
+                    db.adminNotifications = db.adminNotifications.filter(an => an.coupleId !== coupleId);
+                }
+
+                await dbRef.set(db);
+                overlay.classList.add('hidden');
+                cardEl.classList.remove('tear-animation');
+
+                alert('บัตรคู่รักถูกฉีกทำลายและล้างข้อมูลเรียบร้อยแล้ว');
+                window.location.reload();
+            }, 2200);
+        }
+
+        async function requestReconcile() {
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
+            if (couple) {
+                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
+                const partner = (db.users || []).find(u => u.id === partnerId);
+                if (partner) {
+                    if (!partner.notifications) partner.notifications = [];
+                    const hasPending = partner.notifications.some(n => n.type === 'RECONCILE_REQUEST' && !n.handled);
+                    if (hasPending) {
+                        alert('มีคำขอคืนดีส่งไปแล้ว กำลังรออีกฝ่ายตอบรับ');
+                        return;
+                    }
+                    partner.notifications.push({
+                        id: Date.now(),
+                        timestamp: Date.now(),
+                        type: 'RECONCILE_REQUEST',
+                        coupleId: couple.id,
+                        message: `${currentUser.name} ส่งคำขอคืนดี คุณจะรับคำขอคืนดีหรือไม่?`,
+                        time: new Date().toLocaleString(),
+                        read: false,
+                        handled: false
+                    });
+                    await dbRef.set(db);
+                    alert('ส่งคำขอคืนดีไปยังแฟนของคุณแล้ว');
+                }
+            }
+        }
+
+        async function handleReconcileRequest(coupleId, timestamp, accepted) {
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === coupleId);
+            
+            currentUser.notifications.forEach(n => {
+                if (n.timestamp === timestamp) n.handled = true;
+            });
+
+            if (accepted && couple) {
+                const quota = couple.reconcileQuota ?? 3;
+                if (quota <= 0) {
+                    alert('โควต้าขอคืนดีหมดลงแล้ว!');
+                    await dbRef.set(db);
+                    return;
+                }
+                const newQuota = quota - 1;
+                couple.reconcileQuota = newQuota;
+                couple.status = 'ACTIVE';
+                delete couple.breakupTimestamp;
+
+                const partnerId = couple.user1Id === currentUser.id ? couple.user2Id : couple.user1Id;
+                const partner = (db.users || []).find(u => u.id === partnerId);
+                if (partner) {
+                    if (!partner.notifications) partner.notifications = [];
+                    partner.notifications.push({ id: Date.now(), message: `แฟนของคุณตอบรับคำขอคืนดีแล้ว ความสัมพันธ์กลับมาปกติ!`, time: new Date().toLocaleString(), read: false });
+                }
+
+                await dbRef.set(db);
+                closeNotificationsModal();
+
+                const giantEl = document.getElementById('quota-giant-effect');
+                document.getElementById('giant-quota-number').innerText = newQuota;
+                giantEl.classList.remove('hidden');
+                setTimeout(() => {
+                    giantEl.classList.add('hidden');
+                }, 2500);
+
+            } else {
+                await dbRef.set(db);
+                alert('คุณปฏิเสธคำขอคืนดี');
+                closeNotificationsModal();
+            }
+        }
+
+        function openDeleteAccountModal() { document.getElementById('modal-delete-account').classList.remove('hidden'); }
+        function closeDeleteAccountModal() { document.getElementById('modal-delete-account').classList.add('hidden'); }
+
+        async function confirmDeleteAccount() {
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+
+            if (currentUser.coupleId) {
+                const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
+                if (couple) {
+                    couple.status = 'BROKEN';
+                    couple.breakupTimestamp = Date.now();
+                }
+            }
+
+            db.users = (db.users || []).filter(u => u.id !== currentUser.id);
+            await dbRef.set(db);
+
+            localStorage.clear();
+            alert('บัญชีของคุณถูกลบถาวรเรียบร้อย');
+            window.location.href = 'index.html';
+        }
+
+        function logoutVault() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
