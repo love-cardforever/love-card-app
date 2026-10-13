@@ -22,7 +22,6 @@
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
         
-        /* เอฟเฟคเรืองแสงสีทองทั่วจอ */
         @keyframes goldGlow { 0% { background-color: rgba(251, 191, 36, 0); } 50% { background-color: rgba(251, 191, 36, 0.4); } 100% { background-color: rgba(251, 191, 36, 0); } }
         .gold-flash { animation: goldGlow 1.5s ease-in-out; }
     </style>
@@ -33,8 +32,8 @@
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart"><i class="fa-solid fa-heart"></i></div>
             <div>
-                <h1 class="font-bold text-base text-slate-800">Forever Love System</h1>
-                <p class="text-[11px] text-rose-500 font-medium">ระบบขอเป็นแฟน & ความทรงจำคู่รักเรียลไทม์</p>
+                <h1 class="font-bold text-base text-slate-800">Forever Love card</h1>
+                <p class="text-[11px] text-rose-500 font-medium">ระบบขอเป็นแฟน & ความทรงจำคู่รัก</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -59,7 +58,7 @@
             <form onsubmit="handleLogin(event)" class="space-y-4 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">User ID ของคุณ</label>
-                    <input type="text" id="login-id" autocomplete="off" required placeholder="เช่น 11202350A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase bg-white/50">
+                    <input type="text" id="login-id" autocomplete="off" required placeholder="เช่น 11202350A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
@@ -88,14 +87,14 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ (ติ๊กเลือก)</label>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> ชาย (11)</label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> เพศชาย </label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> เพศหญิง </label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ </label>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2002)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2000)</label>
                         <input type="number" id="reg-birthyear" autocomplete="off" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                     </div>
                     <div>
@@ -112,10 +111,10 @@
         </section>
     </main>
 
-    <!-- 1. Modal ใส่โค้ดขอเป็นแฟน -->
+    <!-- Modal ต่างๆ -->
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
+            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ด </h3>
             <input type="text" id="input-proposal-code" autocomplete="off" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
                 <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
@@ -124,7 +123,6 @@
         </div>
     </div>
 
-    <!-- 2. Modal ถามยอมรับหรือปฏิเสธคำขอ -->
     <div id="modal-proposal-choice" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl animate-heart"><i class="fa-solid fa-heart"></i></div>
@@ -136,7 +134,6 @@
         </div>
     </div>
 
-    <!-- 3. Modal ปฏิเสธแบบวนซ้ำ 5 รอบ -->
     <div id="modal-reject-form" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
             <h3 id="reject-warning-title" class="font-bold text-base text-rose-600">แน่ใจแล้วหรอที่จะปฏิเสธ? 😢</h3>
@@ -152,18 +149,15 @@
         </div>
     </div>
 
-    <!-- 4. Modal สแกนลายนิ้วมือแบบ "กดค้าง" (Press & Hold) -->
     <div id="modal-fingerprint" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl text-white">
             <h3 id="fp-title" class="font-bold text-base text-rose-400">กรุณากดนิ้วค้างไว้เพื่อยืนยัน</h3>
             <p id="fp-subtitle" class="text-xs text-slate-400">แตะและแช่นิ้วไว้ที่ไอคอนจนกว่าจะเต็ม 100%</p>
             
-            <!-- ปุ่มสแกนลายนิ้วมือแบบกดค้าง -->
             <div class="relative w-28 h-28 mx-auto flex items-center justify-center cursor-pointer select-none"
                  onmousedown="startFingerprintHold(event)" onmouseup="cancelFingerprintHold(event)" onmouseleave="cancelFingerprintHold(event)"
                  ontouchstart="startFingerprintHold(event)" ontouchend="cancelFingerprintHold(event)">
                 
-                <!-- วงกลม SVG วิ่งรอบสถานะ -->
                 <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="44" stroke="#334155" stroke-width="6" fill="none" />
                     <circle id="fp-progress-circle" cx="50" cy="50" r="44" stroke="#f43f5e" stroke-width="6" fill="none"
@@ -179,7 +173,6 @@
         </div>
     </div>
 
-    <!-- 5. Modal กรอกชื่อเหมือนสมัครบัญชีใหม่ หลังสแกนนิ้วครั้งที่ 1 -->
     <div id="modal-accept-register" class="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md space-y-4 shadow-2xl">
             <div class="text-center">
@@ -189,9 +182,9 @@
             <div class="space-y-3 pt-2">
                 <input type="text" id="acc-name" autocomplete="off" placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 <div class="grid grid-cols-3 gap-2">
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> ชาย (11)</label>
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> เพศชาย </label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> เพศหญิง </label>
+                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ </label>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <input type="number" id="acc-birthyear" autocomplete="off" placeholder="ปีเกิด ค.ศ. เช่น 2002" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
@@ -203,7 +196,6 @@
         </div>
     </div>
 
-    <!-- Modals พื้นฐานอื่นๆ -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
@@ -225,7 +217,7 @@
 
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">สนับสนุนค่าระบบ</h3>
+            <h3 class="font-bold text-base text-slate-800">สนับสนุนค่าข้าว</h3>
             <div class="text-xs text-slate-700 bg-rose-50 p-4 rounded-2xl text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
                 <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600">208-5886021</span></p>
@@ -285,9 +277,17 @@
             "นี่คือรอบสุดท้ายแล้วนะ! ถ้าใจแข็งจริงก็เชิญกดปุ่มแดงข้างล่างเลย 🛑"
         ];
 
-        // ตัวแปรสำหรับระบบกดค้างสแกนนิ้ว
         let holdInterval = null;
         let holdProgress = 0;
+
+        // ซ่อนโค้ดรหัสผ่านแอดมินและผู้สร้างไว้ในรูปแบบเข้ารหัสอย่างง่ายเพื่อความปลอดภัย
+        const _sysAuth = {
+            aUsr: "QWRtaW4xMjEw", 
+            aPwd: "QWRtaW4xMjEwKw==", 
+            cUsr: "Y3JlYXRsdXY=", 
+            cPwd: "Y3JlYXRsdXYr" 
+        };
+        const _decode = (s) => atob(s);
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -326,8 +326,16 @@
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            if (idInput === '0000' && passInput === '0000') { window.location.href = 'admin.html'; return; }
-            if (idInput === '1111' && passInput === '1111') { window.location.href = 'creator.html'; return; }
+            // ตรวจสอบข้อมูลแอดมิน (ซ่อนรหัสผ่าน)
+            if (idInput === _decode(_sysAuth.aUsr) && passInput === _decode(_sysAuth.aPwd)) { 
+                window.location.href = 'admin.html'; 
+                return; 
+            }
+            // ตรวจสอบข้อมูลผู้สร้าง (ซ่อนรหัสผ่าน)
+            if (idInput === _decode(_sysAuth.cUsr) && passInput === _decode(_sysAuth.cPwd)) { 
+                window.location.href = 'creator.html'; 
+                return; 
+            }
 
             const snapshot = await dbRef.once('value');
             const val = snapshot.val() || {};
@@ -414,7 +422,6 @@
             document.getElementById('modal-fingerprint').classList.remove('hidden');
         }
 
-        // --- ระบบกดค้างสแกนนิ้ว (Press & Hold Logic) ---
         function resetFingerprintHoldUI() {
             holdProgress = 0;
             document.getElementById('fp-progress-circle').style.strokeDashoffset = 276;
@@ -430,7 +437,7 @@
             const totalCircumference = 276;
 
             holdInterval = setInterval(() => {
-                holdProgress += 2; // ความเร็วในการสะสมเปอร์เซ็นต์
+                holdProgress += 2;
                 let offset = totalCircumference - (holdProgress / 100) * totalCircumference;
                 circle.style.strokeDashoffset = offset;
                 statusText.innerText = `กำลังสแกน... (${Math.min(holdProgress, 100)}%)`;
@@ -449,7 +456,7 @@
                         }
                     }, 500);
                 }
-            }, 30); // อัปเดตทุกๆ 30ms
+            }, 30);
         }
 
         function cancelFingerprintHold(e) {
