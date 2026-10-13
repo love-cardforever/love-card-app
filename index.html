@@ -8,13 +8,14 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <script type="text/javascript">
         (function() { emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); })();
     </script>
     <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } }
-        }
+        tailwind.config = { theme: { extend: { fontFamily: { prompt: ['Prompt', 'sans-serif'] } } } }
     </script>
     <style>
         body { font-family: 'Prompt', sans-serif; background: linear-gradient(135deg, #fce7f3 0%, #ffd1dc 50%, #fbcfe8 100%); min-height: 100vh; }
@@ -27,21 +28,15 @@
 
     <header class="w-full max-w-4xl mx-auto mb-6 bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-sm flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart">
-                <i class="fa-solid fa-heart"></i>
-            </div>
+            <div class="w-10 h-10 rounded-full bg-rose-500 text-white flex items-center justify-center shadow animate-heart"><i class="fa-solid fa-heart"></i></div>
             <div>
                 <h1 class="font-bold text-base text-slate-800">Forever Love System</h1>
                 <p class="text-[11px] text-rose-500 font-medium">ระบบลงทะเบียนและสร้างความทรงจำคู่รักออนไลน์</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-wallet text-amber-900"></i> โดเนทสนับสนุน
-            </button>
-            <button onclick="openCodeLinkModal()" class="px-3.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow transition">
-                <i class="fa-solid fa-key mr-1"></i> ใส่โค้ดขอเป็นแฟน
-            </button>
+            <button onclick="openPromptPayModal()" class="px-3.5 py-1.5 bg-amber-400 hover:bg-amber-500 text-slate-900 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5"><i class="fa-solid fa-wallet text-amber-900"></i> โดเนทสนับสนุน</button>
+            <button onclick="openCodeLinkModal()" class="px-3.5 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow transition"><i class="fa-solid fa-key mr-1"></i> ใส่โค้ดขอเป็นแฟน</button>
         </div>
     </header>
 
@@ -67,9 +62,7 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
                     <input type="password" id="login-pass" required placeholder="รหัสผ่านของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 </div>
-                <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
-                    <i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ
-                </button>
+                <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm"><i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ</button>
                 <div class="flex justify-between text-xs pt-2">
                     <button type="button" onclick="openForgotModal()" class="text-rose-500 hover:underline">ลืมรหัสผ่าน?</button>
                     <button type="button" onclick="openIssueModal()" class="text-slate-500 hover:underline font-semibold text-rose-600"><i class="fa-solid fa-headset mr-1"></i> แจ้งปัญหาการใช้งาน</button>
@@ -92,20 +85,14 @@
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ (ติ๊กเลือก)</label>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50">
-                            <input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> ชาย (11)
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50">
-                            <input type="radio" name="reg-gender" value="female" class="accent-rose-500"> หญิง (10)
-                        </label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50">
-                            <input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ (12)
-                        </label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> ชาย (11)</label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
+                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2002)</label>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ.)</label>
                         <input type="number" id="reg-birthyear" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                     </div>
                     <div>
@@ -117,23 +104,18 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลจริงสำหรับรับรหัส OTP</label>
                     <input type="email" id="reg-email" required placeholder="example@email.com" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 </div>
-                <button type="submit" id="btn-submit-reg" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm">
-                    <i class="fa-solid fa-paper-plane mr-1"></i> ส่งรหัส OTP ไปยังอีเมล
-                </button>
+                <button type="submit" id="btn-submit-reg" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm"><i class="fa-solid fa-paper-plane mr-1"></i> ส่งรหัส OTP ไปยังอีเมล</button>
             </form>
         </section>
     </main>
 
-    <!-- MODALS -->
+    <!-- Modals ต่างๆ -->
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-envelope-circle-check"></i></div>
-            <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
-            <p class="text-xs text-slate-500">ระบบได้จัดส่งรหัส OTP 6 หลักไปยังอีเมลของคุณแล้ว:</p>
-            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none tracking-widest">
-            <div class="text-[11px] text-slate-400">ติดต่อสำรอง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
+            <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP</h3>
+            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
-                <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="verifyOtpAndRegister()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน OTP</button>
             </div>
         </div>
@@ -141,21 +123,15 @@
 
     <div id="modal-success-reg" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-check"></i></div>
             <h3 class="font-bold text-lg text-slate-800">ยืนยันตัวตนสำเร็จ! 🎉</h3>
-            <p class="text-xs text-slate-500">User ID เฉพาะตัวของคุณคือ:</p>
-            <div class="bg-rose-50 p-4 rounded-2xl border border-rose-100 space-y-1">
-                <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
-            </div>
+            <div id="success-user-id" class="font-mono font-black text-2xl text-rose-700 tracking-wider">--</div>
             <button onclick="closeSuccessRegModal()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow">ไปหน้าเข้าสู่ระบบ</button>
         </div>
     </div>
 
-    <!-- Modal ยืนยันรหัสแอดมิน (0000 / 0000) -->
     <div id="modal-admin-pass" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">เข้าสู่ระบบแอดมิน</h3>
-            <p class="text-xs text-slate-500">กรอกรหัสยืนยันตัวตนแอดมินหลัก</p>
             <input type="text" id="admin-id-real" placeholder="Admin ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <input type="password" id="admin-pass-real" placeholder="Password" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
@@ -165,18 +141,16 @@
         </div>
     </div>
 
-    <!-- Modal ยืนยันรหัสผู้สร้าง (1111 / 1111) -->
     <div id="modal-creator-pass" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md text-center space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800">ยืนยันตัวตนผู้สร้างระบบ (Creator)</h3>
-            <p class="text-xs text-slate-500">ต้องกรอกให้ครบทุกช่องและถูกต้องทั้งหมด</p>
-            <input type="text" id="c-id" placeholder="ID creator" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="c-pass1" placeholder="Password 1" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="c-pass2" placeholder="Password 2" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
-            <input type="password" id="c-key" placeholder="Key" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <h3 class="font-bold text-base text-slate-800">ยืนยันตัวตนผู้สร้างระบบ</h3>
+            <input type="text" id="c-id" placeholder="ID creator (mumuAdmin)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="c-pass1" placeholder="Password 1 (15601)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="c-pass2" placeholder="Password 2 (616451)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
+            <input type="password" id="c-key" placeholder="Key (tapipipat)" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2 pt-2">
                 <button onclick="document.getElementById('modal-creator-pass').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="verifyCreatorLogin()" class="flex-1 py-2 bg-rose-600 text-white text-xs font-bold rounded-xl shadow">ยืนยันและเข้าสู่ระบบ</button>
+                <button onclick="verifyCreatorLogin()" class="flex-1 py-2 bg-rose-600 text-white text-xs font-bold rounded-xl shadow">เข้าสู่ระบบ</button>
             </div>
         </div>
     </div>
@@ -184,68 +158,51 @@
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
-            <input type="text" id="input-proposal-code" placeholder="กรอกโค้ด 7 หลัก เช่น 4829102" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
+            <input type="text" id="input-proposal-code" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
-                <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="goToProposalPage()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบโค้ด</button>
+                <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="goToProposalPage()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบ</button>
             </div>
         </div>
     </div>
 
     <div id="modal-proposal-popup" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-6 shadow-2xl">
-            <div class="w-20 h-20 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-3xl shadow-inner animate-heart">
-                <i class="fa-solid fa-ring"></i>
-            </div>
-            <div class="space-y-2">
-                <h3 id="popup-proposal-title" class="text-xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h3>
-                <p class="text-xs text-slate-600">กรุณาเข้าสู่ระบบหรือสมัครสมาชิกบัญชีของคุณก่อนกดตกลงเป็นแฟน</p>
-            </div>
+            <h3 id="popup-proposal-title" class="text-xl font-bold text-slate-800">มีคนส่งคำขอเป็นแฟนถึงคุณ! 💕</h3>
             <div class="flex gap-3 pt-2">
-                <button onclick="promptLoginBeforeAccept()" class="flex-1 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl shadow transition text-sm">
-                    เข้าสู่ระบบ / สมัครก่อน 🥰
-                </button>
-                <button onclick="openRejectReasonModal()" class="flex-1 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-2xl transition text-sm">
-                    ขอคิดดูก่อน 😜
-                </button>
+                <button onclick="promptLoginBeforeAccept()" class="flex-1 py-3 bg-rose-500 text-white font-bold rounded-2xl shadow text-sm">เข้าสู่ระบบ / สมัครก่อน 🥰</button>
+                <button onclick="openRejectReasonModal()" class="flex-1 py-3 bg-slate-200 text-slate-700 font-bold rounded-2xl text-sm">ขอคิดดูก่อน 😜</button>
             </div>
         </div>
     </div>
 
     <div id="modal-reject-form" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl text-center">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-heart-crack text-rose-500 mr-1"></i> ปฏิเสธคำขอเป็นแฟน</h3>
-            <p class="text-xs text-slate-500">กรุณากรอกชื่อและเหตุผลของคุณ</p>
+            <h3 class="font-bold text-base text-slate-800">ปฏิเสธคำขอเป็นแฟน</h3>
             <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-            <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล (ไม่บังคับ)..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
-            <div class="flex gap-2 pt-2">
-                <button onclick="changeMindToAccept()" class="flex-1 py-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs shadow"><i class="fa-solid fa-heart mr-1"></i> เปลี่ยนใจ (เข้าสู่ระบบเพื่อยอมรับ)</button>
-                <button onclick="submitRejectForm()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
-            </div>
+            <textarea id="reject-reason-input" rows="3" placeholder="เหตุผล..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
+            <button onclick="submitRejectForm()" class="w-full py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">ยืนยันการปฏิเสธ</button>
         </div>
     </div>
 
     <div id="modal-promptpay" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b pb-2">
-                <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-wallet text-amber-500 mr-1"></i> สนับสนุนค่าระบบ</h3>
-                <button onclick="closePromptPayModal()" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="text-xs text-slate-700 space-y-2 bg-rose-50/80 p-4 rounded-2xl border border-rose-100 text-left">
+            <h3 class="font-bold text-base text-slate-800">สนับสนุนค่าระบบ</h3>
+            <div class="text-xs text-slate-700 bg-rose-50 p-4 rounded-2xl text-left">
                 <p><strong>ธนาคาร:</strong> เกียรตินาคินภัทร (KKP)</p>
-                <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600 text-base">208-5886021</span></p>
+                <p><strong>เลขบัญชี:</strong> <span class="font-mono font-bold text-rose-600">208-5886021</span></p>
                 <p><strong>ชื่อบัญชี:</strong> MR. Piphat Thavorn</p>
             </div>
+            <button onclick="closePromptPayModal()" class="w-full py-2 bg-slate-200 text-xs font-bold rounded-xl">ปิด</button>
         </div>
     </div>
 
     <div id="modal-issue" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-1"></i> แจ้งปัญหาการใช้งาน</h3>
+            <h3 class="font-bold text-base text-slate-800">แจ้งปัญหาการใช้งาน</h3>
             <textarea id="issue-text" rows="4" placeholder="พิมพ์ปัญหาที่พบ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
-            <div class="text-[11px] text-slate-500">หรือติดต่อช่องทางสำรองผู้สร้าง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="closeIssueModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="submitIssue()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งข้อความ</button>
             </div>
         </div>
@@ -253,40 +210,39 @@
 
     <div id="modal-forgot" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
-            <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> กู้คืนรหัสผ่าน</h3>
-            <input type="text" id="forgot-id" placeholder="User ID ของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
-            <input type="email" id="forgot-email" placeholder="อีเมลที่ลงทะเบียนไว้" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-            <div class="text-[11px] text-slate-500">ติดต่อสำรอง: <strong class="text-rose-500">IG: @mumu_apr200x</strong></div>
+            <h3 class="font-bold text-base text-slate-800">กู้คืนรหัสผ่าน</h3>
+            <input type="text" id="forgot-id" placeholder="User ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
+            <input type="email" id="forgot-email" placeholder="อีเมล" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <div class="flex justify-end gap-2 pt-2">
-                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">ยกเลิก</button>
-                <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ส่งรหัสผ่าน</button>
+                <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">กู้คืน</button>
             </div>
         </div>
     </div>
 
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
-            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto text-2xl shadow-inner"><i class="fa-solid fa-heart"></i></div>
             <h3 id="alert-title" class="font-bold text-base text-slate-800">แจ้งเตือน</h3>
             <p id="alert-message" class="text-xs text-slate-600 leading-relaxed"></p>
-            <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl shadow transition text-xs">ตกลง</button>
+            <button onclick="closeCustomAlert()" class="w-full py-2.5 bg-rose-500 text-white font-bold rounded-xl shadow text-xs">ตกลง</button>
         </div>
     </div>
 
     <script>
-        const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
+        const firebaseConfig = { databaseURL: "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref();
+
         let pendingUserRegData = null;
         let realOtpCode = "";
         let activeProposalCodeKey = "";
 
-        // เข้ารหัสลับ Base64 ป้องกันการอ่านผ่านโค้ดซอร์ส
-        const _encAdminId = "QWRtaW5Mb3Zl"; // AdminLove
-        const _encAdminPass = "UGlwYXQwODRAMyM="; // Pipat084@#
-        const _encCId = "bXVtdUFkbWlu"; // mumuAdmin
-        const _encCP1 = "MTU2MDE="; // 15601
-        const _encCP2 = "NjE2NDUx"; // 616451
-        const _encCKey = "dGFwaXBpcGF0"; // tapipipat
-
+        const _encAdminId = "QWRtaW5Mb3Zl";
+        const _encAdminPass = "UGlwYXQwODRAMyM=";
+        const _encCId = "bXVtdUFkbWlu";
+        const _encCP1 = "MTU2MDE=";
+        const _encCP2 = "NjE2NDUx";
+        const _encCKey = "dGFwaXBpcGF0";
         function decodeBase64(str) { return atob(str); }
 
         function switchTab(tab) {
@@ -321,107 +277,53 @@
         }
         function closeCustomAlert() { document.getElementById('modal-custom-alert').classList.add('hidden'); }
 
-        async function getDB() {
-            try {
-                const res = await fetch(`${FIREBASE_URL}/.json`);
-                const val = await res.json();
-                if (!val) return { users: [], couples: [], proposalCodes: {}, globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [], globalCoupleCounter: 0 };
-                return {
-                    users: val.users || [],
-                    couples: val.couples || [],
-                    proposalCodes: val.proposalCodes || {},
-                    globalUserCounter: val.globalUserCounter || 0,
-                    globalGroupChar: val.globalGroupChar || 'A',
-                    adminRequests: val.adminRequests || [],
-                    globalCoupleCounter: val.globalCoupleCounter || 0
-                };
-            } catch (e) {
-                return { users: [], couples: [], proposalCodes: {}, globalUserCounter: 0, globalGroupChar: 'A', adminRequests: [], globalCoupleCounter: 0 };
-            }
-        }
-
-        async function saveDB(db) {
-            await fetch(`${FIREBASE_URL}/.json`, {
-                method: 'PUT',
-                body: JSON.stringify(db),
-                headers: { 'Content-Type': 'application/json' }
-            });
-        }
-
-        // ระบบจัดการการเข้าสู่ระบบ (รวมเงื่อนไขลับแอดมินและผู้สร้าง)
         async function handleLogin(e) {
             e.preventDefault();
             const idInput = document.getElementById('login-id').value.trim();
             const passInput = document.getElementById('login-pass').value.trim();
 
-            // เงื่อนไขเข้าสู่หน้าแอดมิน (กรอก 0000 / 0000)
             if (idInput === '0000' && passInput === '0000') {
                 document.getElementById('modal-admin-pass').classList.remove('hidden');
                 return;
             }
-
-            // เงื่อนไขเข้าสู่หน้าผู้สร้าง (กรอก 1111 / 1111)
             if (idInput === '1111' && passInput === '1111') {
                 document.getElementById('modal-creator-pass').classList.remove('hidden');
                 return;
             }
 
-            const db = await getDB();
-            const user = db.users.find(u => u.id === idInput.toUpperCase() && u.password === passInput);
-            if (!user) {
-                showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'User ID หรือรหัสผ่านไม่ถูกต้อง');
-                return;
-            }
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            const user = (val.users || []).find(u => u.id === idInput.toUpperCase() && u.password === passInput);
+            if (!user) { showCustomAlert('เข้าสู่ระบบไม่สำเร็จ', 'User ID หรือรหัสผ่านไม่ถูกต้อง'); return; }
 
-            if (activeProposalCodeKey && db.proposalCodes[activeProposalCodeKey]) {
-                const proposal = db.proposalCodes[activeProposalCodeKey];
+            if (activeProposalCodeKey && val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
+                const proposal = val.proposalCodes[activeProposalCodeKey];
                 proposal.status = 'ACCEPTED';
-                const sender = db.users.find(u => u.id === proposal.senderId);
+                const sender = (val.users || []).find(u => u.id === proposal.senderId);
                 const receiver = user;
 
-                if (sender.id === receiver.id) {
-                    showCustomAlert('ไม่สามารถทำรายการได้', 'คุณไม่สามารถขอเป็นแฟนกับตัวเองได้ครับ');
-                    return;
-                }
-
                 const now = new Date();
-                const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-                const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
-                let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
-                db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
-
-                let seqNum = db.globalCoupleCounter;
-                let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
-                let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
-                let digit = seqNum % 10;
-                let suffix3 = `${char1}${char2}${digit}`;
-
-                const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
-                const startDateStr = now.toISOString().split('T')[0];
-                const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+                let seqNum = (val.globalCoupleCounter || 0) + 1;
+                val.globalCoupleCounter = seqNum;
+                const coupleCardID = `${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}#${now.getDay() || 7}${String(seqNum).padStart(3,'0')}ABC`;
 
                 const newCouple = {
                     id: coupleCardID,
                     user1Id: sender.id, user1Name: sender.name,
                     user2Id: receiver.id, user2Name: receiver.name,
-                    startDate: startDateStr, startTime: startTimeStr,
-                    status: 'ACTIVE', reconcileQuota: 3,
-                    notes: [], photos: [], trashPhotos: [], notifications: []
+                    startDate: now.toISOString().split('T')[0], startTime: `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                    status: 'ACTIVE', reconcileQuota: 3, notes: [], photos: [], trashPhotos: [], notifications: []
                 };
 
-                if (!db.couples) db.couples = [];
-                db.couples.push(newCouple);
+                if (!val.couples) val.couples = [];
+                val.couples.push(newCouple);
                 sender.coupleId = coupleCardID;
                 receiver.coupleId = coupleCardID;
 
                 if (!sender.notifications) sender.notifications = [];
-                sender.notifications.push({
-                    id: Date.now(), type: 'PROPOSAL_ACCEPTED',
-                    message: `${receiver.name} ได้เข้าสู่ระบบและตกลงรับคำขอเป็นแฟนของคุณแล้ว! 💕`,
-                    time: new Date().toLocaleString(), read: false
-                });
+                sender.notifications.push({ id: Date.now(), type: 'PROPOSAL_ACCEPTED', message: `${receiver.name} ตกลงรับคำขอเป็นแฟนแล้ว! 💕`, time: new Date().toLocaleString(), read: false });
 
-                await saveDB(db);
+                await dbRef.set(val);
             }
 
             localStorage.setItem('current_user', JSON.stringify(user));
@@ -429,31 +331,19 @@
         }
 
         function verifyAdminLogin() {
-            const id = document.getElementById('admin-id-real').value.trim();
-            const pass = document.getElementById('admin-pass-real').value.trim();
-            if (id === decodeBase64(_encAdminId) && pass === "Pipat084@#") {
+            if (document.getElementById('admin-id-real').value.trim() === decodeBase64(_encAdminId) && document.getElementById('admin-pass-real').value.trim() === "Pipat084@#") {
                 localStorage.setItem('admin_logged', 'true');
                 window.location.href = 'admin.html';
-            } else {
-                showCustomAlert('รหัสผ่านไม่ถูกต้อง', 'User ID หรือรหัสผ่านแอดมินไม่ถูกต้อง');
-            }
+            } else { showCustomAlert('ผิดพลาด', 'รหัสผ่านแอดมินไม่ถูกต้อง'); }
         }
 
         function verifyCreatorLogin() {
-            const id = document.getElementById('c-id').value.trim();
-            const p1 = document.getElementById('c-pass1').value.trim();
-            const p2 = document.getElementById('c-pass2').value.trim();
-            const key = document.getElementById('c-key').value.trim();
-
-            if (id === decodeBase64(_encCId) && p1 === decodeBase64(_encCP1) && p2 === decodeBase64(_encCP2) && key === decodeBase64(_encCKey)) {
+            if (document.getElementById('c-id').value.trim() === decodeBase64(_encCId) && document.getElementById('c-pass1').value.trim() === decodeBase64(_encCP1) && document.getElementById('c-pass2').value.trim() === decodeBase64(_encCP2) && document.getElementById('c-key').value.trim() === decodeBase64(_encCKey)) {
                 localStorage.setItem('creator_logged', 'true');
                 window.location.href = 'creator.html';
-            } else {
-                showCustomAlert('ข้อมูลไม่ถูกต้อง', 'ข้อมูลผู้สร้างไม่ถูกต้อง ขาดหรือกรอกผิดพลาดแม้แต่ช่องเดียวจะไม่สามารถเข้าได้');
-            }
+            } else { showCustomAlert('ผิดพลาด', 'ข้อมูลผู้สร้างไม่ถูกต้อง'); }
         }
 
-        // ระบบป้องกัน User ID ซ้ำ 100%
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('reg-name').value.trim();
@@ -462,122 +352,49 @@
             const password = document.getElementById('reg-pass').value.trim();
             const email = document.getElementById('reg-email').value.trim();
 
-            let genderPrefix = "12";
-            if (gender === 'male') genderPrefix = "11";
-            else if (gender === 'female') genderPrefix = "10";
+            let genderPrefix = gender === 'male' ? "11" : (gender === 'female' ? "10" : "12");
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            let counter = val.globalUserCounter || 0;
+            let userID = `${genderPrefix}${birthyear.slice(-1)}${String(counter).padStart(3,'0')}A`;
 
-            const db = await getDB();
-            if (!db.users) db.users = [];
-
-            let userID = "";
-            let isDuplicate = true;
-            let safetyCounter = 0;
-            const birthYearLastDigit = birthyear.slice(-1);
-
-            while (isDuplicate && safetyCounter < 50) {
-                let counter = db.globalUserCounter || 0;
-                let groupChar = db.globalGroupChar || 'A';
-
-                let countStr = String(counter).padStart(3, '0');
-                userID = `${genderPrefix}${birthYearLastDigit}${countStr}${groupChar}`;
-
-                const existingUser = db.users.find(u => u.id === userID);
-                if (!existingUser) {
-                    isDuplicate = false;
-                }
-
-                db.globalUserCounter = (counter + 1);
-                if (db.globalUserCounter > 999) {
-                    db.globalUserCounter = 0;
-                    let charCode = groupChar.charCodeAt(0) + 1;
-                    db.globalGroupChar = String.fromCharCode(charCode);
-                }
-                safetyCounter++;
-            }
-
-            pendingUserRegData = {
-                id: userID, name, gender, birthyear, password, email,
-                coupleId: null,
-                createdTime: new Date().toISOString()
-            };
-
+            val.globalUserCounter = counter + 1;
+            pendingUserRegData = { id: userID, name, gender, birthyear, password, email, coupleId: null, createdTime: new Date().toISOString() };
             realOtpCode = String(Math.floor(100000 + Math.random() * 900000));
-            const btn = document.getElementById('btn-submit-reg');
-            btn.innerText = "กำลังส่งอีเมล OTP...";
-            btn.disabled = true;
 
             try {
-                await emailjs.send("service_default", "template_default", {
-                    to_email: email,
-                    to_name: name,
-                    otp_code: realOtpCode
-                });
+                await emailjs.send("service_default", "template_default", { to_email: email, to_name: name, otp_code: realOtpCode });
                 document.getElementById('modal-otp').classList.remove('hidden');
             } catch (err) {
                 document.getElementById('modal-otp').classList.remove('hidden');
-                showCustomAlert('แจ้งเตือนการส่งอีเมล', `ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์เมลได้ รหัส OTP ของคุณคือ: ${realOtpCode} (ติดต่อ IG: @mumu_apr200x)`);
-            } finally {
-                btn.innerText = "ส่งรหัส OTP ไปยังอีเมล";
-                btn.disabled = false;
+                showCustomAlert('OTP', `รหัส OTP คือ: ${realOtpCode}`);
             }
         }
 
         async function verifyOtpAndRegister() {
-            const inputOtp = document.getElementById('otp-input-code').value.trim();
-            if (inputOtp !== realOtpCode) {
-                showCustomAlert('OTP ไม่ถูกต้อง', 'กรุณากรอกรหัส OTP 6 หลักให้ถูกต้อง');
-                return;
-            }
+            if (document.getElementById('otp-input-code').value.trim() !== realOtpCode) { showCustomAlert('ผิดพลาด', 'OTP ไม่ถูกต้อง'); return; }
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            if (!val.users) val.users = [];
+            val.users.push(pendingUserRegData);
 
-            const db = await getDB();
-            if (!db.users) db.users = [];
-            db.users.push(pendingUserRegData);
-
-            if (activeProposalCodeKey && db.proposalCodes[activeProposalCodeKey]) {
-                const proposal = db.proposalCodes[activeProposalCodeKey];
+            if (activeProposalCodeKey && val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
+                const proposal = val.proposalCodes[activeProposalCodeKey];
                 proposal.status = 'ACCEPTED';
-                const sender = db.users.find(u => u.id === proposal.senderId);
+                const sender = val.users.find(u => u.id === proposal.senderId);
                 const receiver = pendingUserRegData;
+                let seqNum = (val.globalCoupleCounter || 0) + 1;
+                val.globalCoupleCounter = seqNum;
+                const coupleCardID = `1200#1${String(seqNum).padStart(3,'0')}ABC`;
 
-                const now = new Date();
-                const timeStr = String(now.getHours()).padStart(2,'0') + String(now.getMinutes()).padStart(2,'0');
-                const dayOfWeek = now.getDay() === 0 ? 7 : now.getDay();
-                let coupleSeq = String(db.globalCoupleCounter || 0).padStart(3, '0');
-                db.globalCoupleCounter = (db.globalCoupleCounter || 0) + 1;
-
-                let seqNum = db.globalCoupleCounter;
-                let char1 = String.fromCharCode(65 + Math.floor(seqNum / 260) % 26);
-                let char2 = String.fromCharCode(65 + Math.floor(seqNum / 10) % 26);
-                let digit = seqNum % 10;
-                let suffix3 = `${char1}${char2}${digit}`;
-
-                const coupleCardID = `${timeStr}#${dayOfWeek}${coupleSeq}${suffix3}`;
-                const startDateStr = now.toISOString().split('T')[0];
-                const startTimeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-
-                const newCouple = {
-                    id: coupleCardID,
-                    user1Id: sender.id, user1Name: sender.name,
-                    user2Id: receiver.id, user2Name: receiver.name,
-                    startDate: startDateStr, startTime: startTimeStr,
-                    status: 'ACTIVE', reconcileQuota: 3,
-                    notes: [], photos: [], trashPhotos: [], notifications: []
-                };
-
-                if (!db.couples) db.couples = [];
-                db.couples.push(newCouple);
+                const newCouple = { id: coupleCardID, user1Id: sender.id, user1Name: sender.name, user2Id: receiver.id, user2Name: receiver.name, startDate: new Date().toISOString().split('T')[0], startTime: '12:00', status: 'ACTIVE', reconcileQuota: 3, notes: [], photos: [], trashPhotos: [], notifications: [] };
+                if (!val.couples) val.couples = [];
+                val.couples.push(newCouple);
                 sender.coupleId = coupleCardID;
                 receiver.coupleId = coupleCardID;
-
-                if (!sender.notifications) sender.notifications = [];
-                sender.notifications.push({
-                    id: Date.now(), type: 'PROPOSAL_ACCEPTED',
-                    message: `${receiver.name} ได้สมัครสมาชิกและตกลงรับคำขอเป็นแฟนของคุณแล้ว! 💕`,
-                    time: new Date().toLocaleString(), read: false
-                });
             }
 
-            await saveDB(db);
+            await dbRef.set(val);
             closeOtpModal();
             document.getElementById('success-user-id').innerText = pendingUserRegData.id;
             document.getElementById('modal-success-reg').classList.remove('hidden');
@@ -585,68 +402,39 @@
 
         async function goToProposalPage() {
             const code = document.getElementById('input-proposal-code').value.trim();
-            if (!code) { showCustomAlert('กรุณากรอกโค้ด', 'โปรดระบุโค้ดขอเป็นแฟน 7 หลัก'); return; }
-
-            const db = await getDB();
-            const proposal = db.proposalCodes ? db.proposalCodes[code] : null;
-
-            if (!proposal) { showCustomAlert('ไม่พบโค้ด', 'โค้ดนี้ไม่ถูกต้องหรือไม่มีอยู่ในระบบ'); return; }
-            if (proposal.status !== 'PENDING') { showCustomAlert('โค้ดถูกใช้งานแล้ว', 'โค้ดนี้ผ่านการใช้งานหรือถูกปฏิเสธไปแล้วครับ'); return; }
-
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            const proposal = val.proposalCodes ? val.proposalCodes[code] : null;
+            if (!proposal || proposal.status !== 'PENDING') { showCustomAlert('ผิดพลาด', 'โค้ดไม่ถูกต้องหรือถูกใช้แล้ว'); return; }
             activeProposalCodeKey = code;
-            document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} อยากที่จะขอเป็นแฟนคุณ! 💕`;
+            document.getElementById('popup-proposal-title').innerText = `${proposal.senderName} ส่งคำขอเป็นแฟนถึงคุณ! 💕`;
             closeCodeLinkModal();
             document.getElementById('modal-proposal-popup').classList.remove('hidden');
         }
 
-        function promptLoginBeforeAccept() {
-            document.getElementById('modal-proposal-popup').classList.add('hidden');
-            showCustomAlert('กรุณาเข้าสู่ระบบหรือสมัครสมาชิก', 'ระบบจะทำการผูกบัญชีคู่รักให้คุณอัตโนมัติทันทีหลังจากเข้าสู่ระบบหรือสมัครสมาชิกสำเร็จ');
-            switchTab('login');
-        }
-
-        function openRejectReasonModal() {
-            document.getElementById('modal-proposal-popup').classList.add('hidden');
-            document.getElementById('modal-reject-form').classList.remove('hidden');
-        }
-
-        function changeMindToAccept() {
-            document.getElementById('modal-reject-form').classList.add('hidden');
-            showCustomAlert('กรุณาเข้าสู่ระบบ', 'เข้าสู่ระบบเพื่อยืนยันการตกลงเป็นแฟน');
-            switchTab('login');
-        }
-
+        function promptLoginBeforeAccept() { document.getElementById('modal-proposal-popup').classList.add('hidden'); switchTab('login'); }
+        function openRejectReasonModal() { document.getElementById('modal-proposal-popup').classList.add('hidden'); document.getElementById('modal-reject-form').classList.remove('hidden'); }
+        
         async function submitRejectForm() {
             const name = document.getElementById('reject-name-input').value.trim();
-            const reason = document.getElementById('reject-reason-input').value.trim() || 'ไม่มีเหตุผลระบุ';
-            if (!name) { showCustomAlert('กรุณากรอกชื่อ', 'โปรดระบุชื่อของคุณก่อนส่ง'); return; }
-
-            const db = await getDB();
-            const proposal = db.proposalCodes[activeProposalCodeKey];
-            if (proposal) {
-                proposal.status = 'REJECTED';
-                const sender = db.users.find(u => u.id === proposal.senderId);
-                if (sender) {
-                    if (!sender.notifications) sender.notifications = [];
-                    sender.notifications.push({
-                        id: Date.now(), type: 'PROPOSAL_REJECTED',
-                        message: `${name} ปฏิเสธคำขอ เนื่องจาก: "${reason}"`,
-                        time: new Date().toLocaleString(), read: false
-                    });
-                }
-                await saveDB(db);
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            if (val.proposalCodes && val.proposalCodes[activeProposalCodeKey]) {
+                val.proposalCodes[activeProposalCodeKey].status = 'REJECTED';
+                await dbRef.set(val);
             }
             document.getElementById('modal-reject-form').classList.add('hidden');
-            showCustomAlert('ส่งคำตอบแล้ว', 'ระบบได้ส่งผลการปฏิเสธคำขอไปยังผู้ส่งเรียบร้อยแล้ว');
+            showCustomAlert('สำเร็จ', 'ส่งผลการปฏิเสธเรียบร้อย');
         }
 
         async function submitIssue() {
             const text = document.getElementById('issue-text').value.trim();
             if (!text) return;
-            const db = await getDB();
-            if (!db.adminRequests) db.adminRequests = [];
-            db.adminRequests.push({ id: Date.now(), userId: 'GUEST', content: text, time: new Date().toLocaleString() });
-            await saveDB(db);
+            const snapshot = await dbRef.once('value');
+            const val = snapshot.val() || {};
+            if (!val.adminRequests) val.adminRequests = [];
+            val.adminRequests.push({ id: Date.now(), userId: 'GUEST', content: text, time: new Date().toLocaleString() });
+            await dbRef.set(val);
             closeIssueModal();
             showCustomAlert('สำเร็จ', 'ส่งปัญหาถึงแอดมินเรียบร้อย');
         }
@@ -654,9 +442,9 @@
         async function sendRecoveryEmail() {
             const id = document.getElementById('forgot-id').value.trim().toUpperCase();
             const email = document.getElementById('forgot-email').value.trim();
-            const db = await getDB();
-            const user = db.users.find(u => u.id === id && u.email === email);
-            if (!user) { showCustomAlert('ไม่พบข้อมูล', 'User ID หรืออีเมลไม่ถูกต้อง'); return; }
+            const snapshot = await dbRef.once('value');
+            const user = ((snapshot.val() || {}).users || []).find(u => u.id === id && u.email === email);
+            if (!user) { showCustomAlert('ผิดพลาด', 'ข้อมูลไม่ถูกต้อง'); return; }
             showCustomAlert('กู้คืนสำเร็จ', `รหัสผ่านของคุณคือ: ${user.password}`);
             closeForgotModal();
         }
