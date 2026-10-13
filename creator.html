@@ -7,12 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>body { font-family: 'Prompt', sans-serif; background: #0f172a; color: #f8fafc; }</style>
 </head>
 <body class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
     <div class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
-            <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (ระบบลับผู้สร้าง)</h1>
+            <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
             <p class="text-xs text-slate-400">ควบคุมข้อมูลเชิงลึกทั้งหมดและป่าวประกาศระบบ</p>
         </div>
         <button onclick="localStorage.removeItem('creator_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
@@ -33,7 +35,7 @@
 
     <!-- โฟลเดอร์: ผู้ใช้งานทั้งหมด -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <details class="group">
+        <details class="group" open>
             <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
                 <span>📁 โฟลเดอร์: ข้อมูลผู้ใช้งานทั้งหมดแบบละเอียด (Users)</span>
                 <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
@@ -44,9 +46,9 @@
 
     <!-- โฟลเดอร์: คู่รัก & รูปภาพอัลบั้ม/ถังขยะ -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <details class="group">
+        <details class="group" open>
             <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
-                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะนับถอยหลัง 30 วัน)</span>
+                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะเก็บรักษา)</span>
                 <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
             </summary>
             <div id="creator-couples-list" class="space-y-4 pt-4"></div>
@@ -54,61 +56,79 @@
     </div>
 
     <script>
-        const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
+        const firebaseConfig = { databaseURL: "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref();
+
         if (localStorage.getItem('creator_logged') !== 'true') { window.location.href = 'index.html'; }
 
-        async function loadCreatorData() {
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json() || {};
+        // Realtime Listener สำหรับอัปเดตหน้าผู้สร้างอัตโนมัติ
+        dbRef.on('value', (snapshot) => {
+            const db = snapshot.val() || {};
 
             const reportDiv = document.getElementById('creator-reports-list');
             reportDiv.innerHTML = '';
-            (db.creatorReports || []).forEach(r => {
-                reportDiv.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700"><b>[${r.time}]</b> ${r.content}</div>`;
-            });
+            const reports = db.creatorReports || [];
+            if (reports.length === 0) {
+                reportDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีรายงานจากแอดมิน</div>';
+            } else {
+                reports.forEach(r => {
+                    reportDiv.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700"><b>[${r.time}]</b> ${r.content}</div>`;
+                });
+            }
 
             const uList = document.getElementById('creator-users-list');
             uList.innerHTML = '';
-            (db.users || []).forEach(u => {
-                uList.innerHTML += `
-                    <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
-                        <div><b>ID: ${u.id}</b> | ชื่อ: ${u.name} | อีเมล: ${u.email} | คู่รักID: ${u.coupleId || 'ไม่มี'}</div>
-                        <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1 bg-red-600 text-white rounded-lg text-[10px] font-bold">ลบถาวร</button>
-                    </div>
-                `;
-            });
+            const users = db.users || [];
+            if (users.length === 0) {
+                uList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีผู้ใช้งานในระบบ</div>';
+            } else {
+                users.forEach(u => {
+                    uList.innerHTML += `
+                        <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
+                            <div><b>ID: ${u.id}</b> | ชื่อ: ${u.name} | อีเมล: ${u.email} | คู่รักID: ${u.coupleId || 'ไม่มี'}</div>
+                            <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1 bg-red-600 text-white rounded-lg text-[10px] font-bold">ลบถาวร</button>
+                        </div>
+                    `;
+                });
+            }
 
             const cList = document.getElementById('creator-couples-list');
             cList.innerHTML = '';
-            (db.couples || []).forEach(c => {
-                let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
-                (c.photos || []).forEach(p => {
-                    photosHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1"><img src="${p.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${p.uploaderName}</p><a href="${p.url}" download class="block text-center bg-blue-600 text-white rounded py-1 text-[10px]">ดาวน์โหลด</a></div>`;
-                });
-                photosHTML += '</div>';
+            const couples = db.couples || [];
+            if (couples.length === 0) {
+                cList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีข้อมูลคู่รัก</div>';
+            } else {
+                couples.forEach(c => {
+                    let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
+                    (c.photos || []).forEach(p => {
+                        photosHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1"><img src="${p.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${p.uploaderName}</p><a href="${p.url}" download class="block text-center bg-blue-600 text-white rounded py-1 text-[10px]">ดาวน์โหลด</a></div>`;
+                    });
+                    photosHTML += '</div>';
 
-                let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ (เก็บรักษา 30 วัน):</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
-                (c.trashPhotos || []).forEach(tp => {
-                    trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
-                });
-                trashHTML += '</div>';
+                    let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ:</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
+                    (c.trashPhotos || []).forEach(tp => {
+                        trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
+                    });
+                    trashHTML += '</div>';
 
-                cList.innerHTML += `
-                    <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
-                        <div class="font-bold text-rose-400">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
-                        <div class="text-xs text-slate-400">สถานะ: ${c.status} | โควต้าคืนดี: ${c.reconcileQuota}</div>
-                        ${photosHTML}
-                        ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
-                    </div>
-                `;
-            });
-        }
+                    cList.innerHTML += `
+                        <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
+                            <div class="font-bold text-rose-400">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
+                            <div class="text-xs text-slate-400">สถานะ: ${c.status} | โควต้าคืนดี: ${c.reconcileQuota}</div>
+                            ${photosHTML}
+                            ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
+                        </div>
+                    `;
+                });
+            }
+        });
 
         async function creatorSendBroadcast() {
             const text = document.getElementById('creator-broadcast').value.trim();
             if (!text) return;
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json() || {};
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
             
             if (db.users) {
                 db.users.forEach(u => {
@@ -122,37 +142,33 @@
                     });
                 });
             }
-            await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
+            await dbRef.set(db);
             document.getElementById('creator-broadcast').value = '';
-            alert('ส่งประกาศจากผู้สร้างถึงทุกคนสำเร็จ!');
+            alert('ส่งประกาศจากผู้สร้างถึงทุกคนสำเร็จแบบเรียลไทม์!');
         }
 
         async function permanentDeleteUser(userId) {
             if (!confirm('ยืนยันลบผู้ใช้นี้แบบถาวร?')) return;
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json();
-            db.users = db.users.filter(u => u.id !== userId);
-            await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
-            loadCreatorData();
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            db.users = (db.users || []).filter(u => u.id !== userId);
+            await dbRef.set(db);
         }
 
         async function restorePhoto(coupleId, photoId) {
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json();
-            const couple = db.couples.find(c => c.id === coupleId);
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 const idx = couple.trashPhotos.findIndex(p => p.id === photoId);
                 if (idx !== -1) {
                     const photo = couple.trashPhotos.splice(idx, 1)[0];
                     if (!couple.photos) couple.photos = [];
                     couple.photos.push(photo);
-                    await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
-                    loadCreatorData();
+                    await dbRef.set(db);
                 }
             }
         }
-
-        loadCreatorData();
     </script>
 </body>
 </html>
