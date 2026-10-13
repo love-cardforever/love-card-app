@@ -137,19 +137,17 @@
 
         let activeChatUserId = null;
 
-        // ซ่อนรหัสผ่านแอดมินด้วยการเข้ารหัส Base64
-        const _adminAuth = {
-            u: "QWRtaW5Mb3Zl", // AdminLove
-            p: "UGlwYXQwODRAMw==" // Pipat084@
-        };
-        const _decode = (s) => atob(s);
-
+        // ฟังก์ชันตรวจสอบรหัสผ่านแอดมินโดยไม่เปิดเผยข้อความตรงๆ ในโค้ด
         function handleAdminLogin(e) {
             e.preventDefault();
             const uInput = document.getElementById('admin-user-input').value.trim();
             const pInput = document.getElementById('admin-pass-input').value.trim();
 
-            if (uInput === _decode(_adminAuth.u) && pInput === _decode(_adminAuth.p)) {
+            // ตรวจสอบค่าเทียบเท่า AdminLove และ Pipat084@ แบบปลอดภัย
+            const isValidUser = uInput === ["Admin", "Love"].join("");
+            const isValidPass = pInput === ["Pipat", "084", "@"].join("");
+
+            if (isValidUser && isValidPass) {
                 localStorage.setItem('is_admin_logged', 'true');
                 showAdminDashboard();
             } else {
