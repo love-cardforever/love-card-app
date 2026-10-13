@@ -14,7 +14,7 @@
         .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
         .grayscale-mode { filter: grayscale(100%); transition: filter 1s ease-in-out; }
         .card-broken-effect { border: 3px dashed #ef4444 !important; background: rgba(254, 226, 226, 0.6) !important; position: relative; }
-        .card-broken-effect::before { content: "⚡ บัตรมีรอยร้าว (คู่รักลบบัญชี/ถูกแบน) ⚡"; position: absolute; top: 10px; right: 15px; font-size: 10px; font-weight: bold; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 999px; }
+        .card-broken-effect::before { content: "⚡ บัตรมีรอยร้าว (ออนไลน์: คู่รักลบบัญชี/ถูกแบน) ⚡"; position: absolute; top: 10px; right: 15px; font-size: 10px; font-weight: bold; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 999px; }
         @keyframes textDissolve { 0% { opacity: 1; filter: blur(0px); } 100% { opacity: 0; filter: blur(10px); transform: translateY(-10px) scale(0.9); } }
         .dissolve-effect { animation: textDissolve 1.5s forwards ease-in-out; }
         @keyframes popUpFade { 0% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0; transform: scale(1.5); pointer-events: none; } }
@@ -118,8 +118,11 @@
                 </div>
             </div>
 
-            <div class="bg-rose-50/70 p-3 rounded-2xl text-center text-xs text-rose-700 space-y-1 font-medium">
-                <p><i class="fa-solid fa-calendar-days mr-1"></i> คบกันวันที่: <span id="card-start-date">00/00/0000</span> | เวลา: <span id="card-start-time">00:00</span> น.</p>
+            <div class="bg-rose-50/70 p-3 rounded-2xl text-center text-xs text-rose-700 space-y-1 font-medium relative">
+                <p>
+                    <i class="fa-solid fa-calendar-days mr-1"></i> คบกันวันที่: <span id="card-start-date">00/00/0000</span> | เวลา: <span id="card-start-time">00:00</span> น.
+                    <button onclick="openEditAnniversaryModal()" class="ml-2 px-2 py-0.5 bg-rose-200 hover:bg-rose-300 text-rose-800 rounded-lg text-[10px] font-bold transition"><i class="fa-solid fa-pen"></i> แก้ไข</button>
+                </p>
                 <p class="text-[11px] text-amber-700 font-bold">โควต้าขอคืนดี: <span id="quota-left">3</span> ครั้ง</p>
             </div>
         </section>
@@ -185,6 +188,28 @@
             <div class="flex gap-2">
                 <button onclick="document.getElementById('modal-accept-proposal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="submitAcceptProposalVault()" class="flex-1 py-2 bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold rounded-xl shadow">ตอบรับเป็นแฟน</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal แก้ไขวันเวลาคบกัน -->
+    <div id="modal-edit-anniversary" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
+            <h3 class="font-bold text-base text-slate-800">แก้ไขวันเวลาคบกัน</h3>
+            <p class="text-xs text-slate-500">กำหนดได้สูงสุด 2 ครั้งต่อ 1 สัปดาห์</p>
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600">วันที่เริ่มต้นคบกัน:</label>
+                    <input type="date" id="edit-start-date" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                </div>
+                <div>
+                    <label class="text-[11px] font-bold text-slate-600">เวลา:</label>
+                    <input type="time" id="edit-start-time" class="w-full p-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                </div>
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="document.getElementById('modal-edit-anniversary').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
+                <button onclick="saveAnniversaryEdit()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">บันทึกการแก้ไข</button>
             </div>
         </div>
     </div>
@@ -328,7 +353,7 @@
             const notifs = currentUser.notifications || [];
             const unreadCount = notifs.filter(n => !n.read).length;
             document.getElementById('notif-count').innerText = unreadCount;
-            renderNotificationsList(notifs, db);
+            renderNotificationsList(notifs);
 
             const couples = db.couples || [];
             let myCouple = couples.find(c => c.id === currentUser.coupleId || c.user1Id === currentUser.id || c.user2Id === currentUser.id);
@@ -339,23 +364,25 @@
             }
 
             if (myCouple) {
-                // ตรวจสอบว่าคู่รักถูกลบบัญชีไปแล้วหรือไม่ (ไม่พบ user ใน database)
                 const partnerId = myCouple.user1Id === currentUser.id ? myCouple.user2Id : myCouple.user1Id;
                 const partnerObj = users.find(u => u.id === partnerId);
 
+                // หากอีกฝ่ายถูกลบจาก database จริงๆ (ลบบัญชีหรือถูกแบน)
                 if (!partnerObj && myCouple.status !== 'PARTNER_DELETED') {
-                    // แฟนถูกลบบัญชี/ถูกแบน อัปเดตสถานะทันที
                     myCouple.status = 'PARTNER_DELETED';
                     myCouple.deletedTimestamp = Date.now();
 
-                    // แจ้งเตือนไปยังผู้ใช้ที่เหลืออยู่
-                    if (!currentUser.notifications) currentUser.notifications = [];
-                    currentUser.notifications.push({
-                        id: Date.now(),
-                        message: `🚨 คู่รักของคุณได้ลบบัญชีหรืออาจจะถูกแบนด้วยเหตุผลบางประการ! บัตรถูกจำกัดเวลา 10 นาที`,
-                        time: new Date().toLocaleString(),
-                        read: false
-                    });
+                    // ตรวจสอบเพื่อไม่ให้แจ้งเตือนซ้ำซ้อน
+                    const alreadyNotified = (currentUser.notifications || []).some(n => n.message.includes('คู่รักของคุณได้ลบบัญชี'));
+                    if (!alreadyNotified) {
+                        if (!currentUser.notifications) currentUser.notifications = [];
+                        currentUser.notifications.push({
+                            id: Date.now(),
+                            message: `🚨 คู่รักของคุณได้ลบบัญชีหรืออาจจะถูกแบนด้วยเหตุผลบางประการ! บัตรถูกจำกัดเวลา 10 นาที`,
+                            time: new Date().toLocaleString(),
+                            read: false
+                        });
+                    }
                     await dbRef.set(db);
                 }
 
@@ -363,7 +390,6 @@
                     const tenMinutesMs = 10 * 60 * 1000;
                     const elapsed = Date.now() - myCouple.deletedTimestamp;
                     if (elapsed > tenMinutesMs) {
-                        // ครบ 10 นาที ล้างบัตรทิ้งอัตโนมัติ
                         db.couples = couples.filter(c => c.id !== myCouple.id);
                         currentUser.coupleId = null;
                         await dbRef.set(db);
@@ -468,6 +494,7 @@
                     startTime: startTimeStr,
                     status: 'ACTIVE',
                     reconcileQuota: 3,
+                    editHistory: [],
                     photos: [],
                     notes: [],
                     trashPhotos: [],
@@ -492,7 +519,7 @@
 
         function renderNoCoupleState() {
             const cardSec = document.getElementById('couple-card-section');
-            cardSec.classList.remove('card-broken-effect', 'opacity-60');
+            cardSec.classList.remove('card-broken-effect', 'opacity-70');
             document.getElementById('vault-body').classList.remove('grayscale-mode');
             document.getElementById('couple-features-panel').classList.add('hidden');
             document.getElementById('text-couple-status').innerText = "ยังไม่มีคู่รัก";
@@ -536,12 +563,10 @@
             const cardSec = document.getElementById('couple-card-section');
 
             if (isPartnerDeleted) {
-                // บัตรมีรอยร้าว สีจางลง
                 cardSec.classList.add('card-broken-effect', 'opacity-70');
                 document.getElementById('text-couple-status').innerText = "คู่รักลบบัญชี / ถูกแบน";
                 document.getElementById('text-couple-status').className = "font-bold text-red-600";
                 
-                // ปุ่มใต้บัตรกรณีอีกฝ่ายลบบัญชี: ติดต่อแอดมิน หรือ ตัดขาดความสัมพันธ์
                 actionContainer.innerHTML = `
                     <button onclick="openPromptPayModal()" class="flex-1 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-2xl text-xs shadow-xs transition cursor-pointer"><i class="fa-solid fa-headset mr-1"></i> ติดต่อแอดมิน</button>
                     <button onclick="triggerCutOffProcess('${couple.id}')" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-xs transition cursor-pointer"><i class="fa-solid fa-scissors mr-1"></i> ตัดขาดความสัมพันธ์</button>
@@ -723,6 +748,44 @@
                     `;
                 });
             }
+        }
+
+        function openEditAnniversaryModal() {
+            document.getElementById('modal-edit-anniversary').classList.remove('hidden');
+        }
+
+        async function saveAnniversaryEdit() {
+            const newDate = document.getElementById('edit-start-date').value;
+            const newTime = document.getElementById('edit-start-time').value;
+            if (!newDate || !newTime) {
+                alert('กรุณากรอกวันที่และเวลาให้ครบถ้วน');
+                return;
+            }
+
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === currentUser.coupleId);
+            if (!couple) return;
+
+            const now = Date.now();
+            const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+            if (!couple.editHistory) couple.editHistory = [];
+
+            // กรองประวัติการแก้ไขในช่วง 7 วันที่ผ่านมา
+            const recentEdits = couple.editHistory.filter(t => now - t < oneWeekMs);
+            if (recentEdits.length >= 2) {
+                alert('คุณแก้ไขวันเวลาคบกันครบ 2 ครั้งในรอบ 1 สัปดาห์แล้ว กรุณารอรอบสัปดาห์ถัดไป');
+                return;
+            }
+
+            recentEdits.push(now);
+            couple.editHistory = recentEdits;
+            couple.startDate = newDate;
+            couple.startTime = newTime;
+
+            await dbRef.set(db);
+            document.getElementById('modal-edit-anniversary').classList.add('hidden');
+            alert('แก้ไขวันเวลาคบกันสำเร็จ!');
         }
 
         function renderNotificationsList(notifs) {
