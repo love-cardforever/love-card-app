@@ -35,7 +35,7 @@
     <header class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
-            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชท รูปภาพ โควต้า และประกาศหมวดหมู่</p>
+            <p class="text-xs text-slate-400">ควบคุมระบบ จัดการแชท รูปภาพ โควต้า และลบข้อมูลไอดีคู่รัก</p>
         </div>
         <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ออกจากระบบ</button>
     </header>
@@ -112,11 +112,14 @@
         <div id="creator-users-list" class="space-y-2 pt-2 max-h-96 overflow-y-auto pr-1"></div>
     </div>
 
-    <!-- ส่วนจัดการรูปภาพคู่รัก (ล้างทั้งหมด / ลบทีละภาพ / ดาวน์โหลด) -->
+    <!-- ส่วนจัดการคู่รักและรูปภาพ (ล้างทั้งหมด / ลบไอดีคู่รัก / ลบทีละภาพ) -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
-        <div class="flex justify-between items-center">
-            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-images mr-2"></i> คลังรูปภาพคู่รัก & ถังขยะ</h3>
-            <button onclick="purgeAllPhotos()" class="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-trash-can mr-1"></i> ล้างรูปภาพทั้งหมดในระบบ</button>
+        <div class="flex flex-wrap justify-between items-center gap-3">
+            <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid id-card mr-2"></i> จัดการไอดีคู่รัก คลังรูปภาพ & ถังขยะ</h3>
+            <div class="flex gap-2">
+                <button onclick="purgeAllCouples()" class="px-3.5 py-2 bg-red-800 hover:bg-red-900 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-user-slash mr-1"></i> ล้างข้อมูลคู่รักทั้งหมด</button>
+                <button onclick="purgeAllPhotos()" class="px-3.5 py-2 bg-red-700 hover:bg-red-800 text-white text-xs font-bold rounded-xl shadow"><i class="fa-solid fa-trash-can mr-1"></i> ล้างรูปภาพทั้งหมด</button>
+            </div>
         </div>
         <div id="creator-couples-list" class="space-y-4 pt-2"></div>
     </div>
@@ -164,7 +167,6 @@
                 const db = snapshot.val() || {};
                 globalDb = db;
 
-                // คำนวณ Analytics สถิติ
                 const users = db.users || [];
                 const couples = db.couples || [];
                 let totalPhotos = 0;
@@ -176,10 +178,9 @@
                 document.getElementById('stats-total-couples').innerText = `${couples.length} คู่`;
                 document.getElementById('stats-total-photos').innerText = `${totalPhotos} รูป`;
 
-                // จำลองปริมาณการใช้ DB (สมมติ 1 GB = 1024 MB คิดจากจำนวนข้อมูลดิบ)
                 const jsonStringSize = JSON.stringify(db).length;
                 const usedKB = (jsonStringSize / 1024).toFixed(2);
-                const percent = Math.min(100, (usedKB / 102400) * 100).toFixed(2); // สมมติขีดจำกัดฟรี 100MB
+                const percent = Math.min(100, (usedKB / 102400) * 100).toFixed(2);
                 document.getElementById('db-usage-text').innerText = `${usedKB} KB (${percent}%)`;
                 document.getElementById('db-usage-bar').style.width = `${percent}%`;
 
@@ -283,12 +284,13 @@
 
                 cList.innerHTML += `
                     <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-3">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center flex-wrap gap-2">
                             <div class="font-bold text-rose-400 text-xs">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
                             <div class="flex items-center gap-2">
                                 <span class="text-xs text-slate-300">โควต้าคืนดี: <b class="text-amber-400">${quota}</b></span>
                                 <button onclick="adjustQuota('${c.id}', -1)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold">-</button>
                                 <button onclick="adjustQuota('${c.id}', 1)" class="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white rounded text-xs font-bold">+</button>
+                                <button onclick="deleteCoupleById('${c.id}')" class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-bold ml-2"><i class="fa-solid fa-trash-can mr-1"></i> ลบคู่นี้ทิ้ง</button>
                             </div>
                         </div>
                         <div class="text-xs text-slate-400">สถานะความสัมพันธ์: <span class="font-bold text-white">${c.status}</span></div>
@@ -306,6 +308,30 @@
                 couple.reconcileQuota = Math.max(0, current + amount);
                 await dbRef.set(globalDb);
             }
+        }
+
+        async function deleteCoupleById(coupleId) {
+            if (!confirm(`ยืนยันลบข้อมูลไอดีคู่รัก [${coupleId}] และปลดสถานะความสัมพันธ์ของผู้ใช้ทั้งสองคน?`)) return;
+            const couple = (globalDb.couples || []).find(c => c.id === coupleId);
+            if (couple) {
+                // ปลดล็อก coupleId ในผู้ใช้ทั้งสองฝ่าย
+                (globalDb.users || []).forEach(u => {
+                    if (u.id === couple.user1Id || u.id === couple.user2Id || u.coupleId === coupleId) {
+                        u.coupleId = null;
+                    }
+                });
+            }
+            globalDb.couples = (globalDb.couples || []).filter(c => c.id !== coupleId);
+            await dbRef.set(globalDb);
+            alert('ลบข้อมูลไอดีคู่รักเรียบร้อยแล้ว');
+        }
+
+        async function purgeAllCouples() {
+            if (!confirm('⚠️ คำเตือน: คุณต้องการลบข้อมูลไอดีคู่รักทั้งหมดในระบบทิ้งใช่หรือไม่?')) return;
+            (globalDb.users || []).forEach(u => { u.coupleId = null; });
+            globalDb.couples = [];
+            await dbRef.set(globalDb);
+            alert('ล้างข้อมูลไอดีคู่รักทั้งหมดเรียบร้อยแล้ว');
         }
 
         async function deleteSinglePhoto(coupleId, photoId, isTrash) {
