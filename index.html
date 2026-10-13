@@ -21,7 +21,6 @@
         .glass-card { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 20px 40px rgba(225, 29, 72, 0.12); }
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
-        
         @keyframes goldGlow { 0% { background-color: rgba(251, 191, 36, 0); } 50% { background-color: rgba(251, 191, 36, 0.4); } 100% { background-color: rgba(251, 191, 36, 0); } }
         .gold-flash { animation: goldGlow 1.5s ease-in-out; }
     </style>
@@ -85,11 +84,11 @@
                     <input type="text" id="reg-name" autocomplete="off" required placeholder="ชื่อเล่นหรือชื่อจริง" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ (ติ๊กเลือก)</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ</label>
                     <div class="grid grid-cols-3 gap-2 pt-1">
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> ชาย (11)</label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
-                        <label class="flex items-center gap-2 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
+                        <label class="flex items-center justify-center gap-1.5 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="male" required class="accent-rose-500"> เพศชาย</label>
+                        <label class="flex items-center justify-center gap-1.5 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="female" class="accent-rose-500"> เพศหญิง</label>
+                        <label class="flex items-center justify-center gap-1.5 p-2.5 bg-white rounded-xl border border-slate-200 text-xs font-medium cursor-pointer hover:bg-rose-50"><input type="radio" name="reg-gender" value="other" class="accent-rose-500"> อื่นๆ</label>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -111,7 +110,7 @@
         </section>
     </main>
 
-    <!-- Modal ต่างๆ -->
+    <!-- Modals -->
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
@@ -182,9 +181,9 @@
             <div class="space-y-3 pt-2">
                 <input type="text" id="acc-name" autocomplete="off" placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 <div class="grid grid-cols-3 gap-2">
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> ชาย (11)</label>
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
-                    <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
+                    <label class="flex items-center justify-center gap-1.5 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> เพศชาย</label>
+                    <label class="flex items-center justify-center gap-1.5 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> เพศหญิง</label>
+                    <label class="flex items-center justify-center gap-1.5 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ</label>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <input type="number" id="acc-birthyear" autocomplete="off" placeholder="ปีเกิด ค.ศ. เช่น 2002" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
@@ -207,7 +206,6 @@
         </div>
     </div>
 
-    <!-- Modal แสดง User ID หลังสมัครสำเร็จ (บังคับกดคัดลอกหรือดาวน์โหลดก่อนถึงจะกดปุ่มถัดไปได้) -->
     <div id="modal-success-reg" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md text-center space-y-5 shadow-2xl">
             <div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl"><i class="fa-solid fa-check"></i></div>
@@ -277,7 +275,7 @@
         let realOtpCode = "";
         let activeProposalCodeKey = "";
         let proposalSenderInfo = null;
-        let isUserIdCopied = false; // ตัวแปรเช็คสถานะการคัดลอก
+        let isUserIdCopied = false;
         
         let rejectClickCount = 0;
         const rejectMessages = [
@@ -332,7 +330,6 @@
             switchTab('login');
         }
 
-        // ฟังก์ชันคัดลอก User ID และปลดล็อคปุ่มถัดไป
         function copyUserId() {
             const userIdText = document.getElementById('success-user-id').innerText;
             navigator.clipboard.writeText(userIdText).then(() => {
