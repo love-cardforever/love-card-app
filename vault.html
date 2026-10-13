@@ -724,10 +724,10 @@
             const noteGrid = document.getElementById('vault-notes-grid');
             noteGrid.innerHTML = '';
             (couple.notes || []).forEach(n => {
-                const isMyNote = n.authorId === currentUser.id;
+                const isMyNote = n.authorId === currentUser.id || n.uploaderId === currentUser.id;
                 noteGrid.innerHTML += `
                     <div class="p-3 bg-white/80 rounded-2xl border flex justify-between items-center text-xs">
-                        <div><b>${n.authorName}:</b> ${n.text}</div>
+                        <div><b>${n.authorName || n.uploaderName || 'ผู้ใช้'}:</b> ${n.text}</div>
                         ${isMyNote ? `<button onclick="moveNoteToTrash(${n.id}, '${couple.id}')" class="text-rose-500 hover:underline text-[10px]">ลบ</button>` : ''}
                     </div>
                 `;
@@ -740,14 +740,14 @@
                 trashPhotoGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะรูปภาพว่างเปล่า</div>';
             } else {
                 trashPhotos.forEach(tp => {
-                    const isOwner = tp.uploaderId === currentUser.id;
+                    const isOwner = tp.uploaderId === currentUser.id || tp.authorId === currentUser.id;
                     trashPhotoGrid.innerHTML += `
                         <div class="bg-white/80 p-2 rounded-2xl shadow-xs border space-y-1 opacity-85">
                             <img src="${tp.url}" class="w-full h-20 object-cover rounded-xl">
-                            <p class="text-[10px] text-slate-500 truncate">เจ้าของ: ${tp.uploaderName}</p>
+                            <p class="text-[10px] text-slate-500 truncate">เจ้าของ: ${tp.uploaderName || tp.authorName || 'ผู้ใช้'}</p>
                             <div class="flex gap-1 pt-1">
                                 <button onclick="restorePhoto(${tp.id}, '${couple.id}')" class="flex-1 bg-emerald-500 text-white rounded-xl py-1 text-[10px] font-bold">กู้คืน</button>
-                                ${isOwner ? `<button onclick="promptPermanentDelete('photo', ${tp.id}, '${couple.id}')" class="flex-1 bg-red-500 text-white rounded-xl py-1 text-[10px] font-bold">ลบถาวร</button>` : '<span class="text-[9px] text-slate-400 self-center">ไม่ใช่เจ้าของ</span>'}
+                                <button onclick="promptPermanentDelete('photo', ${tp.id}, '${couple.id}')" class="flex-1 bg-red-500 text-white rounded-xl py-1 text-[10px] font-bold">ลบถาวร</button>
                             </div>
                         </div>
                     `;
@@ -761,13 +761,12 @@
                 trashNoteGrid.innerHTML = '<div class="text-[11px] text-slate-400 py-1">ถังขยะโน้ตว่างเปล่า</div>';
             } else {
                 trashNotes.forEach(tn => {
-                    const isOwner = tn.authorId === currentUser.id || tn.uploaderId === currentUser.id;
                     trashNoteGrid.innerHTML += `
                         <div class="p-3 bg-white/80 rounded-2xl border flex justify-between items-center text-xs opacity-85">
                             <div><b>${tn.authorName || tn.uploaderName || 'ผู้ใช้'}:</b> ${tn.text}</div>
                             <div class="flex gap-2">
                                 <button onclick="restoreNote(${tn.id}, '${couple.id}')" class="text-emerald-600 font-bold hover:underline">กู้คืน</button>
-                                ${isOwner ? `<button onclick="promptPermanentDelete('note', ${tn.id}, '${couple.id}')" class="text-red-600 font-bold hover:underline">ลบถาวร</button>` : '<span class="text-[9px] text-slate-400">ไม่ใช่เจ้าของ</span>'}
+                                <button onclick="promptPermanentDelete('note', ${tn.id}, '${couple.id}')" class="text-red-600 font-bold hover:underline">ลบถาวร</button>
                             </div>
                         </div>
                     `;
@@ -954,7 +953,7 @@
             const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 const idx = couple.photos.findIndex(p => p.id === photoId);
-                if (idx !== -1 && couple.photos[idx].uploaderId === currentUser.id) {
+                if (idx !== -1 && (couple.photos[idx].uploaderId === currentUser.id || couple.photos[idx].authorId === currentUser.id)) {
                     const photo = couple.photos.splice(idx, 1)[0];
                     if (!couple.trashPhotos) couple.trashPhotos = [];
                     couple.trashPhotos.push(photo);
@@ -1043,9 +1042,9 @@
             const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 if (type === 'photo') {
-                    couple.trashPhotos = (couple.trashPhotos || []).filter(tp => tp.id !== targetId || (tp.uploaderId === currentUser.id));
+                    couple.trashPhotos = (couple.trashPhotos || []).filter(tp => tp.id !== targetId);
                 } else if (type === 'note') {
-                    couple.trashNotes = (couple.trashNotes || []).filter(tn => tn.id !== targetId || (tn.authorId === currentUser.id || tn.uploaderId === currentUser.id));
+                    couple.trashNotes = (couple.trashNotes || []).filter(tn => tn.id !== targetId);
                 }
                 await dbRef.set(db);
             }
