@@ -13,30 +13,23 @@
 </head>
 <body class="p-4 md:p-8 text-slate-800 max-w-5xl mx-auto space-y-6">
 
-    <!-- หน้าจอเข้าสู่ระบบแอดมิน (แสดงขึ้นมาอัตโนมัติถ้ายังไม่ล็อกอิน) -->
+    <!-- หน้าจอเข้าสู่ระบบแอดมินแยกต่างหาก -->
     <div id="admin-login-screen" class="fixed inset-0 bg-slate-900 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-sm space-y-5 text-slate-800">
             <div class="text-center space-y-1">
                 <div class="w-12 h-12 bg-rose-500 text-white rounded-2xl mx-auto flex items-center justify-center text-xl shadow"><i class="fa-solid fa-shield-halved"></i></div>
-                <h1 class="font-bold text-lg text-slate-900">Admin Authentication</h1>
-                <p class="text-xs text-slate-500">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบแอดมิน</p>
+                <h1 class="font-bold text-lg text-slate-900">Admin Control Portal</h1>
+                <p class="text-xs text-slate-500">กรอกสิทธิ์ผู้ดูแลระบบ</p>
             </div>
             <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Admin ID</label>
-                    <input type="text" id="input-admin-id" placeholder="AdminLove" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 outline-none">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Password</label>
-                    <input type="password" id="input-admin-pass" placeholder="Pipat084@#" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 outline-none">
-                </div>
-                <button onclick="handleAdminLogin()" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow transition">เข้าสู่ระบบ</button>
+                <input type="text" id="input-admin-id" placeholder="Admin ID (AdminLove)" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                <input type="password" id="input-admin-pass" placeholder="Password (Pipat084@#)" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 outline-none">
+                <button onclick="handleAdminLogin()" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs shadow transition">เข้าสู่ระบบแอดมิน</button>
                 <a href="index.html" class="block text-center text-[11px] text-slate-400 hover:underline">กลับสู่หน้าแรก</a>
             </div>
         </div>
     </div>
 
-    <!-- แดชบอร์ดแอดมินหลัก -->
     <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
             <h1 class="text-xl font-bold text-slate-900">🛡️ Admin Dashboard (Realtime)</h1>
@@ -59,12 +52,6 @@
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
         <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-heart-circle-bolt text-rose-500 mr-2"></i> จัดการโควต้าขอคืนดีคู่รัก</h3>
         <div id="admin-couples-list" class="space-y-3"></div>
-    </div>
-
-    <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100 space-y-3">
-        <h3 class="font-bold text-sm text-rose-800"><i class="fa-solid fa-paper-plane mr-2"></i> รายงานปัญหาเร่งด่วนถึงผู้สร้าง (Creator)</h3>
-        <textarea id="report-to-creator" rows="3" placeholder="พิมพ์ข้อความรายงานปัญหาถึงผู้สร้างระบบ..." class="w-full p-3 text-xs rounded-xl border border-rose-200 outline-none"></textarea>
-        <button onclick="sendReportToCreator()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ส่งรายงานถึงผู้สร้าง</button>
     </div>
 
     <script>
@@ -95,7 +82,7 @@
 
         function adminLogout() {
             localStorage.removeItem('admin_logged');
-            window.location.reload();
+            window.location.href = 'index.html';
         }
 
         function initAdminRealtime() {
@@ -158,18 +145,6 @@
             await dbRef.set(db);
             document.getElementById('broadcast-msg').value = '';
             alert('ส่งประกาศถึงผู้ใช้งานทุกคนสำเร็จ!');
-        }
-
-        async function sendReportToCreator() {
-            const text = document.getElementById('report-to-creator').value.trim();
-            if (!text) return;
-            const snapshot = await dbRef.once('value');
-            const db = snapshot.val() || {};
-            if (!db.creatorReports) db.creatorReports = [];
-            db.creatorReports.push({ id: Date.now(), from: 'ADMIN', content: text, time: new Date().toLocaleString() });
-            await dbRef.set(db);
-            document.getElementById('report-to-creator').value = '';
-            alert('ส่งรายงานถึงผู้สร้างเรียบร้อยแล้ว!');
         }
     </script>
 </body>
