@@ -7,63 +7,56 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>body { font-family: 'Prompt', sans-serif; background: #f8fafc; }</style>
 </head>
 <body class="p-4 md:p-8 text-slate-800 max-w-5xl mx-auto space-y-6">
     <div class="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-            <h1 class="text-xl font-bold text-slate-900">🛡️ ระบบจัดการหลังบ้าน (Admin Dashboard)</h1>
-            <p class="text-xs text-slate-500">จัดการโควต้าคู่รัก ตรวจสอบปัญหา และประกาศข้อความถึงผู้ใช้ทุกคน</p>
+            <h1 class="text-xl font-bold text-slate-900">🛡️ Admin Dashboard (Realtime)</h1>
+            <p class="text-xs text-slate-500">จัดการโควต้าคู่รักและประกาศระบบ</p>
         </div>
         <button onclick="localStorage.removeItem('admin_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-500 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
     </div>
 
-    <!-- ระบบส่งประกาศจากเซิร์ฟเวอร์ถึงผู้ใช้งานทุกคน -->
     <div class="bg-gradient-to-r from-rose-500 to-pink-500 p-6 rounded-2xl text-white space-y-3 shadow-lg">
-        <h3 class="font-bold text-sm"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศ/แจ้งเตือนจากเซิร์ฟเวอร์ถึงผู้ใช้งานทุกคน</h3>
-        <p class="text-xs opacity-90">ข้อความนี้จะถูกส่งไปแสดงในหน้าแจ้งเตือนของบัญชีผู้ใช้ทุกคนทันที</p>
-        <textarea id="broadcast-msg" rows="3" placeholder="พิมพ์ข้อความประกาศหรือแจ้งเตือน..." class="w-full p-3 text-xs text-slate-800 rounded-xl outline-none"></textarea>
-        <button onclick="sendGlobalBroadcast()" class="px-4 py-2 bg-white text-rose-600 rounded-xl text-xs font-bold shadow hover:bg-rose-50 transition">ส่งประกาศถึงทุกคน</button>
+        <h3 class="font-bold text-sm"><i class="fa-solid fa-bullhorn mr-2"></i> ประกาศจากเซิร์ฟเวอร์ถึงผู้ใช้งานทุกคน</h3>
+        <textarea id="broadcast-msg" rows="3" placeholder="พิมพ์ข้อความประกาศ..." class="w-full p-3 text-xs text-slate-800 rounded-xl outline-none"></textarea>
+        <button onclick="sendGlobalBroadcast()" class="px-4 py-2 bg-white text-rose-600 rounded-xl text-xs font-bold shadow">ส่งประกาศทันที</button>
     </div>
 
-    <!-- รายงานปัญหา -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-        <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-2"></i> รายงานปัญหาจากผู้ใช้งาน</h3>
+        <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-headset text-rose-500 mr-2"></i> รายงานปัญหา</h3>
         <div id="admin-issues-list" class="space-y-2"></div>
     </div>
 
-    <!-- จัดการโควต้าคู่รัก -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-        <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-heart-circle-bolt text-rose-500 mr-2"></i> จัดการโควต้าขอคืนดีคู่รัก</h3>
+        <h3 class="font-bold text-sm text-slate-800"><i class="fa-solid fa-heart-circle-bolt text-rose-500 mr-2"></i> จัดการโควต้าคู่รัก</h3>
         <div id="admin-couples-list" class="space-y-3"></div>
     </div>
 
-    <!-- ช่องทางรายงานไปยังผู้สร้าง -->
-    <div class="bg-rose-50 p-6 rounded-2xl border border-rose-100 space-y-3">
-        <h3 class="font-bold text-sm text-rose-800"><i class="fa-solid fa-paper-plane mr-2"></i> รายงานปัญหาเร่งด่วนถึงผู้สร้าง (Creator)</h3>
-        <textarea id="report-to-creator" rows="3" placeholder="พิมพ์ข้อความรายงานปัญหาถึงผู้สร้างระบบ..." class="w-full p-3 text-xs rounded-xl border border-rose-200 outline-none"></textarea>
-        <button onclick="sendReportToCreator()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ส่งรายงานถึงผู้สร้าง</button>
-    </div>
-
     <script>
-        const FIREBASE_URL = "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app";
-        if (localStorage.getItem('admin_logged') !== 'true') { window.location.href = 'index.html'; }
+        const firebaseConfig = { databaseURL: "https://love-card-app-86e20-default-rtdb.asia-southeast1.firebasedatabase.app" };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref();
 
-        async function loadAdminData() {
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json() || {};
+        if (localStorage.getItem('admin_logged') !== 'true') window.location.href = 'index.html';
+
+        dbRef.on('value', (snapshot) => {
+            const db = snapshot.val() || {};
             
             const issueDiv = document.getElementById('admin-issues-list');
             issueDiv.innerHTML = '';
             (db.adminRequests || []).forEach(i => {
-                issueDiv.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100 flex justify-between items-center"><span><b>[${i.time}]</b> ${i.content}</span><span class="text-slate-400 font-mono">ID: ${i.userId}</span></div>`;
+                issueDiv.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl text-xs border flex justify-between items-center"><span><b>[${i.time}]</b> ${i.content}</span><span class="text-slate-400 font-mono">ID: ${i.userId}</span></div>`;
             });
 
             const coupleDiv = document.getElementById('admin-couples-list');
             coupleDiv.innerHTML = '';
             (db.couples || []).forEach(c => {
                 coupleDiv.innerHTML += `
-                    <div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100 flex justify-between items-center">
+                    <div class="p-3 bg-slate-50 rounded-xl text-xs border flex justify-between items-center">
                         <span><b>${c.id}</b> : ${c.user1Name} ❤️ ${c.user2Name} (โควต้า: <strong class="text-rose-600">${c.reconcileQuota ?? 3}</strong>)</span>
                         <div class="flex gap-2">
                             <button onclick="updateQuota('${c.id}', 1)" class="px-3 py-1 bg-emerald-500 text-white rounded-lg font-bold">+ เพิ่ม</button>
@@ -72,55 +65,31 @@
                     </div>
                 `;
             });
-        }
+        });
 
         async function updateQuota(coupleId, change) {
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json();
-            const couple = db.couples.find(c => c.id === coupleId);
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            const couple = (db.couples || []).find(c => c.id === coupleId);
             if (couple) {
                 couple.reconcileQuota = Math.max(0, (couple.reconcileQuota ?? 3) + change);
-                await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
-                loadAdminData();
+                await dbRef.set(db);
             }
         }
 
         async function sendGlobalBroadcast() {
             const text = document.getElementById('broadcast-msg').value.trim();
             if (!text) return;
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json() || {};
-            
-            if (db.users) {
-                db.users.forEach(u => {
-                    if (!u.notifications) u.notifications = [];
-                    u.notifications.push({
-                        id: Date.now() + Math.random(),
-                        type: 'SERVER_BROADCAST',
-                        message: `📢 ประกาศจากระบบ: ${text}`,
-                        time: new Date().toLocaleString(),
-                        read: false
-                    });
-                });
-            }
-            await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
+            const snapshot = await dbRef.once('value');
+            const db = snapshot.val() || {};
+            (db.users || []).forEach(u => {
+                if (!u.notifications) u.notifications = [];
+                u.notifications.push({ id: Date.now() + Math.random(), type: 'SERVER_BROADCAST', message: `📢 ประกาศ: ${text}`, time: new Date().toLocaleString(), read: false });
+            });
+            await dbRef.set(db);
             document.getElementById('broadcast-msg').value = '';
-            alert('ส่งประกาศถึงผู้ใช้งานทุกคนสำเร็จ!');
+            alert('ส่งประกาศเรียบร้อย!');
         }
-
-        async function sendReportToCreator() {
-            const text = document.getElementById('report-to-creator').value.trim();
-            if (!text) return;
-            const res = await fetch(`${FIREBASE_URL}/.json`);
-            const db = await res.json() || {};
-            if (!db.creatorReports) db.creatorReports = [];
-            db.creatorReports.push({ id: Date.now(), from: 'ADMIN', content: text, time: new Date().toLocaleString() });
-            await fetch(`${FIREBASE_URL}/.json`, { method: 'PUT', body: JSON.stringify(db), headers: {'Content-Type': 'application/json'} });
-            document.getElementById('report-to-creator').value = '';
-            alert('ส่งรายงานถึงผู้สร้างเรียบร้อยแล้ว!');
-        }
-
-        loadAdminData();
     </script>
 </body>
 </html>
