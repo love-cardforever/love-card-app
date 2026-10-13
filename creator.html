@@ -12,28 +12,58 @@
     <style>body { font-family: 'Prompt', sans-serif; background: #0f172a; color: #f8fafc; }</style>
 </head>
 <body class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+
+    <!-- หน้าจอเข้าสู่ระบบผู้สร้าง (แสดงขึ้นมาอัตโนมัติถ้ายังไม่ล็อกอิน) -->
+    <div id="creator-login-screen" class="fixed inset-0 bg-slate-950 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 shadow-2xl w-full max-w-md space-y-5 text-slate-100">
+            <div class="text-center space-y-1">
+                <div class="w-12 h-12 bg-rose-600 text-white rounded-2xl mx-auto flex items-center justify-center text-xl shadow"><i class="fa-solid fa-crown"></i></div>
+                <h1 class="font-bold text-lg text-rose-400">Creator Master Security</h1>
+                <p class="text-xs text-slate-400">ยืนยันตัวตนระดับสูงสุด (ต้องกรอกให้ครบทุกช่อง)</p>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">ID Creator</label>
+                    <input type="text" id="c-id" placeholder="mumuAdmin" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password 1</label>
+                    <input type="password" id="c-pass1" placeholder="15601" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Password 2</label>
+                    <input type="password" id="c-pass2" placeholder="616451" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Secret Key</label>
+                    <input type="password" id="c-key" placeholder="tapipipat" class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white outline-none">
+                </div>
+                <button onclick="handleCreatorLogin()" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs shadow transition mt-1">ยืนยันตัวตนผู้สร้าง</button>
+                <a href="index.html" class="block text-center text-[11px] text-slate-400 hover:underline">กลับสู่หน้าแรก</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- แดชบอร์ดผู้สร้างหลัก -->
     <div class="flex justify-between items-center bg-slate-800/80 backdrop-blur p-6 rounded-2xl border border-slate-700 shadow-xl">
         <div>
             <h1 class="text-xl font-bold text-rose-400">👑 Creator Master Dashboard (Realtime)</h1>
             <p class="text-xs text-slate-400">ควบคุมข้อมูลเชิงลึกทั้งหมดและป่าวประกาศระบบ</p>
         </div>
-        <button onclick="localStorage.removeItem('creator_logged'); window.location.href='index.html';" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
+        <button onclick="creatorLogout()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold">ออกจากระบบ</button>
     </div>
 
-    <!-- ฟังก์ชันประกาศเซิร์ฟเวอร์ของผู้สร้าง -->
     <div class="bg-slate-800/80 p-6 rounded-2xl border border-rose-500/50 space-y-3">
         <h3 class="font-bold text-sm text-rose-300"><i class="fa-solid fa-bullhorn mr-2"></i> ป่าวประกาศด่วนจากผู้สร้างถึงทุกคน</h3>
         <textarea id="creator-broadcast" rows="3" placeholder="พิมพ์ประกาศสำคัญจากผู้สร้าง..." class="w-full p-3 text-xs bg-slate-900 border border-slate-700 rounded-xl text-white outline-none"></textarea>
         <button onclick="creatorSendBroadcast()" class="px-4 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold shadow">ส่งประกาศจากผู้สร้าง</button>
     </div>
 
-    <!-- รายงานจากแอดมิน -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <h3 class="font-bold text-sm text-amber-400"><i class="fa-solid fa-triangle-exclamation mr-2"></i> ข้อความรายงานจากแอดมิน</h3>
         <div id="creator-reports-list" class="space-y-2"></div>
     </div>
 
-    <!-- โฟลเดอร์: ผู้ใช้งานทั้งหมด -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <details class="group" open>
             <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
@@ -44,11 +74,10 @@
         </details>
     </div>
 
-    <!-- โฟลเดอร์: คู่รัก & รูปภาพอัลบั้ม/ถังขยะ -->
     <div class="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 space-y-4">
         <details class="group" open>
             <summary class="font-bold text-sm cursor-pointer flex justify-between items-center text-rose-300">
-                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะเก็บรักษา)</span>
+                <span>📁 โฟลเดอร์: ข้อมูลคู่รัก & รูปภาพ (ถังขยะเก็บรักษา 30 วัน)</span>
                 <i class="fa-solid fa-chevron-down group-open:rotate-180 transition"></i>
             </summary>
             <div id="creator-couples-list" class="space-y-4 pt-4"></div>
@@ -60,91 +89,111 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref();
 
-        if (localStorage.getItem('creator_logged') !== 'true') { window.location.href = 'index.html'; }
-
-        // Realtime Listener สำหรับอัปเดตหน้าผู้สร้างอัตโนมัติ
-        dbRef.on('value', (snapshot) => {
-            const db = snapshot.val() || {};
-
-            const reportDiv = document.getElementById('creator-reports-list');
-            reportDiv.innerHTML = '';
-            const reports = db.creatorReports || [];
-            if (reports.length === 0) {
-                reportDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีรายงานจากแอดมิน</div>';
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('creator_logged') !== 'true') {
+                document.getElementById('creator-login-screen').classList.remove('hidden');
             } else {
-                reports.forEach(r => {
-                    reportDiv.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700"><b>[${r.time}]</b> ${r.content}</div>`;
-                });
-            }
-
-            const uList = document.getElementById('creator-users-list');
-            uList.innerHTML = '';
-            const users = db.users || [];
-            if (users.length === 0) {
-                uList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีผู้ใช้งานในระบบ</div>';
-            } else {
-                users.forEach(u => {
-                    uList.innerHTML += `
-                        <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
-                            <div><b>ID: ${u.id}</b> | ชื่อ: ${u.name} | อีเมล: ${u.email} | คู่รักID: ${u.coupleId || 'ไม่มี'}</div>
-                            <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1 bg-red-600 text-white rounded-lg text-[10px] font-bold">ลบถาวร</button>
-                        </div>
-                    `;
-                });
-            }
-
-            const cList = document.getElementById('creator-couples-list');
-            cList.innerHTML = '';
-            const couples = db.couples || [];
-            if (couples.length === 0) {
-                cList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีข้อมูลคู่รัก</div>';
-            } else {
-                couples.forEach(c => {
-                    let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
-                    (c.photos || []).forEach(p => {
-                        photosHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1"><img src="${p.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${p.uploaderName}</p><a href="${p.url}" download class="block text-center bg-blue-600 text-white rounded py-1 text-[10px]">ดาวน์โหลด</a></div>`;
-                    });
-                    photosHTML += '</div>';
-
-                    let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ:</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
-                    (c.trashPhotos || []).forEach(tp => {
-                        trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
-                    });
-                    trashHTML += '</div>';
-
-                    cList.innerHTML += `
-                        <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
-                            <div class="font-bold text-rose-400">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
-                            <div class="text-xs text-slate-400">สถานะ: ${c.status} | โควต้าคืนดี: ${c.reconcileQuota}</div>
-                            ${photosHTML}
-                            ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
-                        </div>
-                    `;
-                });
+                initCreatorRealtime();
             }
         });
+
+        function handleCreatorLogin() {
+            const id = document.getElementById('c-id').value.trim();
+            const p1 = document.getElementById('c-pass1').value.trim();
+            const p2 = document.getElementById('c-pass2').value.trim();
+            const key = document.getElementById('c-key').value.trim();
+
+            if (id === 'mumuAdmin' && p1 === '15601' && p2 === '616451' && key === 'tapipipat') {
+                localStorage.setItem('creator_logged', 'true');
+                document.getElementById('creator-login-screen').classList.add('hidden');
+                initCreatorRealtime();
+            } else {
+                alert('ข้อมูลการยืนยันตัวตนผู้สร้างไม่ถูกต้อง ขาดหรือกรอกผิดพลาดแม้แต่ช่องเดียวจะเข้าไม่ได้');
+            }
+        }
+
+        function creatorLogout() {
+            localStorage.removeItem('creator_logged');
+            window.location.reload();
+        }
+
+        function initCreatorRealtime() {
+            dbRef.on('value', (snapshot) => {
+                const db = snapshot.val() || {};
+
+                const reportDiv = document.getElementById('creator-reports-list');
+                reportDiv.innerHTML = '';
+                const reports = db.creatorReports || [];
+                if (reports.length === 0) {
+                    reportDiv.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีรายงานจากแอดมิน</div>';
+                } else {
+                    reports.forEach(r => {
+                        reportDiv.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700"><b>[${r.time}]</b> ${r.content}</div>`;
+                    });
+                }
+
+                const uList = document.getElementById('creator-users-list');
+                uList.innerHTML = '';
+                const users = db.users || [];
+                if (users.length === 0) {
+                    uList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีผู้ใช้งานในระบบ</div>';
+                } else {
+                    users.forEach(u => {
+                        uList.innerHTML += `
+                            <div class="p-3 bg-slate-900 rounded-xl text-xs border border-slate-700 flex justify-between items-center">
+                                <div><b>ID: ${u.id}</b> | ชื่อ: ${u.name} | อีเมล: ${u.email} | คู่รักID: ${u.coupleId || 'ไม่มี'}</div>
+                                <button onclick="permanentDeleteUser('${u.id}')" class="px-3 py-1 bg-red-600 text-white rounded-lg text-[10px] font-bold">ลบถาวร</button>
+                            </div>
+                        `;
+                    });
+                }
+
+                const cList = document.getElementById('creator-couples-list');
+                cList.innerHTML = '';
+                const couples = db.couples || [];
+                if (couples.length === 0) {
+                    cList.innerHTML = '<div class="text-xs text-slate-400">ยังไม่มีข้อมูลคู่รัก</div>';
+                } else {
+                    couples.forEach(c => {
+                        let photosHTML = '<div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2">';
+                        (c.photos || []).forEach(p => {
+                            photosHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-slate-700 space-y-1"><img src="${p.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${p.uploaderName}</p><a href="${p.url}" download class="block text-center bg-blue-600 text-white rounded py-1 text-[10px]">ดาวน์โหลด</a></div>`;
+                        });
+                        photosHTML += '</div>';
+
+                        let trashHTML = '<div class="mt-2 text-[11px] text-amber-400 font-bold">รูปในถังขยะ (เก็บรักษา 30 วัน):</div><div class="grid grid-cols-2 md:grid-cols-4 gap-2 pt-1">';
+                        (c.trashPhotos || []).forEach(tp => {
+                            trashHTML += `<div class="bg-slate-900 p-2 rounded-xl border border-amber-900/50 space-y-1 opacity-75"><img src="${tp.url}" class="w-full h-20 object-cover rounded"><p class="text-[10px] truncate">เจ้าของ: ${tp.uploaderName}</p><button onclick="restorePhoto('${c.id}', ${tp.id})" class="w-full bg-emerald-600 text-white rounded py-1 text-[10px]">กู้คืนรูป</button></div>`;
+                        });
+                        trashHTML += '</div>';
+
+                        cList.innerHTML += `
+                            <div class="p-4 bg-slate-900 rounded-xl border border-slate-700 space-y-2">
+                                <div class="font-bold text-rose-400">Couple ID: ${c.id} | ${c.user1Name} ❤️ ${c.user2Name}</div>
+                                <div class="text-xs text-slate-400">สถานะ: ${c.status} | โควต้าคืนดี: ${c.reconcileQuota}</div>
+                                ${photosHTML}
+                                ${c.trashPhotos && c.trashPhotos.length > 0 ? trashHTML : ''}
+                            </div>
+                        `;
+                    });
+                }
+            });
+        }
 
         async function creatorSendBroadcast() {
             const text = document.getElementById('creator-broadcast').value.trim();
             if (!text) return;
             const snapshot = await dbRef.once('value');
             const db = snapshot.val() || {};
-            
             if (db.users) {
                 db.users.forEach(u => {
                     if (!u.notifications) u.notifications = [];
-                    u.notifications.push({
-                        id: Date.now() + Math.random(),
-                        type: 'CREATOR_BROADCAST',
-                        message: `👑 ประกาศจากผู้สร้างระบบ: ${text}`,
-                        time: new Date().toLocaleString(),
-                        read: false
-                    });
+                    u.notifications.push({ id: Date.now() + Math.random(), type: 'CREATOR_BROADCAST', message: `👑 ประกาศจากผู้สร้างระบบ: ${text}`, time: new Date().toLocaleString(), read: false });
                 });
             }
             await dbRef.set(db);
             document.getElementById('creator-broadcast').value = '';
-            alert('ส่งประกาศจากผู้สร้างถึงทุกคนสำเร็จแบบเรียลไทม์!');
+            alert('ส่งประกาศจากผู้สร้างถึงทุกคนสำเร็จ!');
         }
 
         async function permanentDeleteUser(userId) {
