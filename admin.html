@@ -137,16 +137,19 @@
 
         let activeChatUserId = null;
 
-        // ฟังก์ชันตรวจสอบรหัสผ่านแอดมินใหม่ (MumuAdmin / 0802540900mumupt)
+        // ซ่อนรหัสผ่านแอดมินไว้ในรูป Base64 เพื่อความปลอดภัย
+        const _adminAuth = {
+            u: "TXVtdUFkbWlu", // MumuAdmin
+            p: "MDgwMjU0MDkwMG11bXVwdA==" // 0802540900mumupt
+        };
+        const _decode = (s) => atob(s);
+
         function handleAdminLogin(e) {
             e.preventDefault();
             const uInput = document.getElementById('admin-user-input').value.trim();
             const pInput = document.getElementById('admin-pass-input').value.trim();
 
-            const isValidUser = uInput === ["Mumu", "Admin"].join("");
-            const isValidPass = pInput === ["0802540900", "mumupt"].join("");
-
-            if (isValidUser && isValidPass) {
+            if (uInput === _decode(_adminAuth.u) && pInput === _decode(_adminAuth.p)) {
                 localStorage.setItem('is_admin_logged', 'true');
                 showAdminDashboard();
             } else {
