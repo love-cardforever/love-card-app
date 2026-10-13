@@ -22,17 +22,9 @@
         @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         .animate-heart { animation: heartbeat 1.2s infinite ease-in-out; }
         
-        /* เอฟเฟคสแกนนิ้ว */
-        @keyframes scanline { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
-        .scanner-line { position: absolute; width: 100%; height: 3px; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; animation: scanline 2s infinite ease-in-out; }
-
         /* เอฟเฟคเรืองแสงสีทองทั่วจอ */
         @keyframes goldGlow { 0% { background-color: rgba(251, 191, 36, 0); } 50% { background-color: rgba(251, 191, 36, 0.4); } 100% { background-color: rgba(251, 191, 36, 0); } }
         .gold-flash { animation: goldGlow 1.5s ease-in-out; }
-
-        /* บัตรคู่รักเรืองแสง */
-        @keyframes cardGlow { 0%, 100% { box-shadow: 0 0 10px #f43f5e; border-color: #f43f5e; } 50% { box-shadow: 0 0 35px #fbbf24, 0 0 60px #f43f5e; border-color: #fbbf24; transform: scale(1.03); } }
-        .glow-card-effect { animation: cardGlow 1.2s infinite ease-in-out; }
     </style>
 </head>
 <body id="main-body" class="p-3 md:p-6 text-slate-800 flex flex-col items-center justify-between min-h-screen transition-colors duration-500">
@@ -67,11 +59,11 @@
             <form onsubmit="handleLogin(event)" class="space-y-4 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">User ID ของคุณ</label>
-                    <input type="text" id="login-id" required placeholder="เช่น 11202350A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
+                    <input type="text" id="login-id" autocomplete="off" required placeholder="เช่น 11202350A" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase bg-white/50">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
-                    <input type="password" id="login-pass" required placeholder="รหัสผ่านของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                    <input type="password" id="login-pass" autocomplete="new-password" required placeholder="รหัสผ่านของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                 </div>
                 <button type="submit" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm"><i class="fa-solid fa-right-to-bracket mr-1"></i> เข้าสู่ระบบ</button>
                 <div class="flex justify-between text-xs pt-2">
@@ -91,7 +83,7 @@
             <form onsubmit="handleRegister(event)" class="space-y-4 pt-2">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อของคุณ</label>
-                    <input type="text" id="reg-name" required placeholder="ชื่อเล่นหรือชื่อจริง" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                    <input type="text" id="reg-name" autocomplete="off" required placeholder="ชื่อเล่นหรือชื่อจริง" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">เพศ (ติ๊กเลือก)</label>
@@ -104,16 +96,16 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">ปีเกิด (ค.ศ. เช่น 2002)</label>
-                        <input type="number" id="reg-birthyear" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                        <input type="number" id="reg-birthyear" autocomplete="off" required min="1950" max="2020" placeholder="2002" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">รหัสผ่านส่วนตัว</label>
-                        <input type="password" id="reg-pass" required placeholder="รหัสผ่าน" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                        <input type="password" id="reg-pass" autocomplete="new-password" required placeholder="รหัสผ่าน" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">อีเมลจริงสำหรับรับรหัส OTP</label>
-                    <input type="email" id="reg-email" required placeholder="example@email.com" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                    <input type="email" id="reg-email" autocomplete="off" required placeholder="example@email.com" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none bg-white/50">
                 </div>
                 <button type="submit" id="btn-submit-reg" class="w-full py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition text-sm"><i class="fa-solid fa-paper-plane mr-1"></i> ส่งรหัส OTP ไปยังอีเมล</button>
             </form>
@@ -124,7 +116,7 @@
     <div id="modal-code-link" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800"><i class="fa-solid fa-key text-rose-500 mr-1"></i> ใส่โค้ดขอเป็นแฟน</h3>
-            <input type="text" id="input-proposal-code" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
+            <input type="text" id="input-proposal-code" autocomplete="off" placeholder="กรอกโค้ด 7 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-base rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
                 <button onclick="closeCodeLinkModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="verifyProposalCode()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ตรวจสอบ</button>
@@ -150,7 +142,7 @@
             <h3 id="reject-warning-title" class="font-bold text-base text-rose-600">แน่ใจแล้วหรอที่จะปฏิเสธ? 😢</h3>
             <p id="reject-warning-sub" class="text-xs text-slate-500">โปรดพิจารณาใหม่อีกครั้ง...</p>
             <div id="reject-input-group" class="space-y-3 hidden pt-2">
-                <input type="text" id="reject-name-input" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="reject-name-input" autocomplete="off" placeholder="กรอกชื่อของคุณ" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
                 <textarea id="reject-reason-input" rows="3" placeholder="ระบุเหตุผลที่ปฏิเสธ..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none resize-none"></textarea>
             </div>
             <div class="flex gap-2 pt-2">
@@ -160,16 +152,30 @@
         </div>
     </div>
 
-    <!-- 4. Modal สแกนลายนิ้วมือ (รอบที่ 1 และ รอบที่ 2) -->
-    <div id="modal-fingerprint" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
+    <!-- 4. Modal สแกนลายนิ้วมือแบบ "กดค้าง" (Press & Hold) -->
+    <div id="modal-fingerprint" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 w-full max-w-sm text-center space-y-5 shadow-2xl text-white">
-            <h3 id="fp-title" class="font-bold text-base text-rose-400">กรุณาสแกนลายนิ้วมือเพื่อยืนยัน</h3>
-            <p id="fp-subtitle" class="text-xs text-slate-400">แตะที่ไอคอนลายนิ้วมือด้านล่าง</p>
-            <div onclick="simulateFingerprintScan()" class="w-24 h-24 rounded-full bg-slate-800 border-2 border-rose-500/50 mx-auto flex items-center justify-center text-4xl text-rose-500 cursor-pointer relative overflow-hidden shadow-lg hover:scale-105 transition">
-                <div class="scanner-line"></div>
-                <i class="fa-solid fa-fingerprint"></i>
+            <h3 id="fp-title" class="font-bold text-base text-rose-400">กรุณากดนิ้วค้างไว้เพื่อยืนยัน</h3>
+            <p id="fp-subtitle" class="text-xs text-slate-400">แตะและแช่นิ้วไว้ที่ไอคอนจนกว่าจะเต็ม 100%</p>
+            
+            <!-- ปุ่มสแกนลายนิ้วมือแบบกดค้าง -->
+            <div class="relative w-28 h-28 mx-auto flex items-center justify-center cursor-pointer select-none"
+                 onmousedown="startFingerprintHold(event)" onmouseup="cancelFingerprintHold(event)" onmouseleave="cancelFingerprintHold(event)"
+                 ontouchstart="startFingerprintHold(event)" ontouchend="cancelFingerprintHold(event)">
+                
+                <!-- วงกลม SVG วิ่งรอบสถานะ -->
+                <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" stroke="#334155" stroke-width="6" fill="none" />
+                    <circle id="fp-progress-circle" cx="50" cy="50" r="44" stroke="#f43f5e" stroke-width="6" fill="none"
+                            stroke-dasharray="276" stroke-dashoffset="276" class="transition-all duration-75" />
+                </svg>
+
+                <div id="fp-icon-box" class="w-20 h-20 rounded-full bg-slate-800 border-2 border-rose-500/50 flex items-center justify-center text-3xl text-rose-500 shadow-lg transition-transform active:scale-95">
+                    <i class="fa-solid fa-fingerprint"></i>
+                </div>
             </div>
-            <span id="fp-status" class="text-xs text-slate-400 block">รอการสแกน...</span>
+
+            <span id="fp-status" class="text-xs text-slate-400 block font-mono">กดค้างไว้เพื่อสแกน... (0%)</span>
         </div>
     </div>
 
@@ -181,17 +187,17 @@
                 <p class="text-xs text-slate-500">กรอกข้อมูลส่วนตัวเพื่อผูกบัญชีคู่รัก</p>
             </div>
             <div class="space-y-3 pt-2">
-                <input type="text" id="acc-name" placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
+                <input type="text" id="acc-name" autocomplete="off" placeholder="ชื่อของคุณ" class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200 outline-none">
                 <div class="grid grid-cols-3 gap-2">
                     <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="male" checked class="accent-rose-500"> ชาย (11)</label>
                     <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="female" class="accent-rose-500"> หญิง (10)</label>
                     <label class="flex items-center gap-1 p-2 bg-slate-50 rounded-xl border text-xs cursor-pointer"><input type="radio" name="acc-gender" value="other" class="accent-rose-500"> อื่นๆ (12)</label>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="acc-birthyear" placeholder="ปีเกิด ค.ศ. เช่น 2002" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
-                    <input type="password" id="acc-pass" placeholder="รหัสผ่านส่วนตัว" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                    <input type="number" id="acc-birthyear" autocomplete="off" placeholder="ปีเกิด ค.ศ. เช่น 2002" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                    <input type="password" id="acc-pass" autocomplete="new-password" placeholder="รหัสผ่านส่วนตัว" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
                 </div>
-                <input type="email" id="acc-email" placeholder="อีเมลจริง" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+                <input type="email" id="acc-email" autocomplete="off" placeholder="อีเมลจริง" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
                 <button onclick="submitAcceptRegisterData()" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs shadow transition">ดำเนินการต่อ (สแกนนิ้วครั้งที่ 2)</button>
             </div>
         </div>
@@ -201,7 +207,7 @@
     <div id="modal-otp" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-sm text-center space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">กรอกรหัส OTP ที่ส่งไปยังอีเมล</h3>
-            <input type="text" id="otp-input-code" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none">
+            <input type="text" id="otp-input-code" autocomplete="off" placeholder="กรอก OTP 6 หลัก" class="w-full px-3 py-2.5 text-center font-mono text-lg rounded-xl border border-slate-200 outline-none">
             <div class="flex gap-2">
                 <button onclick="closeOtpModal()" class="flex-1 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="verifyOtpAndRegister()" class="flex-1 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">ยืนยัน OTP</button>
@@ -243,8 +249,8 @@
     <div id="modal-forgot" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden z-50">
         <div class="bg-white rounded-3xl p-6 w-full max-w-md space-y-4 shadow-2xl">
             <h3 class="font-bold text-base text-slate-800">กู้คืนรหัสผ่าน</h3>
-            <input type="text" id="forgot-id" placeholder="User ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
-            <input type="email" id="forgot-email" placeholder="อีเมล" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
+            <input type="text" id="forgot-id" autocomplete="off" placeholder="User ID" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none font-mono uppercase">
+            <input type="email" id="forgot-email" autocomplete="off" placeholder="อีเมล" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 outline-none">
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeForgotModal()" class="px-4 py-2 bg-slate-200 text-xs font-bold rounded-xl">ยกเลิก</button>
                 <button onclick="sendRecoveryEmail()" class="px-4 py-2 bg-rose-500 text-white text-xs font-bold rounded-xl shadow">กู้คืน</button>
@@ -270,7 +276,6 @@
         let activeProposalCodeKey = "";
         let proposalSenderInfo = null;
         
-        // ตัวแปรควบคุมการปฏิเสธ 5 รอบ
         let rejectClickCount = 0;
         const rejectMessages = [
             "แน่ใจแล้วหรอที่จะปฏิเสธ? 😢",
@@ -279,6 +284,10 @@
             "เตือนครั้งที่ 4 แล้วนะ จะกดปฏิเสธจริงๆ หรอเนี่ย 😭",
             "นี่คือรอบสุดท้ายแล้วนะ! ถ้าใจแข็งจริงก็เชิญกดปุ่มแดงข้างล่างเลย 🛑"
         ];
+
+        // ตัวแปรสำหรับระบบกดค้างสแกนนิ้ว
+        let holdInterval = null;
+        let holdProgress = 0;
 
         function switchTab(tab) {
             if (tab === 'login') {
@@ -329,7 +338,6 @@
             window.location.href = 'vault.html';
         }
 
-        // --- ระบบตรวจสอบโค้ดขอเป็นแฟน ---
         async function verifyProposalCode() {
             const code = document.getElementById('input-proposal-code').value.trim();
             const snapshot = await dbRef.once('value');
@@ -349,7 +357,6 @@
             document.getElementById('modal-proposal-choice').classList.remove('hidden');
         }
 
-        // --- ระบบปฏิเสธแบบ 5 รอบ ---
         function handleRejectStep() {
             document.getElementById('modal-proposal-choice').classList.add('hidden');
             rejectClickCount++;
@@ -366,7 +373,6 @@
                 btnAction.className = "flex-1 py-2.5 bg-slate-700 text-white font-bold rounded-xl text-xs transition";
                 btnAction.innerText = "ยืนยันปฏิเสธ";
             } else {
-                // รอบที่ 5: ปุ่มปฏิเสธเรืองแสงสีแดง
                 titleElem.innerText = rejectMessages[4];
                 subElem.innerText = "ใจร้ายที่สุด! บังคับกรอกเหตุผลแล้วนะ 🛑";
                 inputGroup.classList.remove('hidden');
@@ -400,29 +406,59 @@
             rejectClickCount = 0;
         }
 
-        // --- ระบบกดยอมรับ -> สแกนนิ้วครั้งที่ 1 ---
         function handleAcceptProposalFlow() {
             document.getElementById('modal-proposal-choice').classList.add('hidden');
-            document.getElementById('fp-title').innerText = "สแกนลายนิ้วมือครั้งที่ 1 (ยืนยันเริ่มต้นตอบรับ)";
-            document.getElementById('fp-status').innerText = "แตะเพื่อสแกนนิ้ว...";
+            document.getElementById('fp-title').innerText = "สแกนลายนิ้วมือครั้งที่ 1 (กดค้างไว้)";
+            resetFingerprintHoldUI();
             window.fingerprintStage = 1;
             document.getElementById('modal-fingerprint').classList.remove('hidden');
         }
 
-        function simulateFingerprintScan() {
-            const statusElem = document.getElementById('fp-status');
-            statusElem.innerText = "กำลังตรวจสอบลายนิ้วมือ...";
-            
-            setTimeout(() => {
-                document.getElementById('modal-fingerprint').classList.add('hidden');
-                if (window.fingerprintStage === 1) {
-                    // เปิดหน้ากรอกข้อมูลบัญชีเหมือนสมัครใหม่
-                    document.getElementById('modal-accept-register').classList.remove('hidden');
-                } else if (window.fingerprintStage === 2) {
-                    // สแกนนิ้วครั้งที่ 2 สำเร็จ -> เริ่มเอฟเฟคแสงทอง & สร้างคู่รักแบบเรียลไทม์
-                    executeFinalAcceptEffect();
+        // --- ระบบกดค้างสแกนนิ้ว (Press & Hold Logic) ---
+        function resetFingerprintHoldUI() {
+            holdProgress = 0;
+            document.getElementById('fp-progress-circle').style.strokeDashoffset = 276;
+            document.getElementById('fp-status').innerText = "กดค้างไว้เพื่อสแกน... (0%)";
+        }
+
+        function startFingerprintHold(e) {
+            e.preventDefault();
+            if (holdInterval) return;
+
+            const circle = document.getElementById('fp-progress-circle');
+            const statusText = document.getElementById('fp-status');
+            const totalCircumference = 276;
+
+            holdInterval = setInterval(() => {
+                holdProgress += 2; // ความเร็วในการสะสมเปอร์เซ็นต์
+                let offset = totalCircumference - (holdProgress / 100) * totalCircumference;
+                circle.style.strokeDashoffset = offset;
+                statusText.innerText = `กำลังสแกน... (${Math.min(holdProgress, 100)}%)`;
+
+                if (holdProgress >= 100) {
+                    clearInterval(holdInterval);
+                    holdInterval = null;
+                    statusText.innerText = "สแกนสำเร็จสำเร็จ! ✅";
+                    
+                    setTimeout(() => {
+                        document.getElementById('modal-fingerprint').classList.add('hidden');
+                        if (window.fingerprintStage === 1) {
+                            document.getElementById('modal-accept-register').classList.remove('hidden');
+                        } else if (window.fingerprintStage === 2) {
+                            executeFinalAcceptEffect();
+                        }
+                    }, 500);
                 }
-            }, 1500);
+            }, 30); // อัปเดตทุกๆ 30ms
+        }
+
+        function cancelFingerprintHold(e) {
+            if (holdInterval && holdProgress < 100) {
+                clearInterval(holdInterval);
+                holdInterval = null;
+                resetFingerprintHoldUI();
+                document.getElementById('fp-status').innerText = "ยกเลิก (ต้องกดค้างให้ครบ 100%)";
+            }
         }
 
         function submitAcceptRegisterData() {
@@ -444,14 +480,12 @@
             pendingUserRegData = { id: userID, name, gender, birthyear, password, email, coupleId: null, createdTime: new Date().toISOString() };
             document.getElementById('modal-accept-register').classList.add('hidden');
 
-            // เปิดสแกนนิ้วครั้งที่ 2 เพื่อยืนยันครั้งสุดท้าย
-            document.getElementById('fp-title').innerText = "สแกนลายนิ้วมือครั้งที่ 2 (ยืนยันตอบรับคำขอครั้งสุดท้าย)";
-            document.getElementById('fp-status').innerText = "แตะเพื่อยืนยันลายนิ้วมือ...";
+            document.getElementById('fp-title').innerText = "สแกนลายนิ้วมือครั้งที่ 2 (กดค้างยืนยันครั้งสุดท้าย)";
+            resetFingerprintHoldUI();
             window.fingerprintStage = 2;
             document.getElementById('modal-fingerprint').classList.remove('hidden');
         }
 
-        // --- เอฟเฟคหน้าจอเรืองแสงสีทอง และ บัตรคู่รักเรืองแสงแบบเรียลไทม์ ---
         async function executeFinalAcceptEffect() {
             const bodyElem = document.getElementById('main-body');
             bodyElem.classList.add('gold-flash');
@@ -499,7 +533,6 @@
             await dbRef.set(val);
             localStorage.setItem('current_user', JSON.stringify(pendingUserRegData));
 
-            // แสดงเอฟเฟคบัตรคู่รักเรืองแสงก่อนวาร์ป
             setTimeout(() => {
                 bodyElem.classList.remove('gold-flash');
                 window.location.href = 'vault.html';
